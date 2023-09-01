@@ -1,0 +1,14 @@
+{
+  "extends": "../.nuxt/tsconfig.server.json",
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
+  },
+  "compilerOptions": {
+    "allowJs": true
+  },
+  "exclude": [
+    "../ecosystem.config.js"
+  ]
+}
