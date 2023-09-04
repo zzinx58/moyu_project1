@@ -179,6 +179,8 @@ const handleUploadFileOnChange = (
   }
 };
 const handleManualEnterApplicant = () => {
+  if (manuallyEnterFormState.value.selectedProjects.length === 0)
+    alert('赛事项目为空，不可相关录入数据');
   manuallyEnterFormState.value.selectedProjects.forEach((item, index) => {
     const finalApplicantData = {
       t_number: +manuallyEnterFormState.value.t_number,

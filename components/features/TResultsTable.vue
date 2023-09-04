@@ -264,47 +264,51 @@ const handleUploadFileOnChange = (
 };
 
 const handleManualEnterPlayerResults = () => {
-  const r1_duration = +manuallyEnterFormState.value.r1_duration;
-  const r2_duration = +manuallyEnterFormState.value.r2_duration;
-  const r3_duration = +manuallyEnterFormState.value.r3_duration;
-  const r4_duration = +manuallyEnterFormState.value.r4_duration;
-  const r5_duration = +manuallyEnterFormState.value.r5_duration;
-  const durationResultArr = [
-    r1_duration,
-    r2_duration,
-    r3_duration,
-    r4_duration,
-    r5_duration,
-  ];
-  const finalFormData = {
-    p_name: manuallyEnterFormState.value.projects?.label,
-    p_id: +manuallyEnterFormState.value.projects?.id,
-    phase: +manuallyEnterFormState.value.phase?.phase,
-    user_id: +manuallyEnterFormState.value.user_id,
-    name: manuallyEnterFormState.value.name,
-    t_number: +manuallyEnterFormState.value.t_number,
-    t_id: +routeParamId,
-    r1_duration: r1_duration,
-    r2_duration: r2_duration,
-    r3_duration: r3_duration,
-    r4_duration: r4_duration,
-    r5_duration: r5_duration,
-    avg:
-      durationResultArr.reduce((sum, durationItem) => {
-        return sum + durationItem;
-      }, 0) / durationResultArr.length,
-    best_duration: Math.min(...durationResultArr),
-  };
-  console.log(finalFormData);
-  $fetch('/api/t_detail/t_results/createMany', {
-    method: 'POST',
-    body: {
-      data: [finalFormData],
-    },
-  }).then((e) => {
-    console.log(e);
-    alert('手动录入选手信息' + e);
-  });
+  if (props.t_projects.length === 0) {
+    alert('赛事项目为空，不可录入相关数据');
+  } else {
+    const r1_duration = +manuallyEnterFormState.value.r1_duration;
+    const r2_duration = +manuallyEnterFormState.value.r2_duration;
+    const r3_duration = +manuallyEnterFormState.value.r3_duration;
+    const r4_duration = +manuallyEnterFormState.value.r4_duration;
+    const r5_duration = +manuallyEnterFormState.value.r5_duration;
+    const durationResultArr = [
+      r1_duration,
+      r2_duration,
+      r3_duration,
+      r4_duration,
+      r5_duration,
+    ];
+    const finalFormData = {
+      p_name: manuallyEnterFormState.value.projects?.label,
+      p_id: +manuallyEnterFormState.value.projects?.id,
+      phase: +manuallyEnterFormState.value.phase?.phase,
+      user_id: +manuallyEnterFormState.value.user_id,
+      name: manuallyEnterFormState.value.name,
+      t_number: +manuallyEnterFormState.value.t_number,
+      t_id: +routeParamId,
+      r1_duration: r1_duration,
+      r2_duration: r2_duration,
+      r3_duration: r3_duration,
+      r4_duration: r4_duration,
+      r5_duration: r5_duration,
+      avg:
+        durationResultArr.reduce((sum, durationItem) => {
+          return sum + durationItem;
+        }, 0) / durationResultArr.length,
+      best_duration: Math.min(...durationResultArr),
+    };
+    console.log(finalFormData);
+    $fetch('/api/t_detail/t_results/createMany', {
+      method: 'POST',
+      body: {
+        data: [finalFormData],
+      },
+    }).then((e) => {
+      console.log(e);
+      alert('手动录入选手信息' + e);
+    });
+  }
 };
 const handleResetFormState = () => {
   manuallyEnterFormState.value = structuredClone(formStateObjTemp);

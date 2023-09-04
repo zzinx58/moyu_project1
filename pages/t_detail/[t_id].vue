@@ -166,13 +166,14 @@ const handleExportModalClick = () => {
       <FeaturesTApplicantsTable
         v-if="t_applicantsData && t_infoData"
         :t_projects="
+        t_infoData.projects_detail.length > 0 ?
         t_infoData.projects_detail.map((item) => {
           return {
             id: item.id,
             label: item.label,
             iconMeta: item.iconMeta!,
           };
-        })
+        }) : []
       "
         :t_applicants-data="t_applicantsData"
         class=""

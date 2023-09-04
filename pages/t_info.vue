@@ -573,6 +573,7 @@ const handleCreateTournament = async () => {
       .then((m) => {
         console.log(m);
         alert(m);
+        navigateTo('/t_list');
       })
       .catch((e) => alert(e));
   }

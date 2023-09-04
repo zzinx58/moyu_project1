@@ -36,36 +36,37 @@ const tableUiStyle = {
   base: 'min-w-full table-fixed',
 };
 
+//可以使用 safelist 优化
 const raw_tournament_state = [
   {
     id: 1,
     label: '报名未开始',
-    color: '#F19EC2',
+    color: 'bg-#F19EC2',
   },
   {
     id: 2,
     label: '报名中',
-    color: '##88ABDA',
+    color: 'bg-#88ABDA',
   },
   {
     id: 3,
     label: '报名已结束 比赛未开始',
-    color: '##89C997',
+    color: 'bg-#89C997',
   },
   {
     id: 4,
     label: '比赛中',
-    color: '##F29B76',
+    color: 'bg-#F29B76',
   },
   {
     id: 5,
     label: '比赛已结束 未公示',
-    color: '##8F82BC',
+    color: 'bg-#8F82BC',
   },
   {
     id: 6,
     label: '比赛已结束 公示中',
-    color: '##535353',
+    color: 'bg-#535353',
   },
 ];
 
@@ -90,7 +91,7 @@ const columns: {
   },
   {
     label: '状态',
-    key: 'status',
+    key: 'status_obj',
   },
   {
     label: '操作',
@@ -102,17 +103,21 @@ const columns: {
   },
 ];
 
+const currentTimeUnix = dayjs().utc(true).unix();
 function isValidTimeRange(time_range: [string, string] | null) {
-  return time_range !== null && Array.prototype.includes.call(time_range, '');
+  return (
+    time_range !== null &&
+    Array.prototype.includes.call(time_range, '') === false
+  );
 }
-
 const calcStatus = (
-  dayjsInstance: typeof dayjs,
+  currentTimeUnix: number,
   apply_time_range: [string, string],
   time_range: [string, string]
 ) => {
-  const currentTimeUnix = dayjsInstance().unix();
-  console.log(isValidTimeRange(time_range));
+  // console.log(
+  //   isValidTimeRange(time_range) && isValidTimeRange(apply_time_range)
+  // );
   if (isValidTimeRange(time_range) && isValidTimeRange(apply_time_range)) {
     switch (true) {
       case currentTimeUnix < +apply_time_range[0]:
@@ -127,13 +132,12 @@ const calcStatus = (
         return raw_tournament_state[3];
       case currentTimeUnix > +time_range[1]:
         return {
-          id: 4,
-          label: '公示需求错误',
-          color: '#000000',
+          id: 5,
+          label: '比赛结束，公示错误:字段暂未给出',
+          color: '#535353',
         };
     }
   }
-  return false;
 };
 
 let pageTotal = ref(0);
@@ -146,22 +150,21 @@ onBeforeMount(async () => {
   }
   if (t_list.value) {
     const solvedListData = t_list.value.map((item) => {
-      // const itemStatus = calcStatus(
-      //   dayjs,
-      //   item.apply_time_range,
-      //   item.time_range
-      // );
-
+      let statusItemObj = calcStatus(
+        currentTimeUnix,
+        item.apply_time_range,
+        item.time_range
+      );
       return {
         id: item.id,
         time_range: item.time_range,
         apply_time_range: item.apply_time_range,
         sub_name: item.sub_name,
         audit_status: item.audit_status,
-        status: item.status,
-        status_id: item.status_id,
+        status_obj: statusItemObj,
       };
     });
+    console.log(solvedListData);
     display_list_data.value = solvedListData;
     pageTotal.value = display_list_data.value.length;
     // console.log(display_list_data.value);
@@ -170,22 +173,34 @@ onBeforeMount(async () => {
 });
 
 const tournament_state_selected = ref([]);
+
 const currentPage = ref(1);
 const tablePageCount = 10;
 const finalListData = computed(() => {
-  return display_list_data.value?.slice(
+  if (tournament_state_selected.value.length === 0)
+    return display_list_data.value?.slice(
+      (currentPage.value - 1) * tablePageCount,
+      currentPage.value * tablePageCount
+    );
+
+  let filterListData = display_list_data.value?.filter(
+    (item, index, selfArr) => {
+      return Object.values(tournament_state_selected.value).some(
+        (valueItem) => {
+          if (item.status_obj && item.status_obj.id) {
+            return valueItem === item.status_obj.id;
+          }
+        }
+      );
+    }
+  );
+
+  return filterListData?.slice(
     (currentPage.value - 1) * tablePageCount,
     currentPage.value * tablePageCount
   );
 });
-// console.log('finalListData', finalListData.value);
 
-// const rowData = computed(() => {
-//   return people.slice(
-//     (currentPage.value - 1) * tablePageCount,
-//     currentPage.value * tablePageCount
-//   );
-// });
 const handleDeleteItem = async (rowData: any) => {
   const rowDataId = rowData.id;
 
@@ -215,7 +230,7 @@ const handleDeleteItem = async (rowData: any) => {
       <UFormGroup label="比赛状态" class="flex" :ui="formGroupUiStyle">
         <!-- v-model="tournament_state_selected" -->
         <USelectMenu
-          v-model="finalListData"
+          v-model="tournament_state_selected"
           :options="raw_tournament_state"
           option-attribute="label"
           value-attribute="id"
@@ -240,9 +255,11 @@ const handleDeleteItem = async (rowData: any) => {
         :ui="tableUiStyle"
       >
         <template #sub_name-data="{ row }">
-          <NuxtLink :to="`/t_info/${row.id}`" class="underline text-#315EFB">{{
-            row.sub_name
-          }}</NuxtLink>
+          <NuxtLink
+            :to="`/t_detail/${row.id}`"
+            class="underline text-#315EFB"
+            >{{ row.sub_name }}</NuxtLink
+          >
         </template>
         <template #time_range-data="{ row }">
           <span>{{
@@ -263,18 +280,18 @@ const handleDeleteItem = async (rowData: any) => {
             }`
           }}</span>
         </template>
-        <template #status-data="{ row }">
-          <!-- <UBadge
-            :class="[
-              (row.role === 'Member'
-                ? 'bg-primary_2'
-                : row.role === 'Admin'
-                ? 'bg-primary_1'
-                : 'bg-blue') + ' w-160px h-24px justify-center rounded-0',
-            ]"
-            >{{ row.role }}</UBadge
-          > -->
-          123
+        <template #status_obj-data="{ row }">
+          <UBadge
+            :class="`${
+              row.status_obj ? row.status_obj.color : 'bg-#000'
+            } w-212px justify-center text-16px`"
+          >
+            {{
+              row.status_obj
+                ? row.status_obj.label
+                : '缺少时间,无法计算相关状态'
+            }}
+          </UBadge>
         </template>
         <template #actions-data="{ row }">
           <div class="space-x-5">

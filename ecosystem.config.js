@@ -31,7 +31,7 @@ module.exports = {
         },
         exec_mode: "cluster",
         instances: "2", // max表示最大的 应用启动实例个数，仅在 cluster 模式有效 默认为 fork
-        exec_mode: "fork",// 自家主机window cluster_mode 模式下启动失败
+        // exec_mode: "fork",// 自家主机window cluster_mode 模式下启动失败
         script: ".output/server/index.mjs",
         log_date_format: "YYYY-MM-DD HH:mm:ss", // 指定日志文件的时间格式
         args: "", // 传递给脚本的参数

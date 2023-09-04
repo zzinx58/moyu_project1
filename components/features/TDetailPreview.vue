@@ -27,9 +27,13 @@ const t_detail_prefix_info: {
     iconMeta: 'i-custom-svg:d-t-location',
     attrLabel: '地点',
   },
-  name: {
+  //Bug 点
+  //name:
+  mode: {
     iconMeta: 'i-custom-svg:d-t-mode',
     attrLabel: '比赛模式',
+    formatter: (objWithIdAndLabel: Record<string, any>) =>
+      objWithIdAndLabel.label,
   },
   groups: {
     iconMeta: 'i-custom-svg:d-t-groups',
@@ -51,18 +55,27 @@ const t_detail_prefix_info: {
     iconMeta: 'i-custom-svg:d-t-apply-time-range',
     attrLabel: '报名截止日期',
     formatter: (time_range: [string, string]) => {
-      return `${dayjs.unix(+time_range[0]).format('YYYY年MM月DD日')}-${dayjs
-        .unix(+time_range[1])
-        .format('MM月DD日')}`;
+      //Bug 点
+      if (time_range) {
+        return `${dayjs.unix(+time_range[0]).format('YYYY年MM月DD日')}-${dayjs
+          .unix(+time_range[1])
+          .format('MM月DD日')}`;
+      } else {
+        return '赛事未设置报名截止日期';
+      }
     },
   },
   time_range: {
     iconMeta: 'i-custom-svg:d-t-time-range',
     attrLabel: '比赛时间',
     formatter: (time_range: [string, string]) => {
-      return `${dayjs.unix(+time_range[0]).format('YYYY年MM月DD日')}-${dayjs
-        .unix(+time_range[1])
-        .format('MM月DD日')}`;
+      if (time_range) {
+        return `${dayjs.unix(+time_range[0]).format('YYYY年MM月DD日')}-${dayjs
+          .unix(+time_range[1])
+          .format('MM月DD日')}`;
+      } else {
+        return '赛事未设置比赛时间';
+      }
     },
   },
   type: {
@@ -169,7 +182,6 @@ const tDetailInfoTemplateObjArr = () => {
       });
     }
   }
-  resultArr;
   return resultArr;
 };
 const tDetailInfoObjArr = tDetailInfoTemplateObjArr();
@@ -197,7 +209,11 @@ const tDetailInfoObjArr = tDetailInfoTemplateObjArr();
         }}</label>
       </div>
       <NuxtLink
-        v-if="typeof content === 'object' && content.isOutLink === true"
+        v-if="
+          typeof content === 'object' &&
+          content.isOutLink &&
+          content.isOutLink === true
+        "
         class="underline underline-offset-2"
         :target="'_blank'"
         title="外链网页链接"
