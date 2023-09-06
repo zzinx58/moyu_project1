@@ -5,12 +5,14 @@ import { genFileId } from 'element-plus';
 import type { FormEvent, FormError } from '@nuxthq/ui/dist/runtime/types';
 
 const formGroupUiStyle = {
-  wrapper: 'flex items-center',
+  // wrapper: '',
   label: {
-    base: 'mr-3 font-sans whitespace-nowrap text-18px',
+    base: 'mr-3 font-sans whitespace-nowrap text-18px ',
+    // wrapper: 'flex! items-start!',
   },
-  container: 'mt-0',
-  error: 'text-red-400 dark:text-red-400 mt-1 text-14px',
+  container: 'mt-0 relative',
+  // container: 'mt-0 relative flex items-start',
+  error: 'text-red-400 dark:text-red-400 mt-1 text-14px ',
 };
 
 const inputUiStyle = {
@@ -270,7 +272,8 @@ export type FinalFormStateType = {
   mode: Record<string, any> | undefined;
   type: Record<string, any> | undefined;
   apply_time_range: [string, string];
-  time_range: [string, string];
+  time_range: [string, string] | undefined;
+  // time_range: [string, string];
   award_time_range: [string, string];
   signin_time_range: [string, string];
   lottery_time: { id: number; time_range: [string, string] }[];
@@ -284,6 +287,7 @@ export type FinalFormStateType = {
 };
 
 const formState = ref<FinalFormStateType>({
+  // const formState = reactive<FinalFormStateType>({
   // const formState = ref<FormStateType>({
   name: '',
   mode: undefined,
@@ -291,7 +295,9 @@ const formState = ref<FinalFormStateType>({
   organizer: '',
   organizer_web_url: '',
   time_range: ['', ''],
+  // time_range: reactive(['', '']),
   apply_time_range: ['', ''],
+  // apply_time_range: reactive(['', '']),
   //holdup ace 通常指代抢劫地点
   location: '',
   apply_condition: '',
@@ -346,6 +352,7 @@ onBeforeMount(async () => {
   }
   //Bug 点
   formState.value.projects_detail.forEach((item) => {
+    // formState.projects_detail.forEach((item) => {
     const selectedProject = {
       project_id: item.id,
       project_label: item.label,
@@ -356,9 +363,11 @@ onBeforeMount(async () => {
 
   //Bug 点
   // t_create_preset_selected_projects_detail.value =
-  //   formState.value.projects_detail.map((item) => item);
+  // formState.value.projects_detail.map((item) => item);
+
   t_create_preset_selected_projects_detail.value =
     formState.value.projects_detail.map((item) => {
+      // formState.projects_detail.map((item) => {
       item.project_id = item.id;
       item.project_label = item.label;
       return item;
@@ -493,42 +502,48 @@ watchEffect(() => {
 });
 
 interface RuleNeededAttr {
-  custom_project_detail: ProjectDetailType[];
-  selected_project_detail: ProjectDetailType[];
-  t_name: string;
-  t_mode: string;
-  t_type: string;
+  // custom_project_detail: ProjectDetailType[];
+  // selected_project_detail: ProjectDetailType[];
+  // t_name: string;
+  // t_mode: string;
+  // t_type: string;
+  name: string;
+  mode: any;
+  time_range: any;
+  apply_time_range: any;
 }
 
 const validateRules = (): FormError[] => {
   const errors = [];
   let specificTargetObj = {} as RuleNeededAttr;
-  specificTargetObj['t_name'] = formState.value.tournament_name;
-  specificTargetObj['t_mode'] = formState.value.tournament_mode;
-  specificTargetObj['t_type'] = formState.value.tournament_type;
-  specificTargetObj['custom_project_detail'] =
-    t_create_custom_created_projects_detail.value;
-  specificTargetObj['selected_project_detail'] =
-    t_create_preset_selected_projects_detail.value;
+  // specificTargetObj['t_name'] = formState.value.tournament_name;
+  // if (!specificTargetObj.t_name)
+  //   errors.push({ path: 't_name', message: '比赛名称必填' });
+  // if (specificTargetObj.selected_project_detail.length === 0) {
+  //   specificTargetObj.custom_project_detail.forEach((item, index) => {
+  //     if (!item.label)
+  //       errors.push({
+  //         path: `custom_project_label${index}`,
+  //         message: '自定义项目名称必填',
+  //       });
+  //   });
+  // }
 
-  if (!specificTargetObj.t_name)
-    errors.push({ path: 't_name', message: '比赛名称必填' });
-  if (!specificTargetObj.t_mode)
-    errors.push({ path: 't_mode', message: '比赛模式必选' });
-  if (!specificTargetObj.t_type)
-    errors.push({ path: 't_type', message: '比赛类型必选' });
-  if (specificTargetObj.selected_project_detail.length === 0) {
-    specificTargetObj.custom_project_detail.forEach((item, index) => {
-      if (!item.label)
-        errors.push({
-          path: `custom_project_label${index}`,
-          message: '自定义项目名称必填',
-        });
-    });
-  }
+  if (!formState.value.name)
+    errors.push({ path: 'name', message: '赛事名称必填' });
+  if (!formState.value.mode)
+    errors.push({ path: 'mode', message: '赛事模式必填' });
+  if (!formState.value.type)
+    errors.push({ path: 'type', message: '赛事类型必填' });
+  //时间相关判定失效？
+  if (formState.value.time_range?.[0] === '')
+    errors.push({ path: 'time_range', message: '赛事起止时间必填' });
+  if (formState.value.apply_time_range?.[0] === '')
+    errors.push({ path: 'apply_time_range', message: '赛事类型必填' });
 
-  // return errors;
-  return [];
+  console.log(errors);
+  return errors;
+  // return [];
 };
 
 //赛事创建
@@ -632,6 +647,43 @@ const handleAddLotteryTimeRoundsChange = () => {
     })
   );
 };
+
+//Time forbidden calc.
+const applyTimeRangeDisabledTime = (selectedTime: Date) =>
+  computed(() => {
+    if (formState.value.time_range)
+      return selectedTime.getTime() > +formState.value.time_range[0] * 1000;
+  });
+const applyTimeRangeDisabledHour = () => {
+  if (formState.value.time_range) {
+    const targetHours = new Date(
+      +formState.value.time_range[0] * 1000
+    ).getHours();
+    const resultHourArr = Array.from({ length: 24 }, (_, index) => {
+      if (index < targetHours) return index;
+      return -1;
+      // return undefined;
+    });
+    // console.log(resultHourArr);
+    // console.log(resultHourArr.filter((item) => item));
+    return resultHourArr;
+  }
+  return [];
+};
+const applyTimeRangeDisabledMinute = () => {
+  if (formState.value.time_range) {
+    const targetMinutes = new Date(
+      +formState.value.time_range[0] * 1000
+    ).getMinutes();
+    const resultMinutesArr = Array.from({ length: 60 }, (_, index) => {
+      if (index < targetMinutes) return index;
+      // return undefined;
+      return -1;
+    });
+    return resultMinutesArr;
+  }
+  return [];
+};
 </script>
 <template>
   <UForm
@@ -640,11 +692,21 @@ const handleAddLotteryTimeRoundsChange = () => {
     class="space-y-6"
     :validate="validateRules"
   >
-    <UFormGroup :ui="formGroupUiStyle" label="比赛名称" name="t_name">
+    <UFormGroup
+      :ui="formGroupUiStyle"
+      label="比赛名称"
+      name="name"
+      :style="{ 'align-items': 'start' }"
+    >
       <UInput :ui="inputUiStyle" v-model="formState.name" :disabled="false" />
     </UFormGroup>
     <div class="flex space-x-9">
-      <UFormGroup :ui="formGroupUiStyle" label="比赛模式" name="t_mode">
+      <UFormGroup
+        :ui="formGroupUiStyle"
+        label="比赛模式"
+        name="mode"
+        :style="{ 'align-items': 'start' }"
+      >
         <USelectMenu
           v-model="formState.mode"
           :options="tournament_mode_options"
@@ -654,7 +716,12 @@ const handleAddLotteryTimeRoundsChange = () => {
         >
         </USelectMenu>
       </UFormGroup>
-      <UFormGroup :ui="formGroupUiStyle" label="比赛类型" name="t_type">
+      <UFormGroup
+        :ui="formGroupUiStyle"
+        label="比赛类型"
+        name="type"
+        :style="{ 'align-items': 'start' }"
+      >
         <!-- value-attribute="type_id" -->
         <USelectMenu
           v-model="formState.type"
@@ -702,7 +769,13 @@ const handleAddLotteryTimeRoundsChange = () => {
     </div>
     <!-- <div class="flex space-x-9"> -->
     <div class="flex flex-wrap gap-5">
-      <UFormGroup :ui="formGroupUiStyle" label="比赛时间" class="items-center">
+      <UFormGroup
+        :ui="formGroupUiStyle"
+        label="比赛时间"
+        class="items-center"
+        :style="{ 'align-items': 'start' }"
+        name="time_range"
+      >
         <el-date-picker
           type="datetimerange"
           start-placeholder="开始时间"
@@ -717,6 +790,8 @@ const handleAddLotteryTimeRoundsChange = () => {
         :ui="formGroupUiStyle"
         label="报名起止时间"
         class="items-center"
+        :style="{ 'align-items': 'start' }"
+        name="apply_time_range"
       >
         <el-date-picker
           type="datetimerange"
@@ -727,6 +802,9 @@ const handleAddLotteryTimeRoundsChange = () => {
           v-model="formState.apply_time_range"
           value-format="X"
           format="YYYY-MM-DD HH:mm"
+          :disabled-date="applyTimeRangeDisabledTime"
+          :disabled-hours="applyTimeRangeDisabledHour"
+          :disabled-minutes="applyTimeRangeDisabledMinute"
         />
       </UFormGroup>
     </div>

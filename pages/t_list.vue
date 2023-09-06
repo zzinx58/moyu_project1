@@ -117,20 +117,6 @@ const calcStatus = (
   apply_time_range: [string, string],
   time_range: [string, string]
 ) => {
-  // if (
-  //   isValidTimeRange(time_range) &&
-  //   currentTimeUnix > +time_range[0] &&
-  //   currentTimeUnix < +time_range[1]
-  // )
-  //   return raw_tournament_state[3];
-
-  //   if (
-  //   isValidTimeRange(apply_time_range) &&
-  //   currentTimeUnix > +apply_time_range[0] &&
-  //   currentTimeUnix < +apply_time_range[1]
-  // )
-  //   return raw_tournament_state[3];
-
   if (isValidTimeRange(time_range) && isValidTimeRange(apply_time_range)) {
     switch (true) {
       case currentTimeUnix < +apply_time_range[0]:
