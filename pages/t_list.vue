@@ -200,7 +200,6 @@ const finalListData = computed(() => {
     currentPage.value * tablePageCount
   );
 });
-
 const handleDeleteItem = async (rowData: any) => {
   const rowDataId = rowData.id;
 
