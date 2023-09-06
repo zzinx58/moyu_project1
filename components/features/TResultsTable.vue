@@ -42,7 +42,8 @@ const inputUiStyle = {
 
 const props = defineProps<{
   t_resultsData: TResultType[];
-  t_projects: { id: number; label: string; iconMeta: string }[];
+  t_projects: { id: number | undefined; label: string; iconMeta: string }[];
+  // t_projects: { id: number; label: string; iconMeta: string }[];
 }>();
 
 const t_phase_options: {
@@ -128,12 +129,12 @@ const columns = [...columnsStable, ...columnsFlexible];
 const selectedColumns = ref([...columns]);
 
 const selectedProject = ref<{
-  id: number;
+  id: number | undefined;
   label: string;
 }>(props.t_projects[0]);
 const selectedProjects = ref<
   {
-    id: number;
+    id: number | undefined;
     label: string;
   }[]
 >([props.t_projects[0]]);

@@ -1,17 +1,31 @@
+<script setup lang="ts">
+import { NConfigProvider, GlobalThemeOverrides } from 'naive-ui';
+
+const meta = document.createElement('meta');
+meta.name = 'naive-ui-style';
+document.head.appendChild(meta);
+// useHead({
+//   meta: [{ name: 'naive-ui-style' }],
+// });
+
+const themeOverrides: GlobalThemeOverrides = {
+  common: {
+    primaryColor: '#ff8f6b',
+    primaryColorHover: '#ff8f6b',
+    primaryColorPressed: '#ff8f6b',
+  },
+  Input: {},
+  Button: {},
+};
+</script>
 <template>
   <div>
     <!-- <NuxtWelcome /> -->
-    <NuxtLayout name="pc" class="select-none whitespace-nowrap">
-      <NuxtPage class="" />
-    </NuxtLayout>
-    <!-- <UNotifications class="text-red" /> -->
-    <!-- :ui="{
-        progress: {
-          base: 'absolute bottom-0 end-0 start-0 h-1',
-          background: 'bg-primary_1',
-        },
-        color: 'bg-primary_1',
-      }" -->
+    <n-config-provider :theme-overrides="themeOverrides">
+      <NuxtLayout name="pc" class="select-none whitespace-nowrap">
+        <NuxtPage class="" />
+      </NuxtLayout>
+    </n-config-provider>
   </div>
 </template>
 <style lang="scss">

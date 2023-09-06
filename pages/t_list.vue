@@ -6,7 +6,7 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 const selectUiMenuStyle = {};
 const selectUiStyle = {
-  base: 'w-261px h-36px',
+  base: 'min-w-240px max-w-260px h-36px',
   option: {
     color: 'bg-red',
   },
@@ -164,7 +164,7 @@ onBeforeMount(async () => {
         status_obj: statusItemObj,
       };
     });
-    console.log(solvedListData);
+    // console.log(solvedListData);
     display_list_data.value = solvedListData;
     pageTotal.value = display_list_data.value.length;
     // console.log(display_list_data.value);
@@ -238,7 +238,22 @@ const handleDeleteItem = async (rowData: any) => {
           multiple
           :ui-menu="selectUiMenuStyle"
           :ui="selectUiStyle"
-        />
+        >
+          <template #label>
+            <span v-if="tournament_state_selected" class="truncate">
+              {{
+                tournament_state_selected
+                  .map((itemId, indexA) => {
+                    return raw_tournament_state.find((itemObj, indexB) => {
+                      return itemObj.id === itemId;
+                    })?.label;
+                  })
+                  .join('、')
+              }}
+            </span>
+            <span v-else> 全部 </span>
+          </template>
+        </USelectMenu>
       </UFormGroup>
       <UButton
         class="bg-primary_1 hover:bg-primary_1 active:opacity-80 rounded-24px w-120px h-48px flex justify-center"

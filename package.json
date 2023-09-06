@@ -18,8 +18,11 @@
     "@unocss/nuxt": "^0.54.1",
     "@vueuse/core": "^10.3.0",
     "@vueuse/nuxt": "^10.3.0",
+    "naive-ui": "^2.34.4",
     "nuxt": "^3.6.5",
-    "sass": "^1.64.2"
+    "sass": "^1.64.2",
+    "unplugin-auto-import": "^0.16.6",
+    "unplugin-vue-components": "^0.25.2"
   },
   "dependencies": {
     "@iconify/tools": "^3.0.4",

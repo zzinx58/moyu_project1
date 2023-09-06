@@ -243,7 +243,7 @@ const tournament_groups_options = ['U8', 'U12', 'U18', '公开组', '女子组']
 // ];
 
 export interface ProjectDetailType {
-  id: number;
+  id: number | undefined;
   label: string;
   iconMeta?: string;
   passline: string | number;
@@ -318,15 +318,19 @@ const formState = ref<FinalFormStateType>({
 const route = useRoute();
 const router = useRouter();
 const routeParamId = route.params.id;
-let t_exist: boolean;
+let t_exist = ref(false);
+//定制化组件动态更新 detail 需要使用变量：selectedProjectChange
+let selectedProjectChange = ref(0);
+
 onBeforeMount(async () => {
+  // onMounted(async () => {
   if (routeParamId) {
     const { data: t_data } = await useFetch<FinalFormStateType | null>(
       `/api/t_info/${routeParamId}`
     );
     // console.log(t_data.value);
     if (!t_data.value) {
-      t_exist = false;
+      t_exist.value = false;
       router.push('/t_info');
       alert('赛事不存在');
       // console.log('afterNav,id:', routeParamId);
@@ -334,9 +338,13 @@ onBeforeMount(async () => {
     }
     if (t_data.value) {
       formState.value = t_data.value;
-      t_exist = true;
+      t_exist.value = true;
+
+      //Success!
+      selectedProjectChange.value = formState.value.projects_detail.length;
     }
   }
+  //Bug 点
   formState.value.projects_detail.forEach((item) => {
     const selectedProject = {
       project_id: item.id,
@@ -345,20 +353,28 @@ onBeforeMount(async () => {
     };
     t_create_preset_selected_projects.value.push(selectedProject);
   });
+
+  //Bug 点
+  // t_create_preset_selected_projects_detail.value =
+  //   formState.value.projects_detail.map((item) => item);
   t_create_preset_selected_projects_detail.value =
-    formState.value.projects_detail.map((item) => item);
+    formState.value.projects_detail.map((item) => {
+      item.project_id = item.id;
+      item.project_label = item.label;
+      return item;
+    });
   // console.log(formState.value);
 });
 
 const t_create_preset_selected_projects = ref<
   {
     project_label: string;
-    project_id: number;
+    project_id: number | undefined;
     iconMeta?: string;
   }[]
 >([]);
 const createProjectDetailTemplate: ProjectDetailType = {
-  id: 0,
+  id: undefined,
   label: '',
   groups: [],
   rounds: {
@@ -425,15 +441,6 @@ const handleUploadExceed: UploadProps['onExceed'] = (files) => {
   uploadBannerRef.value?.handleStart(file);
 };
 
-// const handleAddCustomCreatedProject = () => {
-//   t_create_custom_created_projects_detail.value.push(
-//     // Object.assign({}, createProjectDetailTemplate)
-//     structuredClone(createProjectDetailTemplate)
-//   );
-//   console.log(t_create_custom_created_projects_detail.value.length);
-// };
-
-let selectedProjectChange = ref(0);
 const customDeletedItemRef = ref();
 let customCheckDeletedItem = (deletedItem: []) => {
   customDeletedItemRef.value = deletedItem;
@@ -446,7 +453,13 @@ watchEffect(() => {
     selectedProjectChange.value -= 1;
     let deleteTargetIndex =
       t_create_preset_selected_projects_detail.value.findIndex((item) => {
+        //Bug 点
         return item.project_id === customDeletedItemRef.value[0].project_id;
+        //通过源头解决
+        // return (
+        //   item.project_id === customDeletedItemRef.value[0].project_id ||
+        //   item.id === customDeletedItemRef.value[0].project_id
+        // );
       });
     if (deleteTargetIndex !== -1) {
       t_create_preset_selected_projects_detail.value.splice(
@@ -454,8 +467,7 @@ watchEffect(() => {
         1
       );
     }
-    console.log(deleteTargetIndex);
-    console.log(t_create_preset_selected_projects_detail.value);
+    // console.log(t_create_preset_selected_projects_detail.value);
   }
   if (
     selectedProjectChange.value < t_create_preset_selected_projects.value.length
@@ -472,10 +484,10 @@ watchEffect(() => {
       structuredClone(tempPSPDObj)
     );
     // console.log(
-    //   '用户新增了一个项目的选择',
-    //   'count:' + selectedProjectChange.value,
-    //   'selected:' + t_create_preset_selected_projects_detail.value.length
+    //   't_create_preset_selected_projects_detail:',
+    //   t_create_preset_selected_projects_detail.value
     // );
+    // console.log(t_create_preset_selected_projects_detail.value);
   } else {
   }
 });
@@ -538,9 +550,6 @@ const handleCreateTournament = async () => {
       ...solved_selected_projects_detail,
     ]);
 
-  // solved_formState.projects_detail = solved_formState.projects_detail.filter(
-  //   (item) => item.label.trim() || item.project_id
-  // );
   console.log(
     // formValidState,
     'solved_formState',
@@ -558,8 +567,9 @@ const handleCreateTournament = async () => {
       },
     })
       .then((m) => {
-        console.log(m);
+        // console.log(m);
         alert(m);
+        navigateTo('/t_list');
       })
       .catch((e) => alert(e));
   } else {
@@ -571,7 +581,7 @@ const handleCreateTournament = async () => {
       },
     })
       .then((m) => {
-        console.log(m);
+        // console.log(m);
         alert(m);
         navigateTo('/t_list');
       })
@@ -776,6 +786,7 @@ const handleAddLotteryTimeRoundsChange = () => {
             <div
               :class="`group flex flex-col items-center ${
                 isItemSelected(itemData) ? 'text-primary_1' : ''
+                // isItemSelected ? 'text-primary_1' : ''
               }`"
             >
               <div
@@ -1271,7 +1282,7 @@ const handleAddLotteryTimeRoundsChange = () => {
       <label class="mr-3">赛事横幅</label>
       <el-image
         class="border border-1 border-solid border-gray-300 h-64px w-256px rounded-10px mr-9"
-        :src="formState.banner.url"
+        :src="(formState.banner.url ??= '')"
         fit="contain"
         :preview-src-list="[formState.banner.url]"
       >

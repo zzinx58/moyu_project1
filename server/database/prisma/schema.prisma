@@ -154,7 +154,6 @@ model tournament_t {
   break_time              Json?
   lottery_time            Json?
   projects                String?  @db.VarChar(255)
-  status                  String?  @db.VarChar(255)
   status_id               Int?     @db.TinyInt
 }
 

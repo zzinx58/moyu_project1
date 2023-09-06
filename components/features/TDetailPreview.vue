@@ -16,7 +16,7 @@ const t_detail_prefix_info: {
     attrLabel: '主办方',
   },
   apply_web_url: {
-    iconMeta: '',
+    iconMeta: 'i-custom-svg:d-t-apply-weburl',
     attrLabel: '报名链接',
     formatter: (web_url: string) => ({
       isOutLink: true,
@@ -151,7 +151,8 @@ const DetailPrefixUIPreset: BaseDetailPrefixUIType['ui'] = {
   container: 'flex text-white items-center',
   wrapper: 'flex items-center text-18px mr-3 gap-2',
   label: 'font-bold',
-  content: 'text-16px leading-20px',
+  // content: 'text-16px leading-20px',
+  content: 'text-16px leading-20px whitespace-pre-wrap',
 };
 
 const props = defineProps<{
@@ -160,7 +161,9 @@ const props = defineProps<{
 const display_infoData = toRef(props.t_info_data);
 
 function isValidURL(str: string) {
-  return str.startsWith('https://');
+  if (typeof str === 'string') {
+    return str.startsWith('https://');
+  } else return false;
 }
 const tDetailInfoTemplateObjArr = () => {
   const resultArr: {
@@ -210,6 +213,7 @@ const tDetailInfoObjArr = tDetailInfoTemplateObjArr();
       </div>
       <NuxtLink
         v-if="
+          content &&
           typeof content === 'object' &&
           content.isOutLink &&
           content.isOutLink === true
@@ -217,9 +221,13 @@ const tDetailInfoObjArr = tDetailInfoTemplateObjArr();
         class="underline underline-offset-2"
         :target="'_blank'"
         title="外链网页链接"
-        :href="`${isValidURL(content.web_url) ? content.web_url : `/t_list`}`"
+        :href="`${
+          content.web_url && isValidURL(content.web_url)
+            ? content.web_url
+            : `/t_list`
+        }`"
         >{{
-          isValidURL(content.web_url)
+          content.web_url && isValidURL(content.web_url)
             ? content.web_url
             : `链接不合规，请重新核查`
         }}</NuxtLink
@@ -241,7 +249,8 @@ const tDetailInfoObjArr = tDetailInfoTemplateObjArr();
         <UBadge :class="`text-14px bg-red h-20px`">{{ `报名中` }}</UBadge>
       </span>
     </div>
-    <div class="grid grid-cols-2 grid-rows-6 gap-3 grid-flow-col">
+    <!-- <div class="grid grid-cols-2 grid-rows-6 gap-3 grid-flow-col"> -->
+    <div class="grid gap-3 lg:grid-cols-2 lg:grid-rows-6 lg:grid-flow-col">
       <DetailPrefixTemplate
         v-for="(item, index) in tDetailInfoObjArr"
         :icon-meta="item.iconMeta"
@@ -251,7 +260,7 @@ const tDetailInfoObjArr = tDetailInfoTemplateObjArr();
       />
     </div>
     <!--  -->
-    <div class="grid grid-cols-2 mt-3 gap-3">
+    <div class="grid gap-3 lg:grid-cols-2 mt-3">
       <div class="flex-1">
         <DetailPrefixTemplate
           :label-text="`比赛规则`"

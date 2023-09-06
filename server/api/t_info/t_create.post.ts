@@ -66,8 +66,8 @@ export default defineEventHandler(async (e) => {
   //update use
 
   t_create_form.apply_quota = +t_create_form.apply_quota;
-  t_create_form.status = t_create_form.projects_detail =
-    t_create_form.projects_detail.map((itemA: any, index: any) => {
+  t_create_form.projects_detail = t_create_form.projects_detail.map(
+    (itemA: any, index: any) => {
       if (itemA.project_id) {
         itemA.id = itemA.project_id;
         itemA.label = itemA.project_label!;
@@ -80,7 +80,8 @@ export default defineEventHandler(async (e) => {
         itemB.promotion_quota = +itemB.promotion_quota;
       });
       return itemA;
-    });
+    }
+  );
 
   let groups_temp_temp = t_create_form.projects_detail.map((item: any) => {
     return item.groups;

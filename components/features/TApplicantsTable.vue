@@ -43,7 +43,8 @@ const tableUiStyle = {
 
 const props = defineProps<{
   t_applicantsData: ApplicantType[];
-  t_projects: { id: number; label: string; iconMeta: string }[];
+  // t_projects: { id: number; label: string; iconMeta: string }[];
+  t_projects: { id: number | undefined; label: string; iconMeta: string }[];
 }>();
 const display_applicantsData = toRef(props.t_applicantsData);
 const t_projects_options = props.t_projects;

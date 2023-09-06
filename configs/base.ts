@@ -23,27 +23,28 @@ export const SiteRouteMap: SiteRoutesType = {
     {
       label: '赛事管理',
       iconMeta: 'i-custom-svg:tournaments',
-      to: '/tournaments',
+      // to: '/tournaments',
+      to: '/t_list',
     },
     {
       label: '学员管理',
       iconMeta: 'i-custom-svg:students',
-      to: '/students',
+      // to: '/students',
     },
     {
       label: '战队管理',
       iconMeta: 'i-custom-svg:teams',
-      to: '/teams',
+      // to: '/teams',
     },
     {
       label: '商城管理',
       iconMeta: 'i-custom-svg:marketplace',
-      to: '/marketplace',
+      // to: '/marketplace',
     },
     {
       label: '用户数据',
       iconMeta: 'i-custom-svg:user-data',
-      to: '/userData',
+      // to: '/userData',
     },
   ],
 };

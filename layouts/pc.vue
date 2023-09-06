@@ -17,15 +17,45 @@ interface propsNavMenu {
   className?: string;
   // children: Array<JSX.Element>
 }
+
+const inputUiStyle = {
+  rounded: 'rounded-24px',
+  color: {
+    white: {
+      outline:
+        'shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary_1 dark:focus:ring-primary-400',
+    },
+  },
+  base: 'relative block disabled:cursor-not-allowed disabled:bg-#E5E5E5 focus:outline-none border-0  w-288px h-48px min-w-100px',
+  icon: {
+    trailing: {
+      padding: {
+        lg: 'pe-4',
+      },
+    },
+  },
+};
+
+const isOpen = ref(false);
+const people = [
+  { id: 1, label: 'Wade Cooper' },
+  { id: 2, label: 'Arlene Mccoy' },
+  { id: 3, label: 'Devon Webb' },
+  { id: 4, label: 'Tom Cook' },
+  { id: 5, label: 'Tanya Fox' },
+  { id: 6, label: 'Hellen Schmidt' },
+  { id: 7, label: 'Caroline Schultz' },
+  { id: 8, label: 'Mason Heaney' },
+  { id: 9, label: 'Claudie Smitham' },
+  { id: 10, label: 'Emil Schaefer' },
+];
+const selected = ref([]);
 </script>
 <template>
   <div class="h-100vh w-100vw bg-#F1F2FD flex">
     <aside class="w-280px">
       <div class="logo w-full h-100px grid place-items-center">
-        <div class="w-98px h-57px flex flex-col justify-center items-center">
-          <span text-2xl>MoYu</span>
-          <span>魔域文化</span>
-        </div>
+        <div class="i-custom-svg:nav-logo w-98px h-57px" />
       </div>
       <div class="w-280px h-[calc(100vh-100px)]">
         <UVerticalNavigation
@@ -40,7 +70,7 @@ interface propsNavMenu {
           <template #default="{ link, isActive }">
             <!-- isActive() ? 'text-primary_1' : '' -->
             <div
-              :class="`flex items-center group text-primary_2 text-20px leading-24px ${true}`"
+              :class="`flex items-center group text-primary_2 text-20px leading-24px`"
             >
               <div
                 :class="`${link.iconMeta} group-hover:text-primary_1 group-hover:opacity-60 group-active:opacity-80 pr-4 pl-12`"
@@ -56,10 +86,42 @@ interface propsNavMenu {
       </div>
     </aside>
     <div class="w-full h-full mr-10 mb-17 overflow-auto">
-      <header class="h-100px">
+      <div class="h-100px w-full flex items-center">
         <!-- id selector consumes lots of performance? -->
-        123
-      </header>
+        <div class="flex gap-14 items-center">
+          <!-- <UInput :ui="inputUiStyle" size="lg">
+            <template #trailing>
+              <div
+                :class="`i-custom-svg:nav-search text-20px text-primary_1`"
+              />
+            </template>
+          </UInput> -->
+          <n-input
+            size="large"
+            class="flex items-center"
+            :style="{
+              height: '48px',
+              'border-radius': '24px',
+              'font-size': '16px',
+              'min-width': '200px',
+              width: '288px',
+            }"
+            placeholder="搜索"
+          >
+            <template #suffix>
+              <div
+                :class="`i-custom-svg:nav-search text-20px text-primary_1`"
+              />
+            </template>
+          </n-input>
+          <div
+            class="i-custom-svg:nav-email text-primary_2 w-40px h-35px cursor-pointer hover:bg-primary_1 hover:opacity-60"
+          />
+          <div
+            class="i-custom-svg:nav-ringbell text-primary_2 w-40px h-35px cursor-pointer hover:bg-primary_1 hover:opacity-60"
+          />
+        </div>
+      </div>
       <div
         class="content-container h-[calc(100vh-100px-68px)] bg-background_2 overflow-auto rounded-24px"
       >
