@@ -93,7 +93,7 @@ export default defineEventHandler(async (e) => {
       return item.label;
     })
     .join('、');
-  console.log(projects_temp);
+  // console.log(projects_temp);
 
   // console.log('t_create_form', t_create_form);
 
@@ -132,7 +132,7 @@ export default defineEventHandler(async (e) => {
     return value;
   });
   let result_temp = JSON.parse(stringItem);
-  console.log('test5:', result_temp);
+  // console.log('test5:', result_temp);
 
   return 'Operation Success!';
 });

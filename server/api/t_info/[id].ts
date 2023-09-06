@@ -49,6 +49,14 @@ export default defineEventHandler(async (e) => {
   result_temp['type'] = type_temp;
   result_temp['name'] = result_temp.sub_name;
 
+  if (!result_temp['banner']) {
+    result_temp['banner'] = {
+      name: 'zzx58',
+      url: 'https://p9-passport.byteacctimg.com/img/user-avatar/59296777f828ae4101819744e0ef154c~64x64.awebp',
+      uploadApiUrl: '',
+    };
+  }
+
   const result = result_temp;
 
   return result;

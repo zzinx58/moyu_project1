@@ -103,7 +103,9 @@ const columns: {
   },
 ];
 
-const currentTimeUnix = dayjs().utc(true).unix();
+//BUG 点，dayjs 获取当前时间的秒时间戳不需要进行 utc(true) 转换。
+const currentTimeUnix = dayjs().utc(false).unix();
+// const currentTimeUnix = dayjs().utc(true).unix();
 function isValidTimeRange(time_range: [string, string] | null) {
   return (
     time_range !== null &&
@@ -115,9 +117,20 @@ const calcStatus = (
   apply_time_range: [string, string],
   time_range: [string, string]
 ) => {
-  // console.log(
-  //   isValidTimeRange(time_range) && isValidTimeRange(apply_time_range)
-  // );
+  // if (
+  //   isValidTimeRange(time_range) &&
+  //   currentTimeUnix > +time_range[0] &&
+  //   currentTimeUnix < +time_range[1]
+  // )
+  //   return raw_tournament_state[3];
+
+  //   if (
+  //   isValidTimeRange(apply_time_range) &&
+  //   currentTimeUnix > +apply_time_range[0] &&
+  //   currentTimeUnix < +apply_time_range[1]
+  // )
+  //   return raw_tournament_state[3];
+
   if (isValidTimeRange(time_range) && isValidTimeRange(apply_time_range)) {
     switch (true) {
       case currentTimeUnix < +apply_time_range[0]:
@@ -142,6 +155,7 @@ const calcStatus = (
 
 let pageTotal = ref(0);
 const display_list_data = ref<any[]>();
+const onGoingTs = ref();
 onBeforeMount(async () => {
   const { data: t_list } = await useFetch('/api/t_list/t_getAll');
   // console.log(t_list.value);
@@ -164,6 +178,9 @@ onBeforeMount(async () => {
         status_obj: statusItemObj,
       };
     });
+    onGoingTs.value = solvedListData.filter((item, index, selfArr) => {
+      return item.status_obj?.id === 4;
+    }).length;
     // console.log(solvedListData);
     display_list_data.value = solvedListData;
     pageTotal.value = display_list_data.value.length;
@@ -254,12 +271,17 @@ const handleDeleteItem = async (rowData: any) => {
           </template>
         </USelectMenu>
       </UFormGroup>
-      <UButton
-        class="bg-primary_1 hover:bg-primary_1 active:opacity-80 rounded-24px w-120px h-48px flex justify-center"
-        :ui="{ size: { sm: 'text-20px' } }"
-        @click="navigateTo('/t_info')"
-        >创建赛事</UButton
-      >
+      <div class="flex items-center gap-11">
+        <div class="text-20px text-#70708C">
+          今日 <span class="text-primary_1">{{ onGoingTs }}</span> 场 赛事进行
+        </div>
+        <UButton
+          class="bg-primary_1 hover:bg-primary_1 active:opacity-80 rounded-24px w-120px h-48px flex justify-center"
+          :ui="{ size: { sm: 'text-20px' } }"
+          @click="navigateTo('/t_info')"
+          >创建赛事</UButton
+        >
+      </div>
     </div>
     <div class="h-[calc(60px*11)]">
       <UTable
