@@ -273,10 +273,10 @@ const tDetailInfoObjArr = tDetailInfoTemplateObjArr();
             :key="item.id"
             :iconMeta="item.iconMeta"
             :content="item.rule_content"
-            :label-text="`${item.label}分为${calcRoundsName(
+            :label-text="`${item.label}魔方分为${calcRoundsName(
               item.rounds.total
             )?.join('-')}`"
-            :wrapper-class="`flex space-x-3 font-bold`"
+            :wrapper-class="`flex space-x-3 font-bold items-center text-16px`"
             :content-class="`ml-7 mt-2 text-14px`"
             :container-class="`text-white`"
             :style="{ 'text-wrap': 'balance' }"
