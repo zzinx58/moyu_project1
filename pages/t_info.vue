@@ -541,7 +541,7 @@ const validateRules = (): FormError[] => {
   if (formState.value.apply_time_range?.[0] === '')
     errors.push({ path: 'apply_time_range', message: '赛事类型必填' });
 
-  console.log(errors);
+  // console.log(errors);
   return errors;
   // return [];
 };
@@ -684,6 +684,61 @@ const applyTimeRangeDisabledMinute = () => {
   }
   return [];
 };
+
+const showAuditModal = ref(false);
+const preview_formInfo = ref(formState.value);
+const handleClickPreviewButton = async () => {
+  if (await formRef.value.validate()) {
+    showAuditModal.value = true;
+
+    preview_formInfo.value.projects_detail = [
+      // ...solved_custom_projects_detail,
+      ...toRaw(t_create_preset_selected_projects_detail.value),
+    ];
+    let groups_temp_temp = formState.value.projects_detail.map((item: any) => {
+      return item.groups;
+    });
+    let groups_temp = [...new Set(groups_temp_temp.flat())].join('、');
+    let projects_temp = formState.value.projects_detail
+      .map((item: any) => {
+        return item.project_label;
+      })
+      .join('、');
+    preview_formInfo.value.groups = groups_temp;
+    preview_formInfo.value.projects = projects_temp;
+    console.log(preview_formInfo.value);
+  }
+};
+//赛事预览
+watchEffect(() => {
+  console.log(formState.value);
+});
+watch(
+  () => formState.value,
+  () => console.log('watch:', formState.value),
+  { deep: true }
+);
+(() => {
+  if (formState.value.projects_detail.length === 0) {
+    // let groups_temp_temp = t_create_form.projects_detail.map((item: any) => {
+    let groups_temp_temp = formState.value.projects_detail.map((item: any) => {
+      return item.groups;
+    });
+    let groups_temp = [...new Set(groups_temp_temp.flat())].join('、');
+    // console.log(groups_temp);
+    // let projects_temp = t_create_form.projects_detail
+    let projects_temp = formState.value.projects_detail
+      .map((item: any) => {
+        return item.label;
+      })
+      .join('、');
+    // preview_formInfo.value.type = formState.value.type?.label;
+    // preview_formInfo.value.mode = formState.value.mode?.label;
+    // console.log(preview_formInfo.value);
+    // preview_formInfo.value.groups = groups_temp;
+    // preview_formInfo.value.projects = projects_temp;
+  }
+})();
 </script>
 <template>
   <UForm
@@ -1414,7 +1469,13 @@ const applyTimeRangeDisabledMinute = () => {
       </el-upload>
     </div>
     <!-- space-y-6, after that i can't change the items margin? -->
-    <div class="flex justify-center items-center pt-9">
+    <div class="flex justify-center items-center pt-9 gap-7">
+      <n-button
+        class="bg-primary_2! rounded-24px! w-120px! h-48px! text-white! hover:opacity-80! text-16px!"
+        quaternary
+        @click="handleClickPreviewButton"
+        >预览</n-button
+      >
       <UButton
         class="bg-primary_1 active:bg-opacity-80 w-120px h-48px justify-center rounded-24px"
         @click="handleCreateTournament()"
@@ -1422,5 +1483,17 @@ const applyTimeRangeDisabledMinute = () => {
       >
     </div>
   </UForm>
+  <n-modal v-model:show="showAuditModal">
+    <n-card
+      @close="showAuditModal = false"
+      :bordered="false"
+      class="bg-#B0B0C4! min-w-800px! max-w-1200px!"
+    >
+      <FeaturesTDetailPreview
+        v-bind:t_info_data="preview_formInfo"
+      ></FeaturesTDetailPreview>
+      <!-- v-bind:t_info_data="formState" -->
+    </n-card>
+  </n-modal>
 </template>
 <style scoped lang="scss"></style>

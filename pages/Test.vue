@@ -2,8 +2,26 @@
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
+import { useManagerStore } from '@/stores/manager';
+import { FinalFormStateType } from './t_info.vue';
+
 dayjs.extend(utc);
 dayjs.extend(timezone);
+
+const managerEntity = useManagerStore();
+// console.log(managerEntity.$state);
+// const test = $fetch('https://www.baidu.com');
+// (async () => {
+// const test = await $fetch('/api/test');
+// const test = await $fetch('/api/manager/login');
+// const test = await managerEntity.login({ accountName: '', password: '' });
+// console.log(test);
+// const test1 = managerEntity.$state;
+// console.log(test1);
+
+// })();
+
+// console.log(managerStore.$state.then);
 // dayjs.tz.setDefault('Asia/shanghai');
 // 选开始结束的其中日期 ：fail. time.getTime() < end || time.getTime() > start;
 // time.getTime() 的逻辑好奇怪...哦，大于 end 的日期不可选， 小于 start 的日期不可选！！理解了。
@@ -72,84 +90,84 @@ dayjs.extend(timezone);
 //   });
 // };
 
-const raw_tournament_state = [
-  {
-    id: 1,
-    label: '报名未开始',
-    color: '#F19EC2',
-  },
-  {
-    id: 2,
-    label: '报名中',
-    color: '#88ABDA',
-  },
-  {
-    id: 3,
-    label: '报名已结束 比赛未开始',
-    color: '#89C997',
-  },
-  {
-    id: 4,
-    label: '比赛中',
-    color: '#F29B76',
-  },
-  {
-    id: 5,
-    label: '比赛已结束 未公示',
-    color: '#8F82BC',
-  },
-  {
-    id: 6,
-    label: '比赛已结束 公示中',
-    color: '#535353',
-  },
-];
-function isValidTimeRange(time_range: [string, string] | null) {
-  return (
-    time_range !== null &&
-    //小 Bug 点，注意逻辑通顺
-    Array.prototype.includes.call(time_range, '') === false
-  );
-}
-const { data: validOne } = await useFetch('/api/t_info/63');
-// console.log(validOne.value);
-const currentTimeUnix = dayjs().utc(true).unix();
-const { time_range, apply_time_range } = validOne.value as any;
-console.log(time_range, apply_time_range);
+// const raw_tournament_state = [
+//   {
+//     id: 1,
+//     label: '报名未开始',
+//     color: '#F19EC2',
+//   },
+//   {
+//     id: 2,
+//     label: '报名中',
+//     color: '#88ABDA',
+//   },
+//   {
+//     id: 3,
+//     label: '报名已结束 比赛未开始',
+//     color: '#89C997',
+//   },
+//   {
+//     id: 4,
+//     label: '比赛中',
+//     color: '#F29B76',
+//   },
+//   {
+//     id: 5,
+//     label: '比赛已结束 未公示',
+//     color: '#8F82BC',
+//   },
+//   {
+//     id: 6,
+//     label: '比赛已结束 公示中',
+//     color: '#535353',
+//   },
+// ];
+// function isValidTimeRange(time_range: [string, string] | null) {
+//   return (
+//     time_range !== null &&
+//     //小 Bug 点，注意逻辑通顺
+//     Array.prototype.includes.call(time_range, '') === false
+//   );
+// }
+// const { data: validOne } = await useFetch('/api/t_info/63');
+// // console.log(validOne.value);
+// const currentTimeUnix = dayjs().utc(true).unix();
+// const { time_range, apply_time_range } = validOne.value as any;
+// console.log(time_range, apply_time_range);
 // console.log(+apply_time_range[1] < +time_range[0]);
 // console.log(currentTimeUnix > +time_range[0]);
 
-const calcStatus = (
-  currentTimeUnix: number,
-  apply_time_range: [string, string],
-  time_range: [string, string]
-) => {
-  console.log(
-    isValidTimeRange(time_range) && isValidTimeRange(apply_time_range)
-  );
-  if (isValidTimeRange(time_range) && isValidTimeRange(apply_time_range)) {
-    switch (true) {
-      case currentTimeUnix < +apply_time_range[0]:
-        return raw_tournament_state[0];
-      case currentTimeUnix > +apply_time_range[0] &&
-        currentTimeUnix < +apply_time_range[1]:
-        return raw_tournament_state[1];
-      case currentTimeUnix > +apply_time_range[1] &&
-        currentTimeUnix < +time_range[0]:
-        return raw_tournament_state[2];
-      case currentTimeUnix > +time_range[0] && currentTimeUnix < +time_range[1]:
-        return raw_tournament_state[3];
-      case currentTimeUnix > +time_range[1]:
-        return {
-          id: 5,
-          label: '比赛结束，公示字段暂未给出',
-          color: '#535353',
-        };
-    }
-  }
-};
+// const calcStatus = (
+//   currentTimeUnix: number,
+//   apply_time_range: [string, string],
+//   time_range: [string, string]
+// ) => {
+//   console.log(
+//     isValidTimeRange(time_range) && isValidTimeRange(apply_time_range)
+//   );
+//   if (isValidTimeRange(time_range) && isValidTimeRange(apply_time_range)) {
+//     switch (true) {
+//       case currentTimeUnix < +apply_time_range[0]:
+//         return raw_tournament_state[0];
+//       case currentTimeUnix > +apply_time_range[0] &&
+//         currentTimeUnix < +apply_time_range[1]:
+//         return raw_tournament_state[1];
+//       case currentTimeUnix > +apply_time_range[1] &&
+//         currentTimeUnix < +time_range[0]:
+//         return raw_tournament_state[2];
+//       case currentTimeUnix > +time_range[0] && currentTimeUnix < +time_range[1]:
+//         return raw_tournament_state[3];
+//       case currentTimeUnix > +time_range[1]:
+//         return {
+//           id: 5,
+//           label: '比赛结束，公示字段暂未给出',
+//           color: '#535353',
+//         };
+//     }
+//   }
+// };
 
-console.log(calcStatus(currentTimeUnix, apply_time_range, time_range));
+// console.log(calcStatus(currentTimeUnix, apply_time_range, time_range));
 
 // console.log(dayjs().utc(true).unix());
 // console.log(dayjs().unix());
@@ -202,17 +220,126 @@ console.log(calcStatus(currentTimeUnix, apply_time_range, time_range));
 //   }
 //   return false;
 // };
+const showModal1 = ref(false);
+const showModal2 = ref(false);
+const { data: t_infoData } = await useFetch<FinalFormStateType | null>(
+  `/api/t_info/${60}`
+);
 </script>
 <template>
-  <div class="flex flex-col">
-    <!-- <el-date-picker
+  <n-space>
+    <n-button @click="() => (showModal1 = true)" type="primary"
+      >showModal1={{ showModal1 }}</n-button
+    >
+    <n-button @click="() => (showModal2 = true)" type="primary"
+      >showModal2={{ showModal2 }}</n-button
+    >
+  </n-space>
+  <n-modal v-model:show="showModal1">
+    <n-card
+      @close="showModal1 = false"
+      :bordered="false"
+      class="bg-#B0B0C4! min-w-800px! max-w-1200px!"
+    >
+      <FeaturesTDetailPreview
+        v-bind:t_info_data="t_infoData"
+      ></FeaturesTDetailPreview>
+      <div class="flex justify-center mt-10 gap-7">
+        <n-button
+          type="primary"
+          class="hover:opacity-80! rounded-12px! w-108px! h-40px! text-16px!"
+          >审核通过</n-button
+        >
+        <n-button
+          class="bg-primary_2! rounded-12px! w-108px! h-40px! text-white! hover:opacity-80! text-16px!"
+          quaternary
+          >审核不通过</n-button
+        >
+      </div>
+    </n-card>
+  </n-modal>
+  <n-modal v-model:show="showModal2">
+    <!-- closable -->
+    <!-- header-style="height:50px; background:#70708C; border-radius: 20px 20px 0 0; display:flex; justify-content: center; width: 100%;" -->
+    <n-card
+      @close="showModal2 = false"
+      class="h-550px! w-888px! rounded-20px!"
+      :bordered="false"
+      content-style="padding: 0px"
+    >
+      <div>
+        <div
+          class="rounded-t-20px w-888px h-50px h-100px bg-#70708C text-white flex justify-center text-28px items-center relative select-none"
+        >
+          <div>邮件</div>
+          <div
+            class="i-mdi-close text-white absolute right-5 hover:opacity-70 hover:cursor-pointer"
+            @click="showModal2 = false"
+          ></div>
+        </div>
+        <div class="pt-13 px-15">
+          <n-form ref="emailFormRef" label-placement="left" label-width="80px">
+            <n-form-item label="主题:" label-style="font-size: 20px">
+              <n-input></n-input>
+            </n-form-item>
+            <n-form-item label="收件人:" label-style="font-size: 20px">
+              <n-input></n-input>
+            </n-form-item>
+            <n-form-item label="内容:" label-style="font-size: 20px">
+              <n-input
+                type="textarea"
+                :autosize="{
+                  minRows: 10,
+                }"
+              ></n-input>
+            </n-form-item>
+            <div class="flex justify-end">
+              <n-button
+                role="submit"
+                icon-placement="left"
+                :bordered="false"
+                class="bg-primary_2! w-100px! h-40px! text-white! rounded-10px! text-20px!"
+              >
+                <template #icon>
+                  <div>
+                    <div
+                      class="i-mingcute:send-plane-fill text-white text-20px"
+                    />
+                  </div>
+                </template>
+                发送
+              </n-button>
+            </div>
+          </n-form>
+        </div>
+      </div>
+    </n-card>
+  </n-modal>
+  <!-- <n-modal v-model:show="showModal">{{ showModal }}</n-modal> -->
+  <!-- <n-modal v-model:show="showModal">
+    <n-card
+      style="width: 600px"
+      title="模态框"
+      :bordered="false"
+      size="huge"
+      role="dialog"
+      aria-modal="true"
+    >
+      <template #header-extra> 噢！ </template>
+      内容
+      <template #footer> 尾部 </template>
+    </n-card>
+  </n-modal> -->
+  <!-- <pre>{{}}</pre>
+  <div class="flex flex-col"> -->
+  <!-- <el-date-picker
       type="datetimerange"
       v-model="test1"
       format="YYYY-MM-DD HH:mm"
       value-format="x"
       :clearable="true"
     /> -->
-  </div>
+  <!-- </div> -->
   <!-- <UButton @click="getAll" color="amber">getall</UButton>
   <UButton @click="getOne" color="amber">getOne</UButton>
   <UButton @click="deleteOne" color="amber">deleteOne</UButton>
