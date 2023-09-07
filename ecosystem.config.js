@@ -24,7 +24,7 @@ module.exports = {
           // 环境参数,当前指定为生产环境
           NODE_ENV: "production", //使用production模式 pm2 start ecosystem.config.js --env production
           PORT: "5050",
-          DEV_DATABASE_URL: "mysql://cube_dev:123456@192.168.1.25:3306/cube_dev"
+          DEV_DATABASE_URL: "mysql://cube_dev:123456@127.0.0.1:3306/cube_dev"
         },
         env_test: {
           // 环境参数,当前为测试环境
