@@ -12,6 +12,7 @@
     "@element-plus/nuxt": "^1.0.5",
     "@iconify-json/carbon": "^1.1.19",
     "@iconify-json/mdi": "^1.1.54",
+    "@iconify-json/mingcute": "^1.1.9",
     "@nuxt/devtools": "latest",
     "@nuxthq/ui": "latest",
     "@types/node": "^18.17.1",
@@ -26,9 +27,11 @@
   },
   "dependencies": {
     "@iconify/tools": "^3.0.4",
+    "@pinia/nuxt": "^0.4.11",
     "@prisma/client": "^5.1.1",
     "classnames": "^2.3.2",
     "dayjs": "^1.11.9",
+    "pinia": "^2.1.6",
     "xlsx": "^0.18.5"
   }
 }

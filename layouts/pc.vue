@@ -86,7 +86,7 @@ const selected = ref([]);
       </div>
     </aside>
     <div class="w-full h-full mr-10 mb-17 overflow-auto">
-      <div class="h-100px w-full flex items-center">
+      <div class="h-100px w-full flex items-center justify-between">
         <!-- id selector consumes lots of performance? -->
         <div class="flex gap-14 items-center">
           <!-- <UInput :ui="inputUiStyle" size="lg">
@@ -120,6 +120,12 @@ const selected = ref([]);
           <div
             class="i-custom-svg:nav-ringbell text-primary_2 w-40px h-35px cursor-pointer hover:bg-primary_1 hover:opacity-60"
           />
+        </div>
+        <div class="flex items-center gap-12 mr-25">
+          <div class="text-24px text-#292968">123我{{}}</div>
+          <n-avatar round :size="50" class="bg-white!">
+            <div class="i-mdi:account text-35px text-#E7E6E8" />
+          </n-avatar>
         </div>
       </div>
       <div

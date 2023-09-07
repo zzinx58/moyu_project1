@@ -28,7 +28,8 @@ const tableUiStyle = {
     base: 'text-center  first:rounded-l-10px last:rounded-r-10px',
   },
   td: {
-    base: 'text-center  first:rounded-l-10px last:rounded-r-10px py-3 h-60px',
+    base: 'text-center  first:rounded-l-10px last:rounded-r-10px h-60px',
+    padding: 'py-3 px-3',
   },
   tr: {
     base: 'even:bg-#EDF1FE h-60px',
@@ -82,15 +83,15 @@ const columns: {
     key: 'id',
   },
   {
-    label: '比赛名称',
+    label: '赛事名称',
     key: 'sub_name',
   },
   {
-    label: '日期',
+    label: '赛事起止日期',
     key: 'time_range',
   },
   {
-    label: '状态',
+    label: '赛事状态',
     key: 'status_obj',
   },
   {
@@ -156,12 +157,22 @@ onBeforeMount(async () => {
         item.time_range
       );
       return {
-        id: item.id,
-        time_range: item.time_range,
-        apply_time_range: item.apply_time_range,
-        sub_name: item.sub_name,
-        audit_status: item.audit_status,
+        ...item,
+        //
+        // id: item.id,
+        // time_range: item.time_range,
+        // apply_time_range: item.apply_time_range,
+        // sub_name: item.sub_name,
+        // audit_status: item.audit_status,
+
+        //Custom logic.
         status_obj: statusItemObj,
+        //Differ with the t_info/[id] complement.
+        name: item.sub_name,
+        type: {
+          label: item.type,
+          id: item.type_id,
+        },
       };
     });
     onGoingTs.value = solvedListData.filter((item, index, selfArr) => {
@@ -223,13 +234,35 @@ const handleDeleteItem = async (rowData: any) => {
   }
   return deletedItem.value;
 };
+
+const showAuditModal = ref(false);
+const currentAuditRowData = ref<{ [key: string]: any }>({});
+const showEmailModal = ref(false);
+const auditEmailFormInfo = reactive({
+  email_title: '',
+  content: '',
+  target_t_owner_id: '',
+});
+const handleClickAuditButton = (rowData: any) => {
+  showAuditModal.value = true;
+  currentAuditRowData.value = rowData;
+};
+const handleClickAuditFailedButton = () => {
+  showEmailModal.value = true;
+  auditEmailFormInfo.email_title = `关于您创建的 "${currentAuditRowData.value.name}" 赛事，审核不通过的原因和建议`;
+};
+const handleClickFailedEmailSendButton = () => {
+  showAuditModal.value = false;
+  showEmailModal.value = false;
+  // console.log('formInfo:', auditEmailFormInfo);
+};
 </script>
 <template>
   <div>
     <!-- <pre>{{ display_list_data }}</pre> -->
 
     <div class="flex justify-between mb-6 items-center">
-      <UFormGroup label="比赛状态" class="flex" :ui="formGroupUiStyle">
+      <UFormGroup label="赛事状态" class="flex" :ui="formGroupUiStyle">
         <!-- v-model="tournament_state_selected" -->
         <USelectMenu
           v-model="tournament_state_selected"
@@ -337,7 +370,12 @@ const handleDeleteItem = async (rowData: any) => {
           <span v-if="+row.audit_status === 0">审核不通过</span>
           <span v-if="+row.audit_status === 1">审核通过</span>
           <span v-if="+row.audit_status === 2">
-            <UButton type="button" class="bg-primary_1">审核</UButton>
+            <UButton
+              type="button"
+              class="bg-primary_1"
+              @click="handleClickAuditButton(row)"
+              >审核</UButton
+            >
           </span>
         </template>
       </UTable>
@@ -364,5 +402,102 @@ const handleDeleteItem = async (rowData: any) => {
       </UPagination>
     </div>
   </div>
+  <n-modal v-model:show="showAuditModal">
+    <n-card
+      @close="showAuditModal = false"
+      :bordered="false"
+      class="bg-#B0B0C4! min-w-800px! max-w-1200px!"
+    >
+      <FeaturesTDetailPreview
+        v-bind:t_info_data="currentAuditRowData"
+      ></FeaturesTDetailPreview>
+      <div class="flex justify-center mt-10 gap-7">
+        <n-button
+          type="primary"
+          class="hover:opacity-80! rounded-12px! w-108px! h-40px! text-16px!"
+          >审核通过</n-button
+        >
+        <n-button
+          class="bg-primary_2! rounded-12px! w-108px! h-40px! text-white! hover:opacity-80! text-16px!"
+          quaternary
+          @click="handleClickAuditFailedButton"
+          >审核不通过</n-button
+        >
+      </div>
+    </n-card>
+  </n-modal>
+  <n-modal v-model:show="showEmailModal">
+    <!-- closable -->
+    <!-- header-style="height:50px; background:#70708C; border-radius: 20px 20px 0 0; display:flex; justify-content: center; width: 100%;" -->
+    <n-card
+      @close="showEmailModal = false"
+      class="h-550px! w-888px! rounded-20px!"
+      :bordered="false"
+      content-style="padding: 0px"
+    >
+      <div>
+        <div
+          class="rounded-t-20px w-888px h-50px h-100px bg-#70708C text-white flex justify-center text-28px items-center relative select-none"
+        >
+          <div>邮件</div>
+          <div
+            class="i-mdi-close text-white absolute right-5 hover:opacity-70 hover:cursor-pointer"
+            @click="showEmailModal = false"
+          ></div>
+        </div>
+        <div class="pt-13 px-15">
+          <n-form
+            ref="emailFormRef"
+            label-placement="left"
+            label-width="80px"
+            :model="auditEmailFormInfo"
+          >
+            <n-form-item label="主题:" label-style="font-size: 20px">
+              <n-input
+                type="text"
+                v-modal:value="auditEmailFormInfo.email_title"
+                :default-value="auditEmailFormInfo.email_title"
+              ></n-input>
+            </n-form-item>
+            <n-form-item label="收件人:" label-style="font-size: 20px">
+              <n-input
+                type="text"
+                v-model:value="auditEmailFormInfo.target_t_owner_id"
+                :default-value="auditEmailFormInfo.target_t_owner_id"
+              ></n-input>
+            </n-form-item>
+            <n-form-item label="内容:" label-style="font-size: 20px">
+              <n-input
+                type="textarea"
+                :autosize="{
+                  minRows: 10,
+                }"
+                v-model:value="auditEmailFormInfo.content"
+                :default-value="auditEmailFormInfo.content"
+              ></n-input>
+            </n-form-item>
+            <div class="flex justify-end">
+              <n-button
+                role="submit"
+                icon-placement="left"
+                :bordered="false"
+                class="bg-primary_2! w-100px! h-40px! text-white! rounded-10px! text-20px!"
+                @click="handleClickFailedEmailSendButton"
+              >
+                <template #icon>
+                  <div>
+                    <div
+                      class="i-mingcute:send-plane-fill text-white text-20px"
+                    />
+                  </div>
+                </template>
+                发送
+              </n-button>
+            </div>
+          </n-form>
+        </div>
+      </div>
+    </n-card>
+  </n-modal>
 </template>
 <style scoped lang="scss"></style>
