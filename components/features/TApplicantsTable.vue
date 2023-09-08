@@ -110,7 +110,7 @@ const tablePageCount = 15;
 
 const targetItems = props.t_applicantsData.slice(3, 5);
 
-const sameUserIdprojects = targetItems.reduce();
+// const sameUserIdprojects = targetItems.reduce((resultArr, item) => resultArr.push(item.p_id),[]);
 
 const finalListData = computed(() => {
   return display_applicantsData.value?.slice(
