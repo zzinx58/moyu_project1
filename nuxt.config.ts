@@ -15,9 +15,20 @@ import { NaiveUiResolver } from 'unplugin-vue-components/resolvers';
 
 export default defineNuxtConfig({
   ssr: false,
-  modules: ['@unocss/nuxt', '@nuxthq/ui', '@element-plus/nuxt', '@vueuse/nuxt'],
+  modules: [
+    '@unocss/nuxt',
+    '@nuxthq/ui',
+    '@element-plus/nuxt',
+    '@vueuse/nuxt',
+    [
+      '@pinia/nuxt',
+      {
+        autoImports: ['defineStore', ['defineStore', 'definePiniaStore']],
+      },
+    ],
+  ],
   devtools: {
-    enabled: false,
+    enabled: true,
     timeline: {
       enabled: true,
     },

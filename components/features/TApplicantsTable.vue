@@ -108,9 +108,49 @@ const selectedColumns = ref([...columnsStable, ...columnsAttrs]);
 const currentPage = ref(1);
 const tablePageCount = 15;
 
-const targetItems = props.t_applicantsData.slice(3, 5);
-
-// const sameUserIdprojects = targetItems.reduce((resultArr, item) => resultArr.push(item.p_id),[]);
+const test: { user_id: number; user_projects: number[] }[] = [];
+for (const itemA of props.t_applicantsData) {
+  let existUser = test.find((itemB) => itemB.user_id === itemA.user_id);
+  if (!existUser) {
+    const userDataObj = {
+      user_id: itemA.user_id,
+      user_projects: [itemA.p_id],
+    };
+    test.push(userDataObj);
+  }
+  if (
+    existUser?.user_projects.findIndex((itemC) => itemC === itemA.p_id) === -1
+  )
+    existUser?.user_projects.push(itemA.p_id);
+}
+// console.log(test);
+test.forEach((itemA) => {
+  const finalObj = itemA.user_projects.reduce(
+    (accObj: { [key: string]: any }, item): { [key: string]: any } => {
+      accObj[`p_id-${item}`] = '√';
+      return accObj;
+    },
+    {}
+  );
+  // console.log(finalObj);
+  const targetItem = props.t_applicantsData.find(
+    (itemB) => itemB.user_id === itemA.user_id
+  );
+  if (targetItem) Object.assign(targetItem, finalObj);
+});
+display_applicantsData.value = display_applicantsData.value.filter(
+  (itemA, index, selfArr) => {
+    // let targetUserId = itemA.user_id
+    let targetObj = selfArr.find((item) => item.user_id === itemA.user_id);
+    if (targetObj) {
+      let result = selfArr.indexOf(targetObj) === index;
+      return result;
+    } else {
+      return false;
+    }
+  }
+);
+console.log(display_applicantsData.value);
 
 const finalListData = computed(() => {
   return display_applicantsData.value?.slice(
@@ -317,7 +357,15 @@ const handleResetFormState = () => {
               :columns="selectedColumns"
               :rows="finalListData"
               :ui="tableUiStyle"
-            ></UTable>
+            >
+              <!-- <template
+                v-for="item in columnsAttrs"
+                :key="item.key"
+                v-slot:[`${item.label}-data`]="{ row }"
+              >
+                {{ row.user_id }}
+              </template> -->
+            </UTable>
             <!-- :rows="display_applicantsData" -->
           </div>
         </div>
