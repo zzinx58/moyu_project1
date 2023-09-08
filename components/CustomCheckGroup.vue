@@ -2,6 +2,7 @@
 const props = defineProps<{
   modelValue: Array<Object>;
   itemsList: { [key: string]: any }[];
+  multiple: boolean;
 }>();
 const emits = defineEmits<{
   'update:modelValue': [itemData: {}];
@@ -21,7 +22,11 @@ function isSelected(itemData: { [key: string]: any }) {
   return selected.value.some((someItem: { [key: string]: any }) => {
     //Bug 点
     // return toRaw(someItem) === itemData;
-    return toRaw(someItem).project_id === itemData.project_id;
+    //Bug 点
+    // return toRaw(someItem).project_id === itemData.project_id;
+    return itemData.project_id
+      ? toRaw(someItem).project_id === itemData.project_id
+      : someItem.id === itemData.id;
   });
 }
 
@@ -32,7 +37,14 @@ function onSelect(itemData: { [key: string]: any }) {
     //Bug 点，方法选用错误
     // const itemToRemoveIndex = selected.value.indexOf(itemData);
     const itemToRemoveIndex = selected.value.findIndex(
-      (item: { [key: string]: any }) => item.project_id === itemData.project_id
+      //Bug点, undefined === undefined; findIndex(undefined) => -1
+      // (item: { [key: string]: any }) => item.project_id === itemData.project_id
+      (item: { [key: string]: any }) => {
+        const result = item.project_id
+          ? item.project_id === itemData.project_id
+          : item.id === itemData.id;
+        return result;
+      }
     );
     if (itemToRemoveIndex !== -1) {
       const deletedItem = selected.value.splice(itemToRemoveIndex, 1);

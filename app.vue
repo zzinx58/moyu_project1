@@ -16,6 +16,14 @@ const themeOverrides: GlobalThemeOverrides = {
   },
   Input: {},
   Button: {},
+  InternalSelection: {
+    borderRadius: '10px',
+  },
+  Collapse: {
+    titlePadding: '0 0 0 0',
+    itemMargin: '0 0 44px 0',
+  },
+  CollapseTransition: {},
 };
 </script>
 <template>

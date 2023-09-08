@@ -128,57 +128,61 @@ const resultNumberFormatter = (targetNumber: number) => {
 const columns = [...columnsStable, ...columnsFlexible];
 const selectedColumns = ref([...columns]);
 
-const selectedProject = ref<{
-  id: number | undefined;
-  label: string;
-}>(props.t_projects[0]);
-const selectedProjects = ref<
-  {
-    id: number | undefined;
-    label: string;
-  }[]
->([props.t_projects[0]]);
+// const selectedProject = ref<{
+//   id: number | undefined;
+//   label: string;
+// }>(props.t_projects[0]);
+// const selectedProjects = ref<
+//   {
+//     id: number | undefined;
+//     label: string;
+//   }[]
+// >([props.t_projects[0]]);
 
 const display_resultsData = computed(() => {
-  return props.t_resultsData
-    .filter((item, index, selfArr) => {
-      return selectedProject.value.id === item.p_id;
-    })
-    .map((itemA, indexA) => {
-      const itemAOverviewResults: [string, number][] = [];
-      Object.entries(itemA).forEach(([key, value]) => {
-        if (key.startsWith('r') && key.endsWith('_duration')) {
-          const _durationStrIndex = key.indexOf('_duration');
-          let keySimplified = key.slice(0, _durationStrIndex);
+  return (
+    props.t_resultsData
+      // .filter((item, index, selfArr) => {
+      //   return selectedProject.value.id === item.p_id;
+      // })
+      .map((itemA, indexA) => {
+        const itemAOverviewResults: [string, number][] = [];
+        Object.entries(itemA).forEach(([key, value]) => {
+          if (key.startsWith('r') && key.endsWith('_duration')) {
+            const _durationStrIndex = key.indexOf('_duration');
+            let keySimplified = key.slice(0, _durationStrIndex);
 
-          itemAOverviewResults.push(
-            // Object.fromEntries([[keySimplified, value]])
-            [
-              keySimplified,
-              typeof value === 'number' ? value : parseInt('' + value),
-            ]
-          );
-        }
-      });
-      itemAOverviewResults.sort(
-        (preVal: [string, number], curVal: [string, number]) => {
-          //逆，5,4,3,2,1; judge>0
-          // return +curVal[0].slice(-1) - +preVal[0].slice(-1);
-          //正，1,2,3,4,5; judge<0
-          return +preVal[0].slice(-1) - +curVal[0].slice(-1);
-        }
-      );
-      return {
-        name: itemA.name,
-        user_id: itemA.user_id,
-        wcu_id: null,
-        best_duration: resultNumberFormatter(itemA.best_duration / 1000),
-        avg_duration: resultNumberFormatter(itemA.avg / 1000),
-        is_rise: itemA.is_rise,
-        // is_rise: itemA.is_rise ? '是' : '否',
-        overviewResults: itemAOverviewResults,
-      };
-    });
+            itemAOverviewResults.push(
+              // Object.fromEntries([[keySimplified, value]])
+              [
+                keySimplified,
+                typeof value === 'number' ? value : parseInt('' + value),
+              ]
+            );
+          }
+        });
+        itemAOverviewResults.sort(
+          (preVal: [string, number], curVal: [string, number]) => {
+            //逆，5,4,3,2,1; judge>0
+            // return +curVal[0].slice(-1) - +preVal[0].slice(-1);
+            //正，1,2,3,4,5; judge<0
+            return +preVal[0].slice(-1) - +curVal[0].slice(-1);
+          }
+        );
+        return {
+          name: itemA.name,
+          user_id: itemA.user_id,
+          wcu_id: null,
+          best_duration: resultNumberFormatter(itemA.best_duration / 1000),
+          avg_duration: resultNumberFormatter(itemA.avg / 1000),
+          is_rise: itemA.is_rise,
+          // is_rise: itemA.is_rise ? '是' : '否',
+          overviewResults: itemAOverviewResults,
+          p_id: itemA.p_id,
+          phase: itemA.phase,
+        };
+      })
+  );
 });
 const selectedRowForIsRise = computed(() => {
   return display_resultsData.value.map((itemA, index) => {
@@ -192,11 +196,28 @@ const selectedRowForIsRise = computed(() => {
 const currentPage = ref(1);
 const tablePageCount = 15;
 const finalListData = computed(() => {
-  return display_resultsData.value?.slice(
+  if (selectedProjectItems.value.length === 0) {
+    return display_resultsData.value?.slice(
+      (currentPage.value - 1) * tablePageCount,
+      currentPage.value * tablePageCount
+    );
+  }
+  let filterListData = display_resultsData.value
+    .filter((item, index, selfArr) => {
+      return selectedProjectItems.value.some(
+        (itemA) => +itemA.id === item.p_id
+      );
+    })
+    //Bug 小点
+    .filter((item) => {
+      return item.phase === +selectedPhase.value;
+    });
+  return filterListData.slice(
     (currentPage.value - 1) * tablePageCount,
     currentPage.value * tablePageCount
   );
 });
+
 const pageTotal = computed(() => {
   return display_resultsData.value.length;
 });
@@ -314,6 +335,10 @@ const handleManualEnterPlayerResults = () => {
 const handleResetFormState = () => {
   manuallyEnterFormState.value = structuredClone(formStateObjTemp);
 };
+
+const selectedProjectItems = ref<{ [key: string]: string }[]>([]);
+const selectedPhase = ref();
+// watchEffect(() => console.log(typeof selectedPhase.value));
 </script>
 <template>
   <!-- <CustomSelectGroup
@@ -323,18 +348,19 @@ const handleResetFormState = () => {
   ></CustomSelectGroup> -->
   <!-- v-model="selectedRowForIsRise" -->
   <!-- :sort="{ column: 'is_rise', direction: 'desc' }" -->
-  <div class="h-852px rounded-10px bg-white">
-    <div class="bg-primary_2 h-60px flex items-center rounded-t-10px">
+  <!-- <div class="h-852px rounded-10px bg-white"> -->
+  <div class="rounded-10px bg-white">
+    <!-- <div class="bg-primary_2 h-60px flex items-center rounded-t-10px">
       <div class="text-white text-30px ml-7 leading-30px">赛果</div>
-    </div>
+    </div> -->
     <div class="px-3 py-4 flex gap-2">
       <div class="">
-        <div class="h-590px border-#6F6F8B border bg-#F1F2FD">
+        <div class="h-[calc(590px+104px)] border-#6F6F8B border bg-#F1F2FD">
           <div class="bg-primary_2 text-white h-48px flex items-center">
             <div class="text-18px ml-6 my-3">手动录入</div>
           </div>
           <div
-            class="flex flex-col justify-between h-[calc(588px-48px)] pt-3 pr-5 pl-6 pb-5"
+            class="flex flex-col justify-between h-[calc(588px-48px+104px)] pt-3 pr-5 pl-6 pb-5"
           >
             <div>
               <UForm
@@ -457,8 +483,83 @@ const handleResetFormState = () => {
           </el-upload>
         </div>
       </div>
-      <!--  -->
+      <!-- Table Content Block Start. -->
       <div class="w-full overflow-auto">
+        <div>
+          <CustomCheckGroup
+            :multiple="false"
+            :items-list="t_projects"
+            :model-value="selectedProjectItems"
+            :class="`flex gap-7 mb-5`"
+          >
+            <template #item="{ itemData, isItemSelected }">
+              <div
+                :class="`flex items-center justify-center 
+                  gap-3 
+                  group 
+                  px-2
+                text-primary_2 text-12px 
+                bg-#F1F2FD border border-#6F6F8B border-solid rounded-10px
+                  w-90px h-28px
+                 hover:bg-primary_1 hover:opacity-80
+                  active:opacity-60
+                 ${
+                   isItemSelected(itemData)
+                     ? 'bg-primary_1 text-white! border-none!'
+                     : ''
+                 }`"
+              >
+                <div :class="`${itemData.iconMeta}  group-hover:text-white`" />
+                <div :class="`  group-hover:text-white`">
+                  {{ itemData.label }}
+                </div>
+              </div>
+            </template>
+          </CustomCheckGroup>
+        </div>
+        <div class="mb-5 flex items-center justify-between">
+          <n-form-item
+            label="轮次"
+            label-placement="left"
+            class="h-36px!"
+            label-style="font-size:18px"
+          >
+            <n-select
+              v-model:value="selectedPhase"
+              value-field="phase_id"
+              label-field="label"
+              class="w-180px!"
+              placeholder="请选择比赛轮次.."
+              :options="[
+                {
+                  label: '第一局',
+                  phase_id: '1',
+                },
+                {
+                  label: '第二局',
+                  phase_id: '2',
+                },
+                {
+                  label: '第三局',
+                  phase_id: '3',
+                },
+                {
+                  label: '第四局',
+                  phase_id: '4',
+                },
+                {
+                  label: '第五局',
+                  phase_id: '5',
+                },
+              ]"
+            />
+          </n-form-item>
+
+          <div class="flex gap-2 items-center leading-36px">
+            <div class="bg-green w-52px h-20px"></div>
+            <div class="text-18px">晋级</div>
+          </div>
+        </div>
         <div
           class="w-full overflow-x-auto overflow-y-hidden border border-#6F6F8B"
         >

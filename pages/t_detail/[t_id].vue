@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import gsap from 'gsap';
 import { ApplicantType } from 'server/api/t_detail/t_applicants/[t_id].get';
 import { TResultType } from 'server/api/t_detail/t_results/[t_id].get';
 import { FinalFormStateType } from '../t_info.vue';
@@ -8,6 +9,7 @@ import * as xlsx from 'xlsx';
 import * as dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
+import { CollapseProps } from 'naive-ui';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -144,6 +146,22 @@ const handleExportModalClick = () => {
     },
   });
 };
+
+const collapseItem2 = ref();
+const collapseItem1 = ref();
+const handleClickCollapseItem: CollapseProps['onItemHeaderClick'] = ({
+  name,
+  expanded,
+}) => {
+  gsap.to(
+    name === '1'
+      ? collapseItem1.value
+      : name === '2'
+      ? collapseItem2.value
+      : undefined,
+    { rotate: expanded ? 90 : 0, duration: 0.2 }
+  );
+};
 </script>
 <template>
   <div class="flex flex-col w-full min-w-740px">
@@ -163,7 +181,7 @@ const handleExportModalClick = () => {
 
     <div class="flex flex-col gap-11">
       <FeaturesTDetailPreview v-if="t_infoData" :t_info_data="t_infoData" />
-      <FeaturesTApplicantsTable
+      <!-- <FeaturesTApplicantsTable
         v-if="t_applicantsData && t_infoData"
         :t_projects="
         t_infoData.projects_detail.length > 0 ?
@@ -191,8 +209,95 @@ const handleExportModalClick = () => {
       "
         :t_results-data="t_resultsData"
         class=""
-      />
+      /> -->
+      <n-collapse
+        arrow-placement="right"
+        :default-expanded-names="['1', '2']"
+        @item-header-click="handleClickCollapseItem"
+      >
+        <n-collapse-item name="1">
+          <template #header>
+            <div
+              class="bg-primary_2 h-60px flex items-center rounded-t-10px w-full justify-between group"
+            >
+              <div class="text-white text-30px ml-7 leading-30px">参赛选手</div>
+              <img
+                ref="collapseItem1"
+                src="../../assets/icons/d-collapse.svg"
+                class="w-40px h-40px mr-3 origin-center rotate-90"
+              />
+            </div>
+          </template>
+          <template #arrow>
+            <div class="absolute"></div>
+          </template>
+          <template #default>
+            <FeaturesTApplicantsTable
+              v-if="t_applicantsData && t_infoData"
+              :t_projects="
+                t_infoData.projects_detail.length > 0 ?
+                t_infoData.projects_detail.map((item) => {
+                  return {
+                    id: item.id,
+                    label: item.label,
+                    iconMeta: item.iconMeta!,
+                  };
+                }) : []
+                "
+              :t_applicants-data="t_applicantsData"
+              class=""
+            />
+          </template>
+        </n-collapse-item>
+        <n-collapse-item name="2">
+          <template #header>
+            <div
+              class="bg-primary_2 h-60px flex items-center justify-between rounded-t-10px w-full group"
+            >
+              <div class="text-white text-30px ml-7 leading-30px">赛果</div>
+              <img
+                ref="collapseItem2"
+                src="../../assets/icons/d-collapse.svg"
+                class="w-40px h-40px mr-3 origin-center rotate-90"
+              />
+              <!-- collapse-end-state -->
+              <!-- motion-safe:animate-bounce -->
+            </div>
+          </template>
+          <template #arrow>
+            <div></div>
+          </template>
+          <FeaturesTResultsTable
+            v-if="t_resultsData && t_infoData"
+            :t_projects="
+              t_infoData.projects_detail.map((item) => {
+                return {
+                  id: item.id,
+                  label: item.label,
+                  iconMeta: item.iconMeta!,
+                };
+              })
+      "
+            :t_results-data="t_resultsData"
+            class=""
+          />
+        </n-collapse-item>
+      </n-collapse>
     </div>
   </div>
 </template>
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+:deep(
+    .n-collapse
+      .n-collapse-item
+      .n-collapse-item__content-wrapper
+      .n-collapse-item__content-inner
+  ) {
+  padding-top: 0;
+}
+
+.collapse-end-state {
+  --uno: origin-center rotate-90;
+  // transition duration-500 group-hover:rotate-90
+}
+</style>

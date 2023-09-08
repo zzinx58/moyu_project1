@@ -913,6 +913,7 @@ watch(
           :model-value="t_create_preset_selected_projects"
           @deleted-item="customCheckDeletedItem"
           :items-list="itemList"
+          :multiple="true"
           class="border box-border border-1px border-solid border-gray-300 rounded-10px p-3 min-w-340px bg-white text-primary_2 leading-28px grid grid-rows-2 grid-cols-9 gap-2"
         >
           <template #item="{ itemData, isItemSelected }">

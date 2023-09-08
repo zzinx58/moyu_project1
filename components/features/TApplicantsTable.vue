@@ -107,6 +107,11 @@ const rows = display_applicantsData.value.map((item, index) => {
 const selectedColumns = ref([...columnsStable, ...columnsAttrs]);
 const currentPage = ref(1);
 const tablePageCount = 15;
+
+const targetItems = props.t_applicantsData.slice(3, 5);
+
+const sameUserIdprojects = targetItems.reduce();
+
 const finalListData = computed(() => {
   return display_applicantsData.value?.slice(
     (currentPage.value - 1) * tablePageCount,
@@ -207,10 +212,11 @@ const handleResetFormState = () => {
 };
 </script>
 <template>
-  <div class="h-750px rounded-10px bg-white">
-    <div class="bg-primary_2 h-60px flex items-center rounded-t-10px">
+  <div class="rounded-b-10px bg-white">
+    <!-- <div class="h-750px rounded-10px bg-white"> -->
+    <!-- <div class="bg-primary_2 h-60px flex items-center rounded-t-10px">
       <div class="text-white text-30px ml-7 leading-30px">参赛选手</div>
-    </div>
+    </div> -->
     <div class="px-3 py-4 flex gap-2">
       <div class="">
         <div class="h-590px border-#6F6F8B border bg-#F1F2FD">
