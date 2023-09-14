@@ -109,9 +109,16 @@ const selected = ref([]);
             placeholder="搜索"
           >
             <template #suffix>
-              <div
+              <!-- <div
                 :class="`i-custom-svg:nav-search text-20px text-primary_1`"
-              />
+              /> -->
+              <n-button quaternary circle>
+                <template #icon>
+                  <div
+                    :class="`i-custom-svg:nav-search text-20px text-primary_1`"
+                  />
+                </template>
+              </n-button>
             </template>
           </n-input>
           <div
