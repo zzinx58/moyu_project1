@@ -565,11 +565,11 @@ const handleCreateTournament = async () => {
       ...solved_selected_projects_detail,
     ]);
 
-  console.log(
-    // formValidState,
-    'solved_formState',
-    solved_formState
-  );
+  // console.log(
+  //   // formValidState,
+  //   'solved_formState',
+  //   solved_formState
+  // );
   const route = useRoute();
   const router = useRouter();
   const routeParamId = route.params.id;
@@ -706,16 +706,18 @@ const handleClickPreviewButton = async () => {
       .join('、');
     preview_formInfo.value.groups = groups_temp;
     preview_formInfo.value.projects = projects_temp;
-    console.log(preview_formInfo.value);
+    // console.log(preview_formInfo.value);
   }
 };
 //赛事预览
 watchEffect(() => {
-  console.log(formState.value);
+  // console.log(formState.value);
 });
 watch(
   () => formState.value,
-  () => console.log('watch:', formState.value),
+  () => {
+    // console.log('watch:', formState.value)
+  },
   { deep: true }
 );
 (() => {

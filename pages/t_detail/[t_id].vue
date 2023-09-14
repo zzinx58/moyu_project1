@@ -6,7 +6,7 @@ import { FinalFormStateType } from '../t_info.vue';
 import { ElMessage, ElMessageBox, ElCheckbox } from 'element-plus';
 import type { Action } from 'element-plus';
 import * as xlsx from 'xlsx';
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import { CollapseProps } from 'naive-ui';

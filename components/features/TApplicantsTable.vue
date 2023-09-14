@@ -150,7 +150,7 @@ display_applicantsData.value = display_applicantsData.value.filter(
     }
   }
 );
-console.log(display_applicantsData.value);
+// console.log(display_applicantsData.value);
 
 const finalListData = computed(() => {
   return display_applicantsData.value?.slice(
@@ -358,13 +358,15 @@ const handleResetFormState = () => {
               :rows="finalListData"
               :ui="tableUiStyle"
             >
-              <!-- <template
+              <template
                 v-for="item in columnsAttrs"
-                :key="item.key"
-                v-slot:[`${item.label}-data`]="{ row }"
+                v-slot:[`${item.key}-data`]="{ row }"
               >
-                {{ row.user_id }}
-              </template> -->
+                <div
+                  class="bg-#FF8F6B w-16px h-16px rounded-full"
+                  v-if="row[`${item.key}`] !== undefined"
+                ></div>
+              </template>
             </UTable>
             <!-- :rows="display_applicantsData" -->
           </div>

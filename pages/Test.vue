@@ -8,7 +8,7 @@ import { FinalFormStateType } from './t_info.vue';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-const managerEntity = useManagerStore();
+// const managerEntity = useManagerStore();
 // console.log(managerEntity.$state);
 // const test = $fetch('https://www.baidu.com');
 // (async () => {
@@ -220,22 +220,57 @@ const managerEntity = useManagerStore();
 //   }
 //   return false;
 // };
-const showModal1 = ref(false);
-const showModal2 = ref(false);
-const { data: t_infoData } = await useFetch<FinalFormStateType | null>(
-  `/api/t_info/${60}`
-);
+// const showModal1 = ref(false);
+// const showModal2 = ref(false);
+// const { data: t_infoData } = await useFetch<FinalFormStateType | null>(
+//   `/api/t_info/${60}`
+// );
+// const { data: testData } = await useFetch('/test1', {
+//   method: 'GET',
+//   server: false,
+// });
+// const { data: testData } = await useFetch('/users/1', {
+//   method: 'GET',
+//   server: false,
+// });
+const { data: testData } = await useFetch('/users_list', {
+  method: 'GET',
+  server: false,
+});
 </script>
 <template>
-  <n-space>
+  <n-select
+    :options="[
+      {
+        value: 1,
+        label: '1',
+      },
+      {
+        value: 2,
+        label: '2',
+      },
+      {
+        value: 3,
+        label: '3',
+      },
+      {
+        value: 4,
+        label: '4',
+      },
+    ]"
+  >
+  </n-select>
+  <n-button type="primary">123</n-button>
+  <pre>{{ testData }}</pre>
+  <!-- <n-space>
     <n-button @click="() => (showModal1 = true)" type="primary"
       >showModal1={{ showModal1 }}</n-button
     >
     <n-button @click="() => (showModal2 = true)" type="primary"
       >showModal2={{ showModal2 }}</n-button
     >
-  </n-space>
-  <n-modal v-model:show="showModal1">
+  </n-space> -->
+  <!-- <n-modal v-model:show="showModal1">
     <n-card
       @close="showModal1 = false"
       :bordered="false"
@@ -257,11 +292,11 @@ const { data: t_infoData } = await useFetch<FinalFormStateType | null>(
         >
       </div>
     </n-card>
-  </n-modal>
-  <n-modal v-model:show="showModal2">
-    <!-- closable -->
-    <!-- header-style="height:50px; background:#70708C; border-radius: 20px 20px 0 0; display:flex; justify-content: center; width: 100%;" -->
-    <n-card
+  </n-modal> -->
+  <!-- <n-modal v-model:show="showModal2"> -->
+  <!-- closable -->
+  <!-- header-style="height:50px; background:#70708C; border-radius: 20px 20px 0 0; display:flex; justify-content: center; width: 100%;" -->
+  <!-- <n-card
       @close="showModal2 = false"
       class="h-550px! w-888px! rounded-20px!"
       :bordered="false"
@@ -314,7 +349,7 @@ const { data: t_infoData } = await useFetch<FinalFormStateType | null>(
         </div>
       </div>
     </n-card>
-  </n-modal>
+  </n-modal> -->
   <!-- <n-modal v-model:show="showModal">{{ showModal }}</n-modal> -->
   <!-- <n-modal v-model:show="showModal">
     <n-card
