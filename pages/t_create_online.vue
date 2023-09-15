@@ -1,31 +1,31 @@
 //赛事管理-赛事创建-线上赛
 <script setup lang="ts">
-import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';
-import { genFileId } from 'element-plus';
+import type { UploadInstance, UploadProps, UploadRawFile } from "element-plus";
+import { genFileId } from "element-plus";
 const selectUiStyle = {
-  base: 'relative block w-full disabled:cursor-not-allowed disabled:bg-#e5e5e5 focus:outline-none border-0',
+  base: "relative block w-full disabled:cursor-not-allowed disabled:bg-#e5e5e5 focus:outline-none border-0",
 };
 const selectMenuUiStyle = {
   option: {
-    disabled: 'cursor-not-allowed opacity-50 bg-#E5E5E5',
+    disabled: "cursor-not-allowed opacity-50 bg-#E5E5E5",
   },
 };
 const formGroupUiStyle = {
-  wrapper: 'flex items-center',
+  wrapper: "flex items-center",
   label: {
-    base: 'mr-3 font-sans whitespace-nowrap text-16px',
+    base: "mr-3 font-sans whitespace-nowrap text-16px",
   },
-  container: 'mt-0',
+  container: "mt-0",
 };
 const inputUiStyle = {
-  rounded: 'rounded-10px',
+  rounded: "rounded-10px",
   color: {
     white: {
       outline:
-        'shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary_1 dark:focus:ring-primary-400',
+        "shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary_1 dark:focus:ring-primary-400",
     },
   },
-  base: 'relative block w-full disabled:cursor-not-allowed disabled:bg-#E5E5E5 focus:outline-none border-0 ',
+  base: "relative block w-full disabled:cursor-not-allowed disabled:bg-#E5E5E5 focus:outline-none border-0",
 };
 
 const TournamentRounds: { id: number }[] = [
@@ -53,150 +53,150 @@ const TournamentProjects: {
 }[] = [
   {
     id: 1,
-    tournament_type: 'third_order',
-    label: '三阶',
+    tournament_type: "third_order",
+    label: "三阶",
   },
   {
     id: 2,
-    tournament_type: 'pyramid',
-    label: '金字塔',
+    tournament_type: "pyramid",
+    label: "金字塔",
   },
   {
     id: 3,
-    tournament_type: 'second_order',
-    label: '二阶',
+    tournament_type: "second_order",
+    label: "二阶",
   },
   {
     id: 4,
-    tournament_type: 'oblique_rotation',
-    label: '斜转',
+    tournament_type: "oblique_rotation",
+    label: "斜转",
   },
   {
     id: 5,
-    tournament_type: 'fourth_order',
-    label: '四阶',
+    tournament_type: "fourth_order",
+    label: "四阶",
   },
   {
     id: 6,
-    tournament_type: 'funny_project',
-    label: '趣味项目',
+    tournament_type: "funny_project",
+    label: "趣味项目",
   },
   {
     id: 7,
-    tournament_type: 'singal-handedly',
-    label: '单手',
+    tournament_type: "singal-handedly",
+    label: "单手",
   },
   {
     id: 8,
-    tournament_type: 'blindness_third_order',
-    label: '三盲',
+    tournament_type: "blindness_third_order",
+    label: "三盲",
   },
   {
     id: 9,
-    tournament_type: 'ai-third-oder',
-    label: '智能三阶',
+    tournament_type: "ai-third-oder",
+    label: "智能三阶",
   },
   {
     id: 10,
-    tournament_type: 'fifth-order',
-    label: '五阶',
+    tournament_type: "fifth-order",
+    label: "五阶",
   },
   {
     id: 11,
-    tournament_type: 'sixth-order',
-    label: '六阶',
+    tournament_type: "sixth-order",
+    label: "六阶",
   },
   {
     id: 12,
-    tournament_type: 'seventh_order',
-    label: '七阶',
+    tournament_type: "seventh_order",
+    label: "七阶",
   },
   {
     id: 13,
-    tournament_type: 'sq1',
-    label: 'SQ1',
+    tournament_type: "sq1",
+    label: "SQ1",
   },
   {
     id: 14,
-    tournament_type: 'megaminx',
-    label: '五魔方',
+    tournament_type: "megaminx",
+    label: "五魔方",
   },
   {
     id: 15,
-    tournament_type: 'blindness_fourth_order',
-    label: '四盲',
+    tournament_type: "blindness_fourth_order",
+    label: "四盲",
   },
   {
     id: 16,
-    tournament_type: 'blindness_fifth_oder',
-    label: '五盲',
+    tournament_type: "blindness_fifth_oder",
+    label: "五盲",
   },
   {
     id: 17,
-    tournament_type: 'multiple_blindness',
-    label: '多盲',
+    tournament_type: "multiple_blindness",
+    label: "多盲",
   },
   {
     id: 18,
-    tournament_type: 'minimal_steps',
-    label: '最少步',
+    tournament_type: "minimal_steps",
+    label: "最少步",
   },
   {
     id: 19,
-    tournament_type: 'magic-watch',
-    label: '魔表',
+    tournament_type: "magic-watch",
+    label: "魔表",
   },
   {
     id: 20,
-    tournament_type: 'foot_screw',
-    label: '脚拧',
+    tournament_type: "foot_screw",
+    label: "脚拧",
   },
 ];
 
 const formState = ref({
   tournament_state: {},
-  tournament_name: '',
-  tournament_mode: '123',
-  tournament_type: '231',
-  tournament_organizer: '',
-  tournament_organizer_weburl: '',
-  tournament_time_range: '',
-  tournament_register_deadline: '',
-  tournament_register_conditions: '',
-  tournament_remarks: '',
+  tournament_name: "",
+  tournament_mode: "123",
+  tournament_type: "231",
+  tournament_organizer: "",
+  tournament_organizer_weburl: "",
+  tournament_time_range: "",
+  tournament_register_deadline: "",
+  tournament_register_conditions: "",
+  tournament_remarks: "",
   tournament_player_quota: 0,
-  tournament_project: '',
+  tournament_project: "",
   tournament_rounds: 1,
   tournament_display_on_home: true,
   tournament_display_order: 0,
   tournament_banner: {
-    name: 'zzx58',
-    url: 'https://p9-passport.byteacctimg.com/img/user-avatar/59296777f828ae4101819744e0ef154c~64x64.awebp',
-    uploadApiUrl: '',
+    name: "zzx58",
+    url: "https://p9-passport.byteacctimg.com/img/user-avatar/59296777f828ae4101819744e0ef154c~64x64.awebp",
+    uploadApiUrl: "",
   },
 });
 const tournament_mode_options = [
   {
-    type_id: '2',
-    name: '线上赛',
-    value: 'online',
+    type_id: "2",
+    name: "线上赛",
+    value: "online",
   },
   {
-    type_id: '1',
-    name: '线下赛',
-    value: 'offline',
+    type_id: "1",
+    name: "线下赛",
+    value: "offline",
   },
 ];
 const tournament_type_options = [
   {
-    name: '个人赛',
-    value: 'individual',
+    name: "个人赛",
+    value: "individual",
   },
 ];
 const tournament_project_options = [
   {
-    name: '智能三阶',
-    value: 'ai_third_order',
+    name: "智能三阶",
+    value: "ai_third_order",
   },
 ];
 
@@ -211,7 +211,7 @@ const submitBannerUpload = () => {
   setTimeout(() => {
     loadingState.value = false;
   }, 1000);
-  formState.value.tournament_banner.url = '';
+  formState.value.tournament_banner.url = "";
   setTimeout(() => {
     isUploadConfirmModalOpen.value = false;
   }, 1000);
@@ -220,7 +220,7 @@ const submitBannerUpload = () => {
   //   formState.value.tournament_time_range
   // );
 };
-const handleUploadExceed: UploadProps['onExceed'] = (files) => {
+const handleUploadExceed: UploadProps["onExceed"] = (files) => {
   uploadBannerRef.value?.clearFiles();
   const file = files[0] as UploadRawFile;
   file.uid = genFileId();
@@ -310,7 +310,8 @@ const handleUploadExceed: UploadProps['onExceed'] = (files) => {
         <!-- <CustomCheckGroup
         :model-value="formState.tournament_project"
         :items-list="itemList"
-        class="border box-border border-1px border-solid border-primary_2 rounded-10px p-3 min-w-340px max-w-732px text-primary_2 leading-28px grid grid-rows-2 grid-cols-9 gap-2"
+        class="border box-border border-1px border-solid border-primary_2 rounded-10px
+        p-3 min-w-340px max-w-732px text-primary_2 leading-28px grid grid-rows-2 grid-cols-9 gap-2"
       >
         <template #item="{ itemData, isItemSelected }">
           <div
@@ -422,8 +423,8 @@ const handleUploadExceed: UploadProps['onExceed'] = (files) => {
           <UButton
             class="bg-primary_2 hover:bg-primary_2 hover:opacity-80"
             @click="isUploadConfirmModalOpen = true"
-            >上传图片</UButton
-          >
+            >上传图片
+          </UButton>
         </el-upload>
       </div>
     </UForm>
