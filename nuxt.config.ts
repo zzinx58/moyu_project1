@@ -1,29 +1,19 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import { type IconifyJSON } from '@iconify/types';
-import { compareColors, stringToColor } from '@iconify/utils/lib/colors';
-import { presetIcons } from '@unocss/preset-icons';
-import {
-  importDirectory,
-  parseColors,
-  runSVGO,
-  deOptimisePaths,
-} from '@iconify/tools';
-
-import AutoImport from 'unplugin-auto-import/vite';
-import Components from 'unplugin-vue-components/vite';
-import { NaiveUiResolver } from 'unplugin-vue-components/resolvers';
+import AutoImport from "unplugin-auto-import/vite";
+import Components from "unplugin-vue-components/vite";
+import { NaiveUiResolver } from "unplugin-vue-components/resolvers";
 
 export default defineNuxtConfig({
   ssr: false,
   modules: [
-    '@unocss/nuxt',
-    '@nuxthq/ui',
-    '@element-plus/nuxt',
-    '@vueuse/nuxt',
+    "@unocss/nuxt",
+    "@nuxthq/ui",
+    "@element-plus/nuxt",
+    "@vueuse/nuxt",
     [
-      '@pinia/nuxt',
+      "@pinia/nuxt",
       {
-        autoImports: ['defineStore', ['defineStore', 'definePiniaStore']],
+        autoImports: ["defineStore", ["defineStore", "definePiniaStore"]],
       },
     ],
   ],
@@ -38,6 +28,15 @@ export default defineNuxtConfig({
   },
   //NuxtLab ui
   ui: {},
+  devServer: {
+    https: {
+      // key: "keys/zzx-dev.key",
+      // cert: "keys/zzx-dev.cert",
+      key: "keys/zzx-192.key",
+      cert: "keys/zzx-192.cert",
+    },
+    port: 5050,
+  },
   vite: {
     plugins: [
       Components({
@@ -46,13 +45,13 @@ export default defineNuxtConfig({
       }),
       AutoImport({
         imports: [
-          'vue',
+          "vue",
           {
-            'naive-ui': [
-              'useDialog',
-              'useMessage',
-              'useNotification',
-              'useLoadingBar',
+            "naive-ui": [
+              "useDialog",
+              "useMessage",
+              "useNotification",
+              "useLoadingBar",
             ],
           },
         ],

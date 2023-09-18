@@ -6,7 +6,10 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "pm2-script": "pm2 start ecosystem.config.js",
+    "ca-script": "mkcert create-ca --organization zzx-192 --key zzx-192-ca.key --cert zzx-192-ca.cert",
+    "cert-script": "mkcert create-cert --ca-key zzx-192-ca.key --ca-cert zzx-192-ca.cert --key zzx-192.key --cert zzx-192.cert --domain 192.168.1.37"
   },
   "devDependencies": {
     "@element-plus/nuxt": "^1.0.5",

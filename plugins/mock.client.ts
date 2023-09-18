@@ -1,7 +1,7 @@
-import { worker } from '@/mocks/browser';
+import { worker } from "@/mocks/browser";
 
 export default defineNuxtPlugin(async () => {
   await worker.start({
-    onUnhandledRequest: 'bypass',
+    onUnhandledRequest: "bypass",
   });
 });
