@@ -32,6 +32,9 @@
     "unplugin-vue-components": "^0.25.2"
   },
   "dependencies": {
+    "@antv/g2plot": "^2.4.31",
+    "@antv/l7": "^2.18.0",
+    "@antv/l7plot": "^0.5.5",
     "@iconify/tools": "^3.0.4",
     "@pinia/nuxt": "^0.4.11",
     "@prisma/client": "^5.1.1",
