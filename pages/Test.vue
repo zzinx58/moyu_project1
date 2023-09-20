@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import dayjs from 'dayjs';
-import timezone from 'dayjs/plugin/timezone';
-import utc from 'dayjs/plugin/utc';
-import { useManagerStore } from '@/stores/manager';
-import { FinalFormStateType } from './t_info.vue';
+import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
+import { useManagerStore } from "@/stores/manager";
+import { FinalFormStateType } from "./t_info.vue";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -233,13 +233,15 @@ dayjs.extend(timezone);
 //   method: 'GET',
 //   server: false,
 // });
-const { data: testData } = await useFetch('/users_list', {
-  method: 'GET',
-  server: false,
-});
+// const { data: testData } = await useFetch('/users_list', {
+//   method: 'GET',
+//   server: false,
+// });
 </script>
 <template>
-  <n-select
+  <div id="test"></div>
+  <!-- <pre>{{ ChoroplethData }}</pre> -->
+  <!-- <n-select
     :options="[
       {
         value: 1,
@@ -261,7 +263,7 @@ const { data: testData } = await useFetch('/users_list', {
   >
   </n-select>
   <n-button type="primary">123</n-button>
-  <pre>{{ testData }}</pre>
+  <pre>{{ testData }}</pre> -->
   <!-- <n-space>
     <n-button @click="() => (showModal1 = true)" type="primary"
       >showModal1={{ showModal1 }}</n-button

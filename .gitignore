@@ -129,3 +129,6 @@ dist
 #nuxt
 .output
 .vercel
+
+#zzx58
+.DS_Store
