@@ -1,14 +1,30 @@
 <script setup lang="ts">
-import dayjs from 'dayjs';
-import { NButton, type DataTableColumns, DataTableRowKey } from 'naive-ui';
-import { RowData } from 'naive-ui/es/data-table/src/interface';
-import gsap from 'gsap';
-import _ from 'lodash';
+import dayjs from "dayjs";
+import { NButton, type DataTableColumns, DataTableRowKey } from "naive-ui";
+import { RowData } from "naive-ui/es/data-table/src/interface";
+import gsap from "gsap";
+import _ from "lodash";
+import * as xlsx from "xlsx";
+
+const exportExcelAsFileMethod = (
+  sheetName: string,
+  fileName: string,
+  dataArr: Record<string, any>[]
+) => {
+  const jsonWorkSheet = xlsx.utils.json_to_sheet(dataArr);
+  const workBook: xlsx.WorkBook = {
+    SheetNames: [sheetName],
+    Sheets: {
+      [sheetName]: jsonWorkSheet,
+    },
+  };
+  return xlsx.writeFile(workBook, fileName);
+};
 
 const { data: usersListData } = await useFetch<{ [key: string]: any }[]>(
-  '/users_list',
+  "/users_list",
   {
-    method: 'GET',
+    method: "GET",
     server: false,
   }
 );
@@ -25,91 +41,97 @@ const { data: usersListData } = await useFetch<{ [key: string]: any }[]>(
 // };
 const columns = (): DataTableColumns => {
   return [
-    { type: 'selection' },
+    { type: "selection" },
     {
-      key: 'id',
-      title: 'ID',
+      key: "id",
+      title: "ID",
     },
     {
-      title: '昵称',
-      key: 'nick_name',
+      title: "昵称",
+      key: "nick_name",
     },
     {
-      title: '所在城市',
-      key: 'location_city',
-      titleAlign: 'center',
-      className: 'text-center!',
+      title: "所在城市",
+      key: "location_city",
+      titleAlign: "center",
+      className: "text-center!",
     },
     {
-      title: '注册时间',
-      key: 'register_time',
-      titleAlign: 'center',
+      title: "注册时间",
+      key: "register_time",
+      titleAlign: "center",
+      className: "text-center!",
     },
     {
-      title: '手机',
-      key: 'phone',
-      titleAlign: 'center',
+      title: "手机",
+      key: "phone",
+      titleAlign: "center",
+      className: "text-center!",
     },
     {
-      title: '在线状态',
-      key: 'online_status',
+      title: "在线状态",
+      key: "online_status",
+      className: "text-center!",
       render(rowData) {
         return h(
-          'div',
+          "div",
           {
-            class: 'justify-center flex',
+            class: "justify-center flex",
           },
-          h('div', {
+          h("div", {
             class:
               rowData.online_status === 1
-                ? 'w-18px h-18px bg-#2CDEA7 rounded-full '
-                : ' w-18px h-18px bg-#BBBBBB rounded-full',
+                ? "w-18px h-18px bg-#2CDEA7 rounded-full "
+                : " w-18px h-18px bg-#BBBBBB rounded-full",
           })
         );
       },
     },
     {
-      title: '实名认证',
-      key: 'identity_info',
+      title: "实名认证",
+      key: "identity_info",
+      className: "text-center!",
       render(rowData: any, rowIndex) {
         return h(
-          'div',
+          "div",
           {
             class:
-              rowData.identity_info['status'] === 1
-                ? 'bg-#2CDEA7 text-center rounded-10px text-white'
-                : 'bg-#BBBBBB text-center rounded-10px text-white',
+              rowData.identity_info["status"] === 1
+                ? "bg-#2CDEA7 text-center rounded-10px text-white"
+                : "bg-#BBBBBB text-center rounded-10px text-white",
           },
-          rowData.identity_info['status'] === 1 ? '已实名' : '未实名'
+          rowData.identity_info["status"] === 1 ? "已实名" : "未实名"
         );
       },
     },
     {
-      title: '积分',
-      key: 'points_count',
-      className: 'text-center!',
+      title: "积分",
+      key: "points_count",
+      className: "text-center!",
     },
     {
-      title: '道具卷',
-      key: 'vocher_count',
+      title: "道具卷",
+      key: "vocher_count",
+      titleAlign: "center",
       render(rowData) {
         return h(
-          'div',
+          "div",
           {
-            class: 'text-center',
+            class: "text-center",
           },
           rowData.vocher_count as string
         );
       },
     },
     {
-      title: '登录方式',
-      key: 'login_type',
+      title: "登录方式",
+      key: "login_type",
+      className: "text-center!",
       render(rowData: any) {
         return h(
-          'div',
+          "div",
           {
-            class: 'text-center',
+            class: "text-center",
           },
           login_type_options.find((item) => item.value === rowData.login_type)
             ?.label
@@ -117,50 +139,50 @@ const columns = (): DataTableColumns => {
       },
     },
     {
-      title: '下载渠道',
-      key: 'download_channel',
-      className: 'text-center!',
+      title: "下载渠道",
+      key: "download_channel",
+      className: "text-center!",
     },
     {
-      title: '操作',
-      titleAlign: 'center',
-      key: 'action',
-      className: 'flex justify-center items-center',
+      title: "操作",
+      titleAlign: "center",
+      key: "action",
+      className: "flex justify-center items-center",
       render(rowData: any, rowIndex: any) {
         return h(
-          'div',
+          "div",
           {
-            class: 'flex gap-5',
+            class: "flex gap-5",
           },
           [
             h(
               NButton,
               {
-                type: 'primary',
-                class: 'hover:opacity-80! rounded-12px! text-14px! h-40px!',
-                iconPlacement: 'right',
+                type: "primary",
+                class: "hover:opacity-80! rounded-12px! text-14px! h-40px!",
+                iconPlacement: "right",
                 renderIcon() {
-                  return h('div', {
-                    class: 'i-custom-svg:u-l-contact',
+                  return h("div", {
+                    class: "i-custom-svg:u-l-contact",
                   });
                 },
               },
-              '沟通'
+              "沟通"
             ),
             h(
               NButton,
               {
                 quaternary: true,
                 class:
-                  'bg-primary_2! rounded-12px!  text-white! hover:opacity-80! text-14px! h-40px!',
-                iconPlacement: 'right',
+                  "bg-primary_2! rounded-12px!  text-white! hover:opacity-80! text-14px! h-40px!",
+                iconPlacement: "right",
                 renderIcon() {
-                  return h('div', {
-                    class: 'i-custom-svg:u-l-detail',
+                  return h("div", {
+                    class: "i-custom-svg:u-l-detail",
                   });
                 },
               },
-              '查看'
+              "查看"
             ),
           ]
         );
@@ -169,59 +191,65 @@ const columns = (): DataTableColumns => {
   ];
 };
 
-const selectedUserRowsRef = ref<DataTableRowKey[]>([]);
-const handleSelectUsers = (rowKeys: DataTableRowKey[]) => {
+const selectedUserRowsRef = ref<Array<any>>([]);
+const handleSelectedUsers = (rowKeys: DataTableRowKey[]) => {
   selectedUserRowsRef.value = rowKeys;
+};
+const handleExportSelectedUsers = () => {
+  if (selectedUserRowsRef.value) {
+    const sheetName = `Sheet1`;
+    const fileName = `勾选用户数据导出 - ${dayjs()
+      .utc(true)
+      .format("YYYY-MM-DD HH\:mm")
+      .toString()}.xlsx`;
+    exportExcelAsFileMethod(sheetName, fileName, selectedUserRowsRef.value);
+  }
 };
 
 const login_type_options = [
   {
-    label: '微信',
+    label: "微信",
     value: 1,
   },
   {
-    label: 'QQ',
+    label: "QQ",
     value: 2,
   },
   {
-    label: '手机',
+    label: "手机",
     value: 3,
   },
   {
-    label: '邮箱',
+    label: "邮箱",
     value: 4,
   },
 ];
 const identity_status_options = [
   {
-    label: '已实名',
+    label: "已实名",
     value: 1,
   },
   {
-    label: '未实名',
+    label: "未实名",
     value: 0,
   },
 ];
 const search_options = [
   {
-    label: '全部',
-    value: 'all',
+    label: "全部",
+    value: "all",
   },
   {
-    label: 'ID',
-    value: 'id',
+    label: "ID",
+    value: "id",
   },
   {
-    label: 'WCU_ID',
-    value: 'wcu_id',
+    label: "昵称",
+    value: "nick_name",
   },
   {
-    label: '昵称',
-    value: 'nick_name',
-  },
-  {
-    label: '手机号',
-    value: 'phone',
+    label: "手机号",
+    value: "phone",
   },
 ];
 
@@ -230,9 +258,9 @@ const isCollapsed = ref(true);
 watchEffect(() => {
   if (collapseItem.value) {
     gsap.to(collapseItem.value, {
-      paddingBottom: isCollapsed.value ? '0px' : '28px',
-      height: isCollapsed.value ? '0px' : 'auto',
-      visibility: isCollapsed.value ? 'hidden' : 'visible',
+      paddingBottom: isCollapsed.value ? "0px" : "28px",
+      height: isCollapsed.value ? "0px" : "auto",
+      visibility: isCollapsed.value ? "hidden" : "visible",
       duration: 0.5,
     });
   }
@@ -242,7 +270,7 @@ const filterObjTemp = {
   register_time_range: undefined,
   //Bug 点：[空] 1
   // available_points_range_arr: [,],
-  available_points_range_arr: ['', ''],
+  available_points_range_arr: ["", ""],
   region: undefined,
   login_type: undefined,
   identity_status: undefined,
@@ -308,23 +336,23 @@ const handleClickSimpleSearchButton = () => {
       const targetOption = selectedSearchOption.value;
       // console.log(targetOption, item.id);
       switch (true) {
-        case targetOption === 'all':
+        case targetOption === "all":
           return true;
-        case targetOption === 'id':
+        case targetOption === "id":
           return item.id === +searchOptionDetailInfo.value;
-        case targetOption === 'wcu_id':
+        case targetOption === "wcu_id":
           return item.wcu_id === +searchOptionDetailInfo.value;
-        case targetOption === 'nick_name':
+        case targetOption === "nick_name":
           return item.nick_name === searchOptionDetailInfo.value;
-        case targetOption === 'phone':
+        case targetOption === "phone":
           return item.phone === searchOptionDetailInfo.value;
       }
     }
   );
   watchEffect(() => {
-    if (selectedSearchOption.value === 'all' && usersListData.value) {
+    if (selectedSearchOption.value === "all" && usersListData.value) {
       finalDisplayData.value = finalSourceDisplayData.value;
-      searchOptionDetailInfo.value = '';
+      searchOptionDetailInfo.value = "";
       filterObj.value = structuredClone(filterObjTemp);
     }
   });
@@ -348,7 +376,7 @@ watch(
         .filter(([key, value]) => value !== undefined)
         .map(([key, value]) => {
           if (Array.isArray(value)) {
-            if (value.every((item) => item.trim() === ''))
+            if (value.every((item) => item.trim() === ""))
               return [key, undefined];
           }
           return [key, value];
@@ -526,7 +554,7 @@ watch(
       :striped="true"
       :bordered="false"
       :row-key="(row) => row"
-      @update:checked-row-keys="handleSelectUsers"
+      @update:checked-row-keys="handleSelectedUsers"
       class="h-660px"
     />
     <div class="text-#707070 text-16px gap-2 flex items-center mt-3 ml-7">
@@ -537,7 +565,12 @@ watch(
         </span>
         位用户
       </span>
-      <n-button type="primary" class="rounded-10px!">导出选中用户</n-button>
+      <n-button
+        type="primary"
+        class="rounded-10px!"
+        @click="handleExportSelectedUsers"
+        >导出选中用户</n-button
+      >
     </div>
   </div>
   <div class="flex justify-center mt-7">
