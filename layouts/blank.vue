@@ -1,6 +1,6 @@
 <script setup lang="ts"></script>
 <template>
-  <div>
+  <div class="bg-#F1F2FD w-screen h-screen grid place-items-center">
     <slot />
   </div>
 </template>

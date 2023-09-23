@@ -3,6 +3,11 @@ import { Column, Line, Area, Mix, line } from "@antv/g2plot";
 import { Choropleth } from "@antv/l7plot";
 import _ from "lodash";
 
+definePageMeta({
+  layout: "pc",
+  middleware: ["auth"],
+});
+
 const preview_prefix_info: {
   iconMeta: string;
   attrLabel: string;

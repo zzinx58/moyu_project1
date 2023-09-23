@@ -1,55 +1,60 @@
 spanspan
 <script setup lang="ts">
-import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';
-import { genFileId } from 'element-plus';
-import type { FormEvent, FormError } from '@nuxthq/ui/dist/runtime/types';
+import type { UploadInstance, UploadProps, UploadRawFile } from "element-plus";
+import { genFileId } from "element-plus";
+import type { FormEvent, FormError } from "@nuxthq/ui/dist/runtime/types";
+
+definePageMeta({
+  layout: "pc",
+  middleware: ["auth"],
+});
 
 const formGroupUiStyle = {
   // wrapper: '',
   label: {
-    base: 'mr-3 font-sans whitespace-nowrap text-18px ',
+    base: "mr-3 font-sans whitespace-nowrap text-18px ",
     // wrapper: 'flex! items-start!',
   },
-  container: 'mt-0 relative',
+  container: "mt-0 relative",
   // container: 'mt-0 relative flex items-start',
-  error: 'text-red-400 dark:text-red-400 mt-1 text-14px ',
+  error: "text-red-400 dark:text-red-400 mt-1 text-14px ",
 };
 
 const inputUiStyle = {
-  rounded: 'rounded-10px',
+  rounded: "rounded-10px",
   color: {
     white: {
       outline:
-        'shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary_1 dark:focus:ring-primary-400',
+        "shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary_1 dark:focus:ring-primary-400",
     },
   },
-  base: 'relative block w-full disabled:cursor-not-allowed disabled:bg-#E5E5E5 focus:outline-none border-0 min-w-100px',
+  base: "relative block w-full disabled:cursor-not-allowed disabled:bg-#E5E5E5 focus:outline-none border-0 min-w-100px",
 };
 
 const t_format_options = [
   {
     id: 3,
-    label: '五次去头去尾取平均',
+    label: "五次去头去尾取平均",
   },
   {
     id: 4,
-    label: '三次取平均',
+    label: "三次取平均",
   },
   {
     id: 2,
-    label: '三次取最快',
+    label: "三次取最快",
   },
   {
     id: 5,
-    label: '两次取最快',
+    label: "两次取最快",
   },
   {
     id: 1,
-    label: '单次',
+    label: "单次",
   },
 ];
 
-const custom_project_options = ['签到', '休息', '抽奖', '颁奖'];
+const custom_project_options = ["签到", "休息", "抽奖", "颁奖"];
 
 const itemList: {
   project_id: number;
@@ -58,119 +63,119 @@ const itemList: {
 }[] = [
   {
     project_id: 9,
-    project_label: '智能三阶',
-    iconMeta: 'i-custom-svg:ai-third-order',
+    project_label: "智能三阶",
+    iconMeta: "i-custom-svg:ai-third-order",
   },
   {
     project_id: 1,
-    project_label: '三阶',
-    iconMeta: 'i-custom-svg:third-order',
+    project_label: "三阶",
+    iconMeta: "i-custom-svg:third-order",
   },
   {
     project_id: 3,
-    project_label: '二阶',
-    iconMeta: 'i-custom-svg:second-order',
+    project_label: "二阶",
+    iconMeta: "i-custom-svg:second-order",
   },
   {
     project_id: 5,
-    project_label: '四阶',
-    iconMeta: 'i-custom-svg:fourth-order',
+    project_label: "四阶",
+    iconMeta: "i-custom-svg:fourth-order",
   },
   {
     project_id: 10,
-    project_label: '五阶',
-    iconMeta: 'i-custom-svg:fifth-order',
+    project_label: "五阶",
+    iconMeta: "i-custom-svg:fifth-order",
   },
   {
     project_id: 11,
-    project_label: '六阶',
-    iconMeta: 'i-custom-svg:sixth-order',
+    project_label: "六阶",
+    iconMeta: "i-custom-svg:sixth-order",
   },
   {
     project_id: 12,
-    project_label: '七阶',
-    iconMeta: 'i-custom-svg:seventh-order',
+    project_label: "七阶",
+    iconMeta: "i-custom-svg:seventh-order",
   },
   {
     project_id: 8,
-    project_label: '三盲',
-    iconMeta: 'i-custom-svg:blindness-third-order',
+    project_label: "三盲",
+    iconMeta: "i-custom-svg:blindness-third-order",
   },
   {
     project_id: 18,
-    project_label: '最少步',
-    iconMeta: 'i-custom-svg:minimal-steps',
+    project_label: "最少步",
+    iconMeta: "i-custom-svg:minimal-steps",
   },
   {
     project_id: 7,
-    project_label: '单手',
-    iconMeta: 'i-custom-svg:single-handedly',
+    project_label: "单手",
+    iconMeta: "i-custom-svg:single-handedly",
   },
   {
     project_id: 19,
-    project_label: '魔表',
-    iconMeta: 'i-custom-svg:magic-watch',
+    project_label: "魔表",
+    iconMeta: "i-custom-svg:magic-watch",
   },
   {
     project_id: 14,
-    project_label: '五魔方',
-    iconMeta: 'i-custom-svg:megaminx',
+    project_label: "五魔方",
+    iconMeta: "i-custom-svg:megaminx",
   },
   {
     project_id: 2,
-    project_label: '金字塔',
-    iconMeta: 'i-custom-svg:pyramid',
+    project_label: "金字塔",
+    iconMeta: "i-custom-svg:pyramid",
   },
   {
     project_id: 4,
-    project_label: '斜转',
-    iconMeta: 'i-custom-svg:oblique-rotation',
+    project_label: "斜转",
+    iconMeta: "i-custom-svg:oblique-rotation",
   },
   {
     project_id: 13,
-    project_label: 'SQ1',
-    iconMeta: 'i-custom-svg:sq1',
+    project_label: "SQ1",
+    iconMeta: "i-custom-svg:sq1",
   },
   {
     project_id: 15,
-    project_label: '四盲',
-    iconMeta: 'i-custom-svg:blindness-fourth-order',
+    project_label: "四盲",
+    iconMeta: "i-custom-svg:blindness-fourth-order",
   },
   {
     project_id: 16,
-    project_label: '五盲',
-    iconMeta: 'i-custom-svg:blindness-fifth-order',
+    project_label: "五盲",
+    iconMeta: "i-custom-svg:blindness-fifth-order",
   },
   {
     project_id: 17,
-    project_label: '多盲',
-    iconMeta: 'i-custom-svg:multiple-blindness',
+    project_label: "多盲",
+    iconMeta: "i-custom-svg:multiple-blindness",
   },
 ];
 
 const tournament_mode_options = [
   {
     id: 1,
-    label: '线下赛',
+    label: "线下赛",
   },
   {
     id: 2,
-    label: '线上赛',
+    label: "线上赛",
   },
 ];
 // const tournament_type_options = ['个人赛', '团体赛', '综合赛'];
 const tournament_type_options = [
   {
     id: 1,
-    label: '个人赛',
+    label: "个人赛",
   },
   {
     id: 2,
-    label: '团体赛',
+    label: "团体赛",
   },
   {
     id: 3,
-    label: '综合赛',
+    label: "综合赛",
   },
 ];
 const tournament_rounds_options: {
@@ -178,49 +183,49 @@ const tournament_rounds_options: {
   rounds_label: string;
 }[] = [
   {
-    rounds_label: '1',
+    rounds_label: "1",
     rounds_total: 1,
   },
   {
-    rounds_label: '2',
+    rounds_label: "2",
     rounds_total: 2,
   },
   {
-    rounds_label: '3',
+    rounds_label: "3",
     rounds_total: 3,
   },
   {
-    rounds_label: '4',
+    rounds_label: "4",
     rounds_total: 4,
   },
   {
-    rounds_label: '5',
+    rounds_label: "5",
     rounds_total: 5,
   },
 ];
 const display_order_options = [
   {
-    label: '1',
+    label: "1",
     id: 1,
   },
   {
-    label: '2',
+    label: "2",
     id: 2,
   },
   {
-    label: '3',
+    label: "3",
     id: 3,
   },
   {
-    label: '4',
+    label: "4",
     id: 4,
   },
   {
-    label: '5',
+    label: "5",
     id: 5,
   },
 ];
-const tournament_groups_options = ['U8', 'U12', 'U18', '公开组', '女子组'];
+const tournament_groups_options = ["U8", "U12", "U18", "公开组", "女子组"];
 // const tournament_group_options = [
 //   {
 //     group_label: 'U8',
@@ -289,34 +294,34 @@ export type FinalFormStateType = {
 const formState = ref<FinalFormStateType>({
   // const formState = reactive<FinalFormStateType>({
   // const formState = ref<FormStateType>({
-  name: '',
+  name: "",
   mode: undefined,
   type: undefined,
-  organizer: '',
-  organizer_web_url: '',
-  time_range: ['', ''],
+  organizer: "",
+  organizer_web_url: "",
+  time_range: ["", ""],
   // time_range: reactive(['', '']),
-  apply_time_range: ['', ''],
+  apply_time_range: ["", ""],
   // apply_time_range: reactive(['', '']),
   //holdup ace 通常指代抢劫地点
-  location: '',
-  apply_condition: '',
-  apply_condition_remarks: '',
+  location: "",
+  apply_condition: "",
+  apply_condition_remarks: "",
   apply_quota: 0,
   //new
-  apply_web_url: '',
+  apply_web_url: "",
   display_on_homepage: true,
   display_order: 0,
   banner: {
-    name: 'zzx58',
-    url: 'https://p9-passport.byteacctimg.com/img/user-avatar/59296777f828ae4101819744e0ef154c~64x64.awebp',
-    uploadApiUrl: '',
+    name: "zzx58",
+    url: "https://p9-passport.byteacctimg.com/img/user-avatar/59296777f828ae4101819744e0ef154c~64x64.awebp",
+    uploadApiUrl: "",
   },
   projects_detail: [],
-  award_time_range: ['', ''],
-  signin_time_range: ['', ''],
-  lottery_time: [{ id: 1, time_range: ['', ''] }],
-  break_time: [{ id: 1, time_range: ['', ''] }],
+  award_time_range: ["", ""],
+  signin_time_range: ["", ""],
+  lottery_time: [{ id: 1, time_range: ["", ""] }],
+  break_time: [{ id: 1, time_range: ["", ""] }],
 });
 // satisfies FinalFormStateType);
 
@@ -337,8 +342,8 @@ onBeforeMount(async () => {
     // console.log(t_data.value);
     if (!t_data.value) {
       t_exist.value = false;
-      router.push('/t_info');
-      alert('赛事不存在');
+      router.push("/t_info");
+      alert("赛事不存在");
       // console.log('afterNav,id:', routeParamId);
       // throw createError({ statusCode: 404, statusMessage: 'Page Not Found' });
     }
@@ -384,15 +389,15 @@ const t_create_preset_selected_projects = ref<
 >([]);
 const createProjectDetailTemplate: ProjectDetailType = {
   id: undefined,
-  label: '',
+  label: "",
   groups: [],
   rounds: {
     total: 0,
     detail: [],
   },
-  rule_content: '',
-  reduction_limit: '',
-  passline: '',
+  rule_content: "",
+  reduction_limit: "",
+  passline: "",
 };
 const t_create_preset_selected_projects_detail = ref<ProjectDetailType[]>([]);
 const t_create_custom_created_projects_detail = ref<ProjectDetailType[]>([
@@ -401,26 +406,26 @@ const t_create_custom_created_projects_detail = ref<ProjectDetailType[]>([
 
 const numberToChineseNumber = (number: number) => {
   const chineseNumbers = [
-    '一',
-    '二',
-    '三',
-    '四',
-    '五',
-    '六',
-    '七',
-    '八',
-    '九',
-    '十',
-    '十一',
-    '十二',
-    '十三',
-    '十四',
-    '十五',
-    '十六',
-    '十七',
-    '十八',
-    '十九',
-    '二十',
+    "一",
+    "二",
+    "三",
+    "四",
+    "五",
+    "六",
+    "七",
+    "八",
+    "九",
+    "十",
+    "十一",
+    "十二",
+    "十三",
+    "十四",
+    "十五",
+    "十六",
+    "十七",
+    "十八",
+    "十九",
+    "二十",
   ];
   if (number >= 0 && number <= 20) {
     return chineseNumbers[number];
@@ -438,12 +443,12 @@ const submitBannerUpload = () => {
   setTimeout(() => {
     loadingState.value = false;
   }, 1000);
-  formState.value.tournament_banner.url = '';
+  formState.value.tournament_banner.url = "";
   setTimeout(() => {
     isUploadConfirmModalOpen.value = false;
   }, 1000);
 };
-const handleUploadExceed: UploadProps['onExceed'] = (files) => {
+const handleUploadExceed: UploadProps["onExceed"] = (files) => {
   uploadBannerRef.value?.clearFiles();
   const file = files[0] as UploadRawFile;
   file.uid = genFileId();
@@ -530,16 +535,16 @@ const validateRules = (): FormError[] => {
   // }
 
   if (!formState.value.name)
-    errors.push({ path: 'name', message: '赛事名称必填' });
+    errors.push({ path: "name", message: "赛事名称必填" });
   if (!formState.value.mode)
-    errors.push({ path: 'mode', message: '赛事模式必填' });
+    errors.push({ path: "mode", message: "赛事模式必填" });
   if (!formState.value.type)
-    errors.push({ path: 'type', message: '赛事类型必填' });
+    errors.push({ path: "type", message: "赛事类型必填" });
   //时间相关判定失效？
-  if (formState.value.time_range?.[0] === '')
-    errors.push({ path: 'time_range', message: '赛事起止时间必填' });
-  if (formState.value.apply_time_range?.[0] === '')
-    errors.push({ path: 'apply_time_range', message: '赛事类型必填' });
+  if (formState.value.time_range?.[0] === "")
+    errors.push({ path: "time_range", message: "赛事起止时间必填" });
+  if (formState.value.apply_time_range?.[0] === "")
+    errors.push({ path: "apply_time_range", message: "赛事类型必填" });
 
   // console.log(errors);
   return errors;
@@ -574,8 +579,8 @@ const handleCreateTournament = async () => {
   const router = useRouter();
   const routeParamId = route.params.id;
   if (t_exist) {
-    $fetch('/api/t_info/t_create', {
-      method: 'post',
+    $fetch("/api/t_info/t_create", {
+      method: "post",
       body: {
         id: routeParamId,
         t_create_form: solved_formState,
@@ -584,12 +589,12 @@ const handleCreateTournament = async () => {
       .then((m) => {
         // console.log(m);
         alert(m);
-        navigateTo('/t_list');
+        navigateTo("/t_list");
       })
       .catch((e) => alert(e));
   } else {
-    $fetch('/api/t_info/t_create', {
-      method: 'post',
+    $fetch("/api/t_info/t_create", {
+      method: "post",
       body: {
         t_create_form: solved_formState,
         // t_create_form: newObj,
@@ -598,7 +603,7 @@ const handleCreateTournament = async () => {
       .then((m) => {
         // console.log(m);
         alert(m);
-        navigateTo('/t_list');
+        navigateTo("/t_list");
       })
       .catch((e) => alert(e));
   }
@@ -616,7 +621,7 @@ const handlePresetProjectRoundsChange = (
   ].rounds.detail = Array.from({ length: e }, (_, index) =>
     reactive({
       promotion_quota: 0,
-      time_range: ['', ''],
+      time_range: ["", ""],
       t_format: 0,
     })
   );
@@ -635,7 +640,7 @@ const handleAddBreakTimeRoundsChange = () => {
   formState.value.break_time.push(
     reactive({
       id: formState.value.break_time.length + 1,
-      time_range: ['', ''],
+      time_range: ["", ""],
     })
   );
 };
@@ -643,7 +648,7 @@ const handleAddLotteryTimeRoundsChange = () => {
   formState.value.lottery_time.push(
     reactive({
       id: formState.value.lottery_time.length + 1,
-      time_range: ['', ''],
+      time_range: ["", ""],
     })
   );
 };
@@ -698,12 +703,12 @@ const handleClickPreviewButton = async () => {
     let groups_temp_temp = formState.value.projects_detail.map((item: any) => {
       return item.groups;
     });
-    let groups_temp = [...new Set(groups_temp_temp.flat())].join('、');
+    let groups_temp = [...new Set(groups_temp_temp.flat())].join("、");
     let projects_temp = formState.value.projects_detail
       .map((item: any) => {
         return item.project_label;
       })
-      .join('、');
+      .join("、");
     preview_formInfo.value.groups = groups_temp;
     preview_formInfo.value.projects = projects_temp;
     // console.log(preview_formInfo.value);
@@ -726,14 +731,14 @@ watch(
     let groups_temp_temp = formState.value.projects_detail.map((item: any) => {
       return item.groups;
     });
-    let groups_temp = [...new Set(groups_temp_temp.flat())].join('、');
+    let groups_temp = [...new Set(groups_temp_temp.flat())].join("、");
     // console.log(groups_temp);
     // let projects_temp = t_create_form.projects_detail
     let projects_temp = formState.value.projects_detail
       .map((item: any) => {
         return item.label;
       })
-      .join('、');
+      .join("、");
     // preview_formInfo.value.type = formState.value.type?.label;
     // preview_formInfo.value.mode = formState.value.mode?.label;
     // console.log(preview_formInfo.value);
@@ -1006,7 +1011,7 @@ watch(
                   >{{
                     t_create_preset_selected_projects_detail[index].groups
                       .map((item) => item)
-                      .join(',')
+                      .join(",")
                   }}</span
                 >
                 <span v-else>请设置参赛组别..</span>

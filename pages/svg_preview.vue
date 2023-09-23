@@ -1,4 +1,9 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+definePageMeta({
+  layout: "pc",
+  middleware: ["auth"],
+});
+</script>
 <template>
   <div flex flex-row>
     <div class="i-custom-svg:ai-third-order text-5xl text-green" />

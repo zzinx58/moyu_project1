@@ -16,29 +16,32 @@ export default defineNuxtConfig({
         autoImports: ["defineStore", ["defineStore", "definePiniaStore"]],
       },
     ],
+    "@nuxtjs/color-mode",
+    "@pinia-plugin-persistedstate/nuxt",
   ],
-  colorMode: {
-    preference: "dark",
-  },
   devtools: {
     enabled: true,
     timeline: {
       enabled: true,
     },
   },
-  imports: {
-    autoImport: true,
+  piniaPersistedstate: {
+    storage: "sessionStorage",
   },
-  //NuxtLab ui
-  ui: {},
   devServer: {
     https: {
-      // key: "keys/zzx-dev.key",
-      // cert: "keys/zzx-dev.cert",
       key: "keys/zzx-192.key",
       cert: "keys/zzx-192.cert",
     },
     port: 5050,
+  },
+  nitro: {
+    devProxy: {
+      "/api_cors": {
+        target: "https://api.yicloud.vip/api",
+        changeOrigin: true,
+      },
+    },
   },
   vite: {
     plugins: [
@@ -46,33 +49,67 @@ export default defineNuxtConfig({
         dts: true,
         resolvers: [NaiveUiResolver()],
       }),
-      AutoImport({
-        imports: [
-          "vue",
-          {
-            "naive-ui": [
-              "useDialog",
-              "useMessage",
-              "useNotification",
-              "useLoadingBar",
-            ],
-          },
-        ],
-      }),
     ],
   },
-
-  // 工具链可能永远会把 tailwind 的样式插入 head 的尾部。这种情况下，你需要在 app 挂载之前动态的插入 meta 标签。
-  // app: {
-  //   head: {
-  //     meta: [
-  //       {
-  //         name: 'naive-ui-style',
-  //       },
-  //       {
-  //         name: 'vueuc-style',
-  //       },
-  //     ],
-  //   },
-  // },
+  colorMode: {
+    preference: "class",
+  },
 });
+
+// router: {
+// },
+// pinia: {
+// },
+// imports: {
+//   autoImport: true,
+// },
+
+// colorMode: {
+//   // preference: "dark",
+//   preference: "light",
+// },
+// tailwindcss: {
+//   config: {
+//     darkmode: "class",
+//   },
+// },
+//NuxtLab ui
+// ui: {},
+
+// 工具链可能永远会把 tailwind 的样式插入 head 的尾部。这种情况下，你需要在 app 挂载之前动态的插入 meta 标签。
+// app: {
+//   head: {
+//     meta: [
+//       {
+//         name: 'naive-ui-style',
+//       },
+//       {
+//         name: 'vueuc-style',
+//       },
+//     ],
+//   },
+// },
+
+// Vite. Use Nitro devServer instead.
+// server: {
+//   proxy: {
+//     "/api_cors": {
+//       target: "https://api.yicloud.vip/api",
+//       changeOrigin: true,
+//     },
+//   },
+// },
+// AutoImport seems doesn't work.
+// AutoImport({
+//   imports: [
+//     "vue",
+//     {
+//       "naive-ui": [
+//         "useDialog",
+//         "useMessage",
+//         "useNotification",
+//         "useLoadingBar",
+//       ],
+//     },
+//   ],
+// }),

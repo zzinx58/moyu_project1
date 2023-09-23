@@ -2,8 +2,13 @@
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
-import { useManagerStore } from "@/stores/manager";
+// import { useManagerStore } from "@/stores/manager";
 import { FinalFormStateType } from "./t_info.vue";
+
+definePageMeta({
+  layout: "pc",
+  middleware: ["auth"],
+});
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -237,8 +242,52 @@ dayjs.extend(timezone);
 //   method: 'GET',
 //   server: false,
 // });
+
+const token =
+  "SFMyNTY.g2gDdAAAAANkAAhhZG1pbl9pZGEDZAAFcm9sZXNqZAAEdHlwZWQACGV4dGVybmFsbgYAY8q-tooBYgABUYA.lqKC4rrVYbYHtmciiRbbNQgODWgt_c4tLK5THt-zMLQ";
+// const { data: simpleFilteredData } = useFetch("/api_cors", {
+//   method: "GET",
+//   // baseURL: "https://api.yicloud.vip/api/dashboard",
+//   headers: {
+//     Authorization: `Bearer ${token}`,
+//   },
+//   // 要使用 Object.fromEntries 方法，需要提供一个包含数组的数组
+//   // params: Object.fromEntries([["id", "66348"]]),
+// });
+// const simpleFilteredData = await $fetch("/api_cors");
+const { data: simpleFilteredData, error } = await useFetch(
+  // "/api_cors/admins/login",
+  "/api_cors/dashboard/users/list",
+  {
+    // method: "post",
+    // body: Object.fromEntries([
+    //   ["username", "zzx"],
+    //   ["password", "123456"],
+    // ]),
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    params: Object.fromEntries([
+      ["size", "5"],
+      ["page", 166],
+    ]),
+    // query: Object.fromEntries([["size", 5]]),
+    // query: Object.fromEntries([["user_id", "66348"]]),
+  }
+);
 </script>
 <template>
+  <pre v-if="simpleFilteredData"> {{ simpleFilteredData }}</pre>
+  <div v-else>
+    <pre>{{ error?.data }}</pre>
+    <pre>{{ error?.message }}</pre>
+    <pre>{{ error?.name }}</pre>
+    <pre>{{ error?.stack }}</pre>
+    <pre>{{ error?.statusCode }}</pre>
+    <pre>{{ error?.statusMessage }}</pre>
+  </div>
+
   <div id="test"></div>
   <!-- <pre>{{ ChoroplethData }}</pre> -->
   <!-- <n-select

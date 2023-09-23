@@ -36,6 +36,7 @@
     "@antv/l7": "^2.18.0",
     "@antv/l7plot": "^0.5.5",
     "@iconify/tools": "^3.0.4",
+    "@pinia-plugin-persistedstate/nuxt": "^1.1.2",
     "@pinia/nuxt": "^0.4.11",
     "@prisma/client": "^5.1.1",
     "classnames": "^2.3.2",
@@ -43,6 +44,7 @@
     "gsap": "^3.12.2",
     "lodash": "^4.17.21",
     "pinia": "^2.1.6",
+    "pinia-plugin-persistedstate": "^3.2.0",
     "xlsx": "^0.18.5"
   },
   "msw": {

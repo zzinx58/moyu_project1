@@ -1,73 +1,79 @@
 <script setup lang="ts">
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-import timezone from 'dayjs/plugin/timezone';
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
+
+definePageMeta({
+  layout: "pc",
+  middleware: ["auth"],
+});
+
 dayjs.extend(utc);
 dayjs.extend(timezone);
 const selectUiMenuStyle = {};
 const selectUiStyle = {
-  base: 'min-w-240px max-w-260px h-36px',
+  base: "min-w-240px max-w-260px h-36px",
   option: {
-    color: 'bg-red',
+    color: "bg-red",
   },
 };
 const formGroupUiStyle = {
   label: {
-    base: 'mr-4 text-16px',
+    base: "mr-4 text-16px",
   },
-  container: 'mt-0',
+  container: "mt-0",
 };
 const tableUiStyle = {
   //   divide: 'divide-y divide-gray-300 dark:divide-gray-700',
   // tbody: 'divide-y divide-gray-200 dark:divide-gray-800 rounded-10px',
   // tbody: 'h-[calc(60px*10)]',
   //这个 divide 是改 行头和数据行分隔线的。
-  divide: '',
+  divide: "",
   th: {
-    color: 'text-white bg-primary_2 ',
-    base: 'text-center  first:rounded-l-10px last:rounded-r-10px',
+    color: "text-white bg-primary_2 ",
+    base: "text-center  first:rounded-l-10px last:rounded-r-10px",
   },
   td: {
-    base: 'text-center  first:rounded-l-10px last:rounded-r-10px h-60px',
-    padding: 'py-3 px-3',
+    base: "text-center  first:rounded-l-10px last:rounded-r-10px h-60px",
+    padding: "py-3 px-3",
   },
   tr: {
-    base: 'even:bg-#EDF1FE h-60px',
+    base: "even:bg-#EDF1FE h-60px",
   },
-  base: 'min-w-full table-fixed',
+  base: "min-w-full table-fixed",
 };
 
 //可以使用 safelist 优化
 const raw_tournament_state = [
   {
     id: 1,
-    label: '报名未开始',
-    color: 'bg-#F19EC2',
+    label: "报名未开始",
+    color: "bg-#F19EC2",
   },
   {
     id: 2,
-    label: '报名中',
-    color: 'bg-#88ABDA',
+    label: "报名中",
+    color: "bg-#88ABDA",
   },
   {
     id: 3,
-    label: '报名已结束 比赛未开始',
-    color: 'bg-#89C997',
+    label: "报名已结束 比赛未开始",
+    color: "bg-#89C997",
   },
   {
     id: 4,
-    label: '比赛中',
-    color: 'bg-#F29B76',
+    label: "比赛中",
+    color: "bg-#F29B76",
   },
   {
     id: 5,
-    label: '比赛已结束 未公示',
-    color: 'bg-#8F82BC',
+    label: "比赛已结束 未公示",
+    color: "bg-#8F82BC",
   },
   {
     id: 6,
-    label: '比赛已结束 公示中',
-    color: 'bg-#535353',
+    label: "比赛已结束 公示中",
+    color: "bg-#535353",
   },
 ];
 
@@ -75,32 +81,32 @@ const columns: {
   key: string;
   label: string;
   sortable?: boolean;
-  direction?: 'asc' | 'desc';
+  direction?: "asc" | "desc";
   class?: string;
 }[] = [
   {
-    label: '#',
-    key: 'id',
+    label: "#",
+    key: "id",
   },
   {
-    label: '赛事名称',
-    key: 'sub_name',
+    label: "赛事名称",
+    key: "sub_name",
   },
   {
-    label: '赛事起止日期',
-    key: 'time_range',
+    label: "赛事起止日期",
+    key: "time_range",
   },
   {
-    label: '赛事状态',
-    key: 'status_obj',
+    label: "赛事状态",
+    key: "status_obj",
   },
   {
-    label: '操作',
-    key: 'actions',
+    label: "操作",
+    key: "actions",
   },
   {
-    label: '审核',
-    key: 'audit_status',
+    label: "审核",
+    key: "audit_status",
   },
 ];
 
@@ -110,7 +116,7 @@ const currentTimeUnix = dayjs().utc(false).unix();
 function isValidTimeRange(time_range: [string, string] | null) {
   return (
     time_range !== null &&
-    Array.prototype.includes.call(time_range, '') === false
+    Array.prototype.includes.call(time_range, "") === false
   );
 }
 const calcStatus = (
@@ -133,8 +139,8 @@ const calcStatus = (
       case currentTimeUnix > +time_range[1]:
         return {
           id: 5,
-          label: '比赛结束，公示错误:字段暂未给出',
-          color: '#535353',
+          label: "比赛结束，公示错误:字段暂未给出",
+          color: "#535353",
         };
     }
   }
@@ -144,10 +150,10 @@ let pageTotal = ref(0);
 const display_list_data = ref<any[]>();
 const onGoingTs = ref();
 onBeforeMount(async () => {
-  const { data: t_list } = await useFetch('/api/t_list/t_getAll');
+  const { data: t_list } = await useFetch("/api/t_list/t_getAll");
   // console.log(t_list.value);
   if (!t_list.value) {
-    alert('数据获取失败');
+    alert("数据获取失败");
   }
   if (t_list.value) {
     const solvedListData = t_list.value.map((item) => {
@@ -217,8 +223,8 @@ const finalListData = computed(() => {
 const handleDeleteItem = async (rowData: any) => {
   const rowDataId = rowData.id;
 
-  const { data: deletedItem } = await useFetch('/api/t_list/t_delete', {
-    method: 'POST',
+  const { data: deletedItem } = await useFetch("/api/t_list/t_delete", {
+    method: "POST",
     body: {
       id: rowDataId,
     },
@@ -239,9 +245,9 @@ const showAuditModal = ref(false);
 const currentAuditRowData = ref<{ [key: string]: any }>({});
 const showEmailModal = ref(false);
 const auditEmailFormInfo = reactive({
-  email_title: '',
-  content: '',
-  target_t_owner_id: '',
+  email_title: "",
+  content: "",
+  target_t_owner_id: "",
 });
 const handleClickAuditButton = (rowData: any) => {
   showAuditModal.value = true;
@@ -283,7 +289,7 @@ const handleClickFailedEmailSendButton = () => {
                       return itemObj.id === itemId;
                     })?.label;
                   })
-                  .join('、')
+                  .join("、")
               }}
             </span>
             <span v-else> 全部 </span>
@@ -320,17 +326,17 @@ const handleClickFailedEmailSendButton = () => {
           <span>{{
             `${
               row.time_range === null
-                ? '日期为 Null'
-                : Array.prototype.includes.call(row.time_range, '')
-                ? '日期错误，日期数组中有空元素'
+                ? "日期为 Null"
+                : Array.prototype.includes.call(row.time_range, "")
+                ? "日期错误，日期数组中有空元素"
                 : `${dayjs
                     .unix(+row.time_range[0])
                     .utc(true)
-                    .format('YYYY.MM.DD')
+                    .format("YYYY.MM.DD")
                     .toString()} - ${dayjs
                     .unix(+row.time_range[1])
                     .utc(true)
-                    .format('YYYY.MM.DD')
+                    .format("YYYY.MM.DD")
                     .toString()}`
             }`
           }}</span>
@@ -344,7 +350,7 @@ const handleClickFailedEmailSendButton = () => {
             {{
               row.status_obj
                 ? row.status_obj.label
-                : '缺少时间,无法计算相关状态'
+                : "缺少时间,无法计算相关状态"
             }}
           </UBadge>
         </template>

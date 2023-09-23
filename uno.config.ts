@@ -4,9 +4,10 @@ import {
   presetUno,
   presetAttributify,
   transformerDirectives,
-} from 'unocss';
-import { compareColors, stringToColor } from '@iconify/utils/lib/colors';
-import type { IconifyJSON } from '@iconify/types';
+  presetMini,
+} from "unocss";
+import { compareColors, stringToColor } from "@iconify/utils/lib/colors";
+import type { IconifyJSON } from "@iconify/types";
 import {
   SVG,
   cleanupSVG,
@@ -15,25 +16,28 @@ import {
   importDirectory,
   runSVGO,
   deOptimisePaths,
-} from '@iconify/tools';
+} from "@iconify/tools";
 
 export default defineConfig({
   presets: [
     presetIcons({
       autoInstall: false,
       collections: {
-        'custom-svg': () => loadCustomIconSet(),
+        "custom-svg": () => loadCustomIconSet(),
       },
     }),
     presetUno(),
     presetAttributify(),
+    // presetMini({
+    //   dark: "class",
+    // }),
   ],
   theme: {
     colors: {
-      background_1: '#F1F2FD',
-      background_2: '#F7F8FE',
-      primary_2: '#70708C',
-      primary_1: '#FF8F6B',
+      background_1: "#F1F2FD",
+      background_2: "#F7F8FE",
+      primary_2: "#70708C",
+      primary_1: "#FF8F6B",
     },
   },
   //TransformerDirectives auto opened?
@@ -41,28 +45,28 @@ export default defineConfig({
 });
 
 async function loadCustomIconSet(): Promise<IconifyJSON> {
-  const iconSet = await importDirectory('assets/icons', {
-    prefix: 'svg',
+  const iconSet = await importDirectory("assets/icons", {
+    prefix: "svg",
   });
   // console.log(iconSet.list().length);
   await iconSet.forEach(async (name) => {
     const svg = iconSet.toSVG(name)!;
     // console.log('Source svg:', svg.toString());
     cleanupSVG(svg);
-    const blackColor = stringToColor('black')!;
+    const blackColor = stringToColor("black")!;
     await parseColors(svg, {
-      defaultColor: 'currentColor',
+      defaultColor: "currentColor",
       callback: (attr, colorStr, color) => {
         if (color && compareColors(color, blackColor)) {
-          return 'currentColor';
+          return "currentColor";
         }
         switch (color?.type) {
-          case 'none':
-          case 'current':
+          case "none":
+          case "current":
             return color;
         }
         //     throw new Error(`Unexpected color "${colorStr}" in attribute ${attr}`);
-        return 'currentColor';
+        return "currentColor";
       },
     });
     // console.log('After Cleanup and Before Optimise:', svg.toString());

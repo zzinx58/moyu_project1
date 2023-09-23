@@ -1,15 +1,21 @@
 <script setup lang="ts">
-import gsap from 'gsap';
-import { ApplicantType } from 'server/api/t_detail/t_applicants/[t_id].get';
-import { TResultType } from 'server/api/t_detail/t_results/[t_id].get';
-import { FinalFormStateType } from '../t_info.vue';
-import { ElMessage, ElMessageBox, ElCheckbox } from 'element-plus';
-import type { Action } from 'element-plus';
-import * as xlsx from 'xlsx';
-import dayjs from 'dayjs';
-import timezone from 'dayjs/plugin/timezone';
-import utc from 'dayjs/plugin/utc';
-import { CollapseProps } from 'naive-ui';
+import gsap from "gsap";
+import { ApplicantType } from "server/api/t_detail/t_applicants/[t_id].get";
+import { TResultType } from "server/api/t_detail/t_results/[t_id].get";
+import { FinalFormStateType } from "../t_info.vue";
+import { ElMessage, ElMessageBox, ElCheckbox } from "element-plus";
+import type { Action } from "element-plus";
+import * as xlsx from "xlsx";
+import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
+import { CollapseProps } from "naive-ui";
+
+definePageMeta({
+  layout: "pc",
+  middleware: ["auth"],
+});
+
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -21,8 +27,8 @@ const { data: t_infoData } = await useFetch<FinalFormStateType | null>(
   `/api/t_info/${routeParamTId}`
 );
 if (!t_infoData.value) {
-  router.push('/t_list');
-  alert('赛事不存在');
+  router.push("/t_list");
+  alert("赛事不存在");
 }
 const { data: t_applicantsData } = await useFetch<ApplicantType[] | null>(
   `/api/t_detail/t_applicants/${routeParamTId}`
@@ -53,7 +59,7 @@ const handleExportTDetailData = () => {
     const sheetName = `Sheet1`;
     const fileName = `赛事详情数据导出 - ${dayjs()
       .utc(true)
-      .format('YYYY-MM-DD HH\:mm')
+      .format("YYYY-MM-DD HH\:mm")
       .toString()}.xlsx`;
     exportExcelAsFileMethod(sheetName, fileName, [t_infoData.value]);
   }
@@ -64,7 +70,7 @@ const handleExportApplicantsData = () => {
     const sheetName = `Sheet1`;
     const fileName = `赛事参赛选手数据导出 - ${dayjs()
       .utc(true)
-      .format('YYYY-MM-DD HH:mm')
+      .format("YYYY-MM-DD HH:mm")
       .toString()}.xlsx`;
     exportExcelAsFileMethod(sheetName, fileName, t_applicantsData.value);
   }
@@ -75,7 +81,7 @@ const handleExportPlayersResultsData = () => {
     const sheetName = `Sheet1`;
     const fileName = `赛事选手成绩数据导出 - ${dayjs()
       .utc(true)
-      .format('YYYY-MM-DD HH:mm')
+      .format("YYYY-MM-DD HH:mm")
       .toString()}.xlsx`;
 
     exportExcelAsFileMethod(sheetName, fileName, t_resultsData.value);
@@ -96,43 +102,43 @@ const correspondExportMethodObj: Record<string, () => void> = {
 const handleExportModalClick = () => {
   ElMessageBox({
     // dangerouslyUseHTMLString: true,
-    title: '选择导出',
+    title: "选择导出",
     message: () =>
       h(
-        'div',
+        "div",
         {
-          class: 'flex justify-between',
+          class: "flex justify-between",
         },
         // [h('span', null, 1), h('span', null, 2)]
         [
           h(ElCheckbox, {
             modelValue: exportStateObjRef.value.isExportTournamentDetail,
-            'onUpdate:modelValue': (val: boolean | string | number) => {
+            "onUpdate:modelValue": (val: boolean | string | number) => {
               exportStateObjRef.value.isExportTournamentDetail = val as boolean;
             },
-            label: '赛事详情',
+            label: "赛事详情",
           }),
           h(ElCheckbox, {
             modelValue: exportStateObjRef.value.isExportApplicantsData,
-            'onUpdate:modelValue': (val: boolean | string | number) => {
+            "onUpdate:modelValue": (val: boolean | string | number) => {
               exportStateObjRef.value.isExportApplicantsData = val as boolean;
             },
-            label: '参赛选手详情',
+            label: "参赛选手详情",
           }),
           h(ElCheckbox, {
             modelValue: exportStateObjRef.value.isExportPlayerResultsData,
-            'onUpdate:modelValue': (val: boolean | string | number) => {
+            "onUpdate:modelValue": (val: boolean | string | number) => {
               exportStateObjRef.value.isExportPlayerResultsData =
                 val as boolean;
             },
-            label: '赛事赛果详情',
+            label: "赛事赛果详情",
           }),
         ]
       ),
-    confirmButtonText: '确认',
-    cancelButtonText: '取消',
+    confirmButtonText: "确认",
+    cancelButtonText: "取消",
     callback: (action: Action) => {
-      if (action === 'confirm') {
+      if (action === "confirm") {
         Object.entries(exportStateObjRef.value).forEach(([key, value]) => {
           // console.log(key, value);
           if (value) {
@@ -149,14 +155,14 @@ const handleExportModalClick = () => {
 
 const collapseItem2 = ref();
 const collapseItem1 = ref();
-const handleClickCollapseItem: CollapseProps['onItemHeaderClick'] = ({
+const handleClickCollapseItem: CollapseProps["onItemHeaderClick"] = ({
   name,
   expanded,
 }) => {
   gsap.to(
-    name === '1'
+    name === "1"
       ? collapseItem1.value
-      : name === '2'
+      : name === "2"
       ? collapseItem2.value
       : undefined,
     { rotate: expanded ? 90 : 0, duration: 0.2 }

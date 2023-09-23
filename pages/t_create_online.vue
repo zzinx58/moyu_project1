@@ -2,6 +2,12 @@
 <script setup lang="ts">
 import type { UploadInstance, UploadProps, UploadRawFile } from "element-plus";
 import { genFileId } from "element-plus";
+
+definePageMeta({
+  layout: "pc",
+  middleware: ["auth"],
+});
+
 const selectUiStyle = {
   base: "relative block w-full disabled:cursor-not-allowed disabled:bg-#e5e5e5 focus:outline-none border-0",
 };

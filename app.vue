@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NConfigProvider, GlobalThemeOverrides } from 'naive-ui';
+import { NConfigProvider, GlobalThemeOverrides } from "naive-ui";
 // import { worker } from './mocks/browser';
 // worker.start();
 
@@ -7,51 +7,51 @@ const vue3App = (useNuxtApp().vueApp.config.warnHandler = () => null);
 
 const themeOverrides: GlobalThemeOverrides = {
   common: {
-    primaryColor: '#ff8f6b',
-    primaryColorHover: '#ff8f6b',
-    primaryColorPressed: '#ff8f6b',
+    primaryColor: "#ff8f6b",
+    primaryColorHover: "#ff8f6b",
+    primaryColorPressed: "#ff8f6b",
   },
   Input: {},
   Button: {},
   InternalSelection: {
-    borderRadius: '10px',
+    borderRadius: "10px",
     // arrowColor: 'white',
     // placeholderColor: 'white',
     // textColor: 'white',
   },
   InternalSelectMenu: {
-    color: '#8989A2',
-    optionColorActive: '#E7E7EC',
-    optionTextColorActive: '#292968',
-    optionTextColor: 'white',
-    optionColorPending: '#ff8f6b',
-    optionTextColorPressed: 'white',
+    color: "#8989A2",
+    optionColorActive: "#E7E7EC",
+    optionTextColorActive: "#292968",
+    optionTextColor: "white",
+    optionColorPending: "#ff8f6b",
+    optionTextColorPressed: "white",
   },
   Collapse: {
-    titlePadding: '0 0 0 0',
-    itemMargin: '0 0 44px 0',
+    titlePadding: "0 0 0 0",
+    itemMargin: "0 0 44px 0",
   },
   CollapseTransition: {},
   Select: {},
   DataTable: {
     // thColor: '#70708C',
     // thFontWeight: '800',
-    thTextColor: 'white',
-    tdColor: '#F7F8FE',
-    tdColorStriped: '#EDF1FE',
+    thTextColor: "white",
+    tdColor: "#F7F8FE",
+    tdColorStriped: "#EDF1FE",
     // borderRadius: '10px',
-    tdColorHover: 'none',
+    tdColorHover: "none",
   },
   Pagination: {
     // buttonColor: '#ff8f6b',
     // buttonColorHover: '#ff8f6b',
-    itemColorActive: '#ff8f6b',
-    itemTextColor: '#ff8f6b',
-    itemColorActiveHover: '#ff8f6b',
-    itemTextColorActive: 'white',
-    itemBorder: 'none',
-    itemBorderHover: 'none',
-    itemBorderActive: 'none',
+    itemColorActive: "#ff8f6b",
+    itemTextColor: "#ff8f6b",
+    itemColorActiveHover: "#ff8f6b",
+    itemTextColorActive: "white",
+    itemBorder: "none",
+    itemBorderHover: "none",
+    itemBorderActive: "none",
   },
 };
 </script>
@@ -60,7 +60,8 @@ const themeOverrides: GlobalThemeOverrides = {
     <!-- <NuxtWelcome /> -->
     <n-config-provider :theme-overrides="themeOverrides">
       <n-message-provider>
-        <NuxtLayout name="pc" class="select-none whitespace-nowrap">
+        <!-- <NuxtLayout name="pc" class="select-none whitespace-nowrap"> -->
+        <NuxtLayout class="select-none whitespace-nowrap">
           <NuxtPage class="" />
         </NuxtLayout>
       </n-message-provider>

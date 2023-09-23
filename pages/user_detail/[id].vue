@@ -1,10 +1,15 @@
 <script setup lang="ts">
-import { type DataTableColumns } from 'naive-ui';
-import * as xlsx from 'xlsx';
-import dayjs from 'dayjs';
-import timezone from 'dayjs/plugin/timezone';
-import utc from 'dayjs/plugin/utc';
-import { ElMessage, ElMessageBox, ElCheckbox, type Action } from 'element-plus';
+import { type DataTableColumns } from "naive-ui";
+import * as xlsx from "xlsx";
+import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
+import { ElMessage, ElMessageBox, ElCheckbox, type Action } from "element-plus";
+
+definePageMeta({
+  layout: "pc",
+  middleware: ["auth"],
+});
 
 type UserDetailPrefixInfoType = {
   key: string;
@@ -13,36 +18,36 @@ type UserDetailPrefixInfoType = {
 };
 const user_detail_prefix_info_arr_part1: UserDetailPrefixInfoType[] = [
   {
-    attrLabel: '昵称：',
-    key: 'nick_name',
+    attrLabel: "昵称：",
+    key: "nick_name",
   },
   {
-    key: 'wcu_id',
-    attrLabel: 'ID：',
+    key: "wcu_id",
+    attrLabel: "ID：",
   },
   {
-    attrLabel: '注册时间：',
-    key: 'register_time',
+    attrLabel: "注册时间：",
+    key: "register_time",
   },
   {
-    attrLabel: '地区：',
-    key: 'location',
+    attrLabel: "地区：",
+    key: "location",
   },
   {
-    attrLabel: '魔方教室：',
-    key: 'classroom',
+    attrLabel: "魔方教室：",
+    key: "classroom",
   },
   {
-    attrLabel: '战队：',
-    key: 'squad_name',
+    attrLabel: "战队：",
+    key: "squad_name",
   },
   {
-    attrLabel: '手机号：',
-    key: 'phone',
+    attrLabel: "手机号：",
+    key: "phone",
   },
   {
-    attrLabel: '实名认证：',
-    key: 'identity_info',
+    attrLabel: "实名认证：",
+    key: "identity_info",
     formatter: (infoObj) => {
       return infoObj.status;
     },
@@ -50,80 +55,80 @@ const user_detail_prefix_info_arr_part1: UserDetailPrefixInfoType[] = [
 ];
 const user_detail_prefix_info_arr_part2: UserDetailPrefixInfoType[] = [
   {
-    attrLabel: '积分：',
-    key: 'points_count',
+    attrLabel: "积分：",
+    key: "points_count",
   },
   {
-    attrLabel: '道具卷：',
-    key: 'voucher_count',
+    attrLabel: "道具卷：",
+    key: "voucher_count",
   },
   {
-    attrLabel: '绑定QQ：',
-    key: 'binded_qq',
+    attrLabel: "绑定QQ：",
+    key: "binded_qq",
   },
   {
-    attrLabel: '绑定微信：',
-    key: 'binded_wechat',
+    attrLabel: "绑定微信：",
+    key: "binded_wechat",
   },
 ];
 const user_detail_prefix_info_arr_part3: UserDetailPrefixInfoType[] = [
   {
-    attrLabel: '在线总时间：',
-    key: 'online_time_count',
+    attrLabel: "在线总时间：",
+    key: "online_time_count",
   },
   {
-    attrLabel: '下载渠道：',
-    key: 'download_channel',
+    attrLabel: "下载渠道：",
+    key: "download_channel",
   },
   {
-    attrLabel: '登录类型：',
-    key: 'login_method',
+    attrLabel: "登录类型：",
+    key: "login_method",
   },
 
   {
-    attrLabel: '登录设备系统：',
-    key: 'device_agent',
+    attrLabel: "登录设备系统：",
+    key: "device_agent",
   },
   {
-    attrLabel: '登录设备型号：',
-    key: 'device_type',
+    attrLabel: "登录设备型号：",
+    key: "device_type",
   },
   {
-    attrLabel: 'CPU型号：',
-    key: 'cpu_model',
+    attrLabel: "CPU型号：",
+    key: "cpu_model",
   },
   {
-    attrLabel: '绑定智能魔方型号：',
-    key: 'binded_rubik_cube_model',
+    attrLabel: "绑定智能魔方型号：",
+    key: "binded_rubik_cube_model",
   },
   {
-    attrLabel: '物理地址（mac）：',
-    key: 'mac_address',
+    attrLabel: "物理地址（mac）：",
+    key: "mac_address",
   },
   {
-    attrLabel: '设备尺寸：',
-    key: 'devicePixelRatio',
+    attrLabel: "设备尺寸：",
+    key: "devicePixelRatio",
   },
 ];
 
 const user_detail_prefix_info_arr_part4: UserDetailPrefixInfoType[] = [
   {
-    attrLabel: '最后登录',
-    key: 'last_login_time',
+    attrLabel: "最后登录",
+    key: "last_login_time",
   },
   {
-    attrLabel: '登出时间：',
-    key: 'last_logout_time',
+    attrLabel: "登出时间：",
+    key: "last_logout_time",
   },
 ];
 const user_detail_prefix_info_arr_part5: UserDetailPrefixInfoType[] = [
   {
-    attrLabel: '绑定时间：',
-    key: 'binding_time',
+    attrLabel: "绑定时间：",
+    key: "binding_time",
   },
   {
-    attrLabel: '解绑时间：',
-    key: 'unbinding_time',
+    attrLabel: "解绑时间：",
+    key: "unbinding_time",
   },
 ];
 
@@ -131,44 +136,44 @@ const columns_timed_race_data = (): DataTableColumns => {
   return [
     // const columns_timed_race_data_raw = [
     {
-      title: '最佳复原时长',
-      key: 'best_duration',
-      titleAlign: 'center',
+      title: "最佳复原时长",
+      key: "best_duration",
+      titleAlign: "center",
     },
     {
-      title: '完成率',
-      key: 'completion_rate',
-      titleAlign: 'center',
+      title: "完成率",
+      key: "completion_rate",
+      titleAlign: "center",
     },
     {
-      title: '当前排名',
-      key: 'current_ranking',
-      titleAlign: 'center',
+      title: "当前排名",
+      key: "current_ranking",
+      titleAlign: "center",
     },
     {
-      title: '最高排名',
-      key: 'highest_ranking',
-      titleAlign: 'center',
+      title: "最高排名",
+      key: "highest_ranking",
+      titleAlign: "center",
     },
     {
-      title: '最佳AO5',
-      key: 'best_ao5_duration',
-      titleAlign: 'center',
+      title: "最佳AO5",
+      key: "best_ao5_duration",
+      titleAlign: "center",
     },
     {
-      title: '最佳AO12',
-      key: 'best_ao12_duration',
-      titleAlign: 'center',
+      title: "最佳AO12",
+      key: "best_ao12_duration",
+      titleAlign: "center",
     },
     {
-      title: '最佳AO100',
-      key: 'best_ao100_duration',
-      titleAlign: 'center',
+      title: "最佳AO100",
+      key: "best_ao100_duration",
+      titleAlign: "center",
     },
     {
-      title: '完成次数',
-      key: 'completions_count',
-      titleAlign: 'center',
+      title: "完成次数",
+      key: "completions_count",
+      titleAlign: "center",
     },
   ];
   // return columns_timed_race_data_raw;
@@ -176,29 +181,29 @@ const columns_timed_race_data = (): DataTableColumns => {
 
 const columns_t_rank_data_raw = [
   {
-    title: '月段位/最高段位',
-    key: 'best_duration',
+    title: "月段位/最高段位",
+    key: "best_duration",
     render(rowData: any) {},
   },
   {
-    title: '月奖杯/最高奖杯',
-    key: 'completion_rate',
+    title: "月奖杯/最高奖杯",
+    key: "completion_rate",
   },
   {
-    title: '月胜场/总胜场',
-    key: 'current_ranking',
+    title: "月胜场/总胜场",
+    key: "current_ranking",
   },
   {
-    title: '月败场/总败场',
-    key: 'highest_ranking',
+    title: "月败场/总败场",
+    key: "highest_ranking",
   },
   {
-    title: '月平局/总平局',
-    key: 'best_ao5_duration',
+    title: "月平局/总平局",
+    key: "best_ao5_duration",
   },
   {
-    title: '月连胜/最高连胜',
-    key: 'best_ao12_duration',
+    title: "月连胜/最高连胜",
+    key: "best_ao12_duration",
   },
 ];
 const columns_t_rank_data = (): DataTableColumns => {
@@ -206,20 +211,20 @@ const columns_t_rank_data = (): DataTableColumns => {
 };
 const columns_multi_race_speed_data_raw = [
   {
-    title: '参加次数',
-    key: 'participate_count',
+    title: "参加次数",
+    key: "participate_count",
   },
   {
-    title: '完成次数',
-    key: 'completions_count',
+    title: "完成次数",
+    key: "completions_count",
   },
   {
-    title: '最佳排名',
-    key: 'best_ranking',
+    title: "最佳排名",
+    key: "best_ranking",
   },
   {
-    title: '最佳AO5',
-    key: 'best_ao5',
+    title: "最佳AO5",
+    key: "best_ao5",
   },
 ];
 const columns_multi_race_speed_data = (): DataTableColumns => {
@@ -230,44 +235,44 @@ const columns_squad_info = (): DataTableColumns => {
 };
 const columns_squad_info_raw = [
   {
-    title: '战队id',
-    key: 'squad_id',
+    title: "战队id",
+    key: "squad_id",
   },
   {
-    title: '战队名称',
-    key: 'squad_name',
+    title: "战队名称",
+    key: "squad_name",
   },
   {
-    title: '战队等级',
-    key: 'squad_level',
+    title: "战队等级",
+    key: "squad_level",
   },
   {
-    title: '成员数量',
-    key: 'squad_members_count',
+    title: "成员数量",
+    key: "squad_members_count",
   },
   {
-    title: '个人职称',
-    key: 'self_title_in_team',
+    title: "个人职称",
+    key: "self_title_in_team",
   },
   {
-    title: '战队地区',
-    key: 'squad_region',
+    title: "战队地区",
+    key: "squad_region",
   },
   {
-    title: '战队战力值/排行',
-    key: 'squad_combat_value_rank',
+    title: "战队战力值/排行",
+    key: "squad_combat_value_rank",
   },
   {
-    title: '个人战力值/排行',
-    key: 'self_combat_value_rank',
+    title: "个人战力值/排行",
+    key: "self_combat_value_rank",
   },
   {
-    title: '加入战队时间',
-    key: 'squad_join_time',
+    title: "加入战队时间",
+    key: "squad_join_time",
   },
   {
-    title: '离开战队时间',
-    key: 'squad_leaving_time',
+    title: "离开战队时间",
+    key: "squad_leaving_time",
   },
 ];
 const columns_pratice_task_info = (): DataTableColumns => {
@@ -275,20 +280,20 @@ const columns_pratice_task_info = (): DataTableColumns => {
 };
 const columns_pratice_task_info_raw = [
   {
-    title: '成就',
-    key: 'achievements_count',
+    title: "成就",
+    key: "achievements_count",
   },
   {
-    title: '完成任务数',
-    key: 'task_completions_count',
+    title: "完成任务数",
+    key: "task_completions_count",
   },
   {
-    title: '公式广场CFOP练习公式的id',
-    key: 'cfop_formula_id',
+    title: "公式广场CFOP练习公式的id",
+    key: "cfop_formula_id",
   },
   {
-    title: '完成练习',
-    key: 'practice_completions_count',
+    title: "完成练习",
+    key: "practice_completions_count",
   },
 ];
 
@@ -297,36 +302,36 @@ const columns_wcu_t_data = (): DataTableColumns => {
 };
 const columns_wcu_t_data_raw = [
   {
-    title: '赛事名称',
-    key: 'name',
+    title: "赛事名称",
+    key: "name",
   },
   {
-    title: '模式',
-    key: 'mode',
+    title: "模式",
+    key: "mode",
   },
   {
-    title: '项目',
-    key: 'p_name',
+    title: "项目",
+    key: "p_name",
   },
   {
-    title: '排名',
-    key: 'rank',
+    title: "排名",
+    key: "rank",
   },
   {
-    title: '单次',
-    key: '',
+    title: "单次",
+    key: "",
   },
   {
-    title: '平均',
-    key: 'avg_duration',
+    title: "平均",
+    key: "avg_duration",
   },
   {
-    title: '详情',
-    key: 'rounds_duration_detail',
+    title: "详情",
+    key: "rounds_duration_detail",
   },
   {
-    title: '更新日期',
-    key: 'update_date',
+    title: "更新日期",
+    key: "update_date",
   },
 ];
 
@@ -335,20 +340,20 @@ const columns_account_info = (): DataTableColumns => {
 };
 const columns_account_info_raw = [
   {
-    title: '积分',
-    key: 'points_count',
+    title: "积分",
+    key: "points_count",
   },
   {
-    title: '兑换卷',
-    key: 'vocher_count',
+    title: "兑换卷",
+    key: "vocher_count",
   },
   {
-    title: '拥有物品id',
-    key: 'award_record_id',
+    title: "拥有物品id",
+    key: "award_record_id",
   },
   {
-    title: '中奖记录',
-    key: '',
+    title: "中奖记录",
+    key: "",
   },
 ];
 const columns_order_info = (): DataTableColumns => {
@@ -356,105 +361,114 @@ const columns_order_info = (): DataTableColumns => {
 };
 const columns_order_info_raw = [
   {
-    title: '收件人',
-    key: 'receiver_name',
+    title: "收件人",
+    key: "receiver_name",
   },
   {
-    title: '手机',
-    key: 'phone',
+    title: "手机",
+    key: "phone",
   },
   {
-    title: '订单状态',
-    key: 'order_status',
+    title: "订单状态",
+    key: "order_status",
   },
   {
-    title: '收件地址',
-    key: 'receive_location',
+    title: "收件地址",
+    key: "receive_location",
   },
 ];
 
 const tabs_competition_data = [
   {
-    tabLabel: '计时赛',
-    key: 'timed_race_data',
+    tabLabel: "计时赛",
+    key: "timed_race_data",
   },
   {
-    tabLabel: '排位赛',
-    key: 't_rank_data',
+    tabLabel: "排位赛",
+    key: "t_rank_data",
   },
   {
-    tabLabel: '多人速拧',
-    key: 'multi_race_speed_data',
+    tabLabel: "多人速拧",
+    key: "multi_race_speed_data",
   },
   {
-    tabLabel: '战队',
-    key: 'squad_info',
+    tabLabel: "战队",
+    key: "squad_info",
   },
   {
-    tabLabel: '练习&任务',
-    key: 'pratice_task_info',
+    tabLabel: "练习&任务",
+    key: "pratice_task_info",
   },
 ];
 const tabs_t_data = [
   {
-    tabLabel: 'WCU 赛事',
-    key: 'wcu_t_data',
+    tabLabel: "WCU 赛事",
+    key: "wcu_t_data",
   },
   {
-    tabLabel: 'WCA 赛事',
-    key: 'wca_t_data',
+    tabLabel: "WCA 赛事",
+    key: "wca_t_data",
   },
 ];
 const tabs_account_info = [
   {
-    tabLabel: '基础信息',
-    key: 'account_info',
+    tabLabel: "基础信息",
+    key: "account_info",
   },
   {
-    tabLabel: '订单信息',
-    key: 'order_info',
+    tabLabel: "订单信息",
+    key: "order_info",
   },
 ];
 
 const identity_info_detail_obj = [
   {
-    label: '姓名',
-    key: 'name',
+    label: "姓名",
+    key: "name",
   },
   {
-    label: '身份证号',
-    key: 'identity_number',
+    label: "身份证号",
+    key: "identity_number",
   },
   {
-    label: '实名手机',
-    key: 'phone',
+    label: "实名手机",
+    key: "phone",
   },
   {
-    label: '详细地址',
-    key: 'location',
+    label: "详细地址",
+    key: "location",
   },
 ];
+
+const route = useRoute();
 
 const refTabFor_competitionData = ref(0);
 const refTabFor_tData = ref(0);
 const refTabFor_accountInfo = ref(0);
 
-const { data: userDetailData } = await useFetch<{ [key: string]: any }>(
-  '/user_detail/1',
-  {
-    method: 'GET',
-    server: false,
-  }
-);
-console.log(userDetailData.value);
-const { data: userRelatedData } = await useFetch<{ [key: string]: any }>(
-  '/user_related_data/1',
-  {
-    method: 'get',
-    server: false,
-  }
-);
-console.log(userRelatedData.value);
+const handleFetchUserDetailData = async () => {
+  const { data: userDetailDataRaw } = useFetch(
+    `/api_cors/dashboard/users/${route.params.id}`
+  );
+  console.log(`output->userDetailDataRaw.value`, userDetailDataRaw.value);
+};
+
+// const { data: userDetailData } = await useFetch<{ [key: string]: any }>(
+//   "/user_detail/1",
+//   {
+//     method: "GET",
+//     server: false,
+//   }
+// );
+// console.log(userDetailData.value);
+// const { data: userRelatedData } = await useFetch<{ [key: string]: any }>(
+//   "/user_related_data/1",
+//   {
+//     method: "get",
+//     server: false,
+//   }
+// );
+// console.log(userRelatedData.value);
 
 const exportExcelAsFileMethod = (
   sheetName: string,
@@ -648,8 +662,8 @@ const exportExcelAsFileMethod = (
                     <template #trigger>
                       {{
                         userDetailData?.[item.key].status === 1
-                          ? '已实名'
-                          : '未实名'
+                          ? "已实名"
+                          : "未实名"
                       }}
                     </template>
                     <div v-for="itemI in identity_info_detail_obj">
