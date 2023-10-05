@@ -330,7 +330,7 @@ const handleFetchPageUserListData = async (
     {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${userStore.userInfo?.token}`,
+        Authorization: `Bearer ${userStore.token}`,
       },
       query: {
         page: (searchOptions.currentPageRaw ??= 1),

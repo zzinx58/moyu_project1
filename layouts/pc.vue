@@ -4,6 +4,10 @@ import {
   type SiteRouteItemType,
   type SiteRoutesType,
 } from "../configs/base";
+import { useUserStore } from "@/stores/user";
+
+const userStore = useUserStore();
+
 interface propsNavMenuItem {
   to?: string;
   label?: string;
@@ -130,7 +134,9 @@ const selected = ref([]);
           />
         </div>
         <div class="flex items-center gap-12 mr-25">
-          <div class="text-24px text-#292968">123我{{}}</div>
+          <div class="text-24px text-#292968">
+            {{ userStore.userInfo.username }}
+          </div>
           <n-avatar round :size="50" class="bg-white!">
             <div class="i-mdi:account text-35px text-#E7E6E8" />
           </n-avatar>

@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { type DataTableColumns } from "naive-ui";
+import { useMessage, type DataTableColumns } from "naive-ui";
 import * as xlsx from "xlsx";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import { ElMessage, ElMessageBox, ElCheckbox, type Action } from "element-plus";
+import { useUserStore } from "@/stores/user";
 
 definePageMeta({
   layout: "pc",
@@ -446,29 +447,177 @@ const refTabFor_competitionData = ref(0);
 const refTabFor_tData = ref(0);
 const refTabFor_accountInfo = ref(0);
 
-const handleFetchUserDetailData = async () => {
-  const { data: userDetailDataRaw } = useFetch(
-    `/api_cors/dashboard/users/${route.params.id}`
-  );
-  console.log(`output->userDetailDataRaw.value`, userDetailDataRaw.value);
-};
+const userStore = useUserStore();
+const naiveMessage = useMessage();
 
-// const { data: userDetailData } = await useFetch<{ [key: string]: any }>(
-//   "/user_detail/1",
-//   {
-//     method: "GET",
-//     server: false,
-//   }
-// );
+// const userDetailData = ref()
+// const userRelatedData = ref()
+const handleFetchUserDetailData = async () => {
+  const { data: userDetailDataRaw, error } = await useFetch<{
+    [key: string]: any;
+  }>(`/api_cors/dashboard/users/${route.params.id}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${userStore.token}`,
+    },
+  });
+  // console.log(`output->error.value`, error.value);
+  // console.log(`output->userDetailDataRaw.value`, userDetailDataRaw.value);
+  // if (!userDetailDataRaw.value) {
+  //   naiveMessage.error("目标用户不存在，正在跳转至主页..");
+  //   setTimeout(() => {
+  //     navigateTo("/users_list");
+  //   }, 1000);
+  // }
+  console.log(`output->userDetailDataRaw.value`, userDetailDataRaw.value);
+  let userDetailDataTemp = {};
+  if (userDetailDataRaw.value?.data) {
+    const userDetailDataRawInfo = userDetailDataRaw.value.data;
+    userDetailDataTemp = {
+      // B 接口 对应字段名是 id，需要更改
+      user_id: userDetailDataRawInfo.user_id,
+      // Part_One 对接
+      //缺少
+      // oath_type 只有一个对象信息，并没有给足 wechat、qq 的 oath_type 信息
+      // binded_qq: oauth_type?
+      // binded_wechat: oauth_type?
+      // binded_rubik_cube_model: 缺少字段
+      // binding_time: 缺少字段
+      // clssroom: 缺少字段
+      // cpu_model: terminal.cpu
+      // devicePixelRatio: terminal.size
+      // device_agent: terminal.name
+      // device_type: terminal.type
+      // download_channel: channel_id
+      // gender: oauth_json.gender
+      // id: user_id <= user_id & wcu_id
+      // identity_info: {
+      //    status: 缺少字段
+      // 目标字段不明确,起名不算规范？
+      //    identity_number: oauth_json.unionid?
+      //    location: 缺少字段
+      //    name: oauth_json.name
+      // 需要业务讨论，用户直接手机号不一定是 身份认证的手机号？身份认证的手机号
+      //    phone: phone?
+      // }
+      // last_login_time: last_login_time
+      // last_logout_time: last_logout_time
+      // location: 缺少字段，通过 privince、country、city 字段计算获取？
+      // login_method: 缺少字段 oauth_type?
+      // mac_address: 缺少字段
+      // nick_name: 缺少字段
+      // online_time_count: 缺少字段, 通过计算获取？
+      // phone: phone
+      // points_count: score
+      // register_time: reg_time
+      // sex: oauth_json.gender
+      // squad_name: 缺少字段
+      // unbinding_time: 缺少字段
+      // voucher_count: ticket
+      // wca_authentication: 缺少字段
+      // wcu_id: 缺少字段
+
+      // Part_two 对接
+      // account_info: {
+      //    award_record_id: 缺少字段
+      //    points_count: score
+      //    vocher_count: ticket
+      // }
+      // multi_race_speed_data: {
+      //    best_ao5: user_comp_multi.best_ao5
+      //    best_ranking: user_comp_multi.best_rank
+      //    completions_count: 缺少字段 enter_num??
+      //    participate_count: 缺少字段 finish_num??
+      // }
+      // order_info: {
+      //    order_status: 缺少字段
+      //    phone: 缺少字段
+      //    receive_location: 缺少字段
+      //    receiver_name: 缺少字段
+      // }
+      // 缺少 pratice_task_info 块相关字段
+      // pratice_task_info: {
+      //    achievements_count:
+      //    cfop_formula_id:
+      //    practice_completions_count:
+      //    task_completions_count:
+      // }
+      // 缺少 squad_info 块相关字段
+      // squad_info: {
+      //    self_combat_value:
+      //    self_combat_value_rank:
+      //    self_title_in_team:
+      //    squad_combat_value:
+      //    squad_combat_value_rank:
+      //    squad_id:
+      //    squad_join_time:
+      //    squad_leaving_time:
+      //    squad_level:
+      //    squad_max_merbers:
+      //    squad_members_count:
+      //    squad_name:
+      //    squad_region:
+      // }
+      // timed_race_data: {
+      //    best_ao5_duration: user_time_trial.best_ao5
+      //    best_ao12_duration: user_time_trial.best_ao12
+      //    best_ao100_duration: user_time_trial.best_ao100
+      //    best_duration: user_time_trial.best_duration
+      //    completion_rate: 缺少字段或表意不明确, user_time_trial.finish_num?
+      //    completions_count: 缺少字段或表意不明确, user_time_trial.finish_num?
+      //    current_ranking: 缺少字段或表意不明确, user_time_trial.num?
+      //    highest_ranking: 缺少字段或表意不明确, user_time_trial.used_num?
+      // user_time_trial.add_num_time?
+      // }
+      // wac_t_data: {}
+      // 缺少 wcu_t_data 块相关字段
+      // wcu_t_data: {
+      //    avg_duration:
+      //    best_duration:
+      //    mode:
+      //    name:
+      //    p_name:
+      //    rank:
+      //    rounds_duration_detail:
+      //    update_date:
+      // }
+      // 不清楚 user_qualifier 块字段对应模块。t_rank_data?
+      // t_rank_data: {
+      //    draw_total: 缺少字段或表意不明确 user_qualifier.drawn?
+      //    highest_winning_streak: user_qualifier.max_cup?
+      //    lose_total: user_qualifier.lose?
+      //    monthly_draw_total: 缺少字段或表意不明确 user_qualifier.drawn?
+      //    monthly_highest_rank: user_qualifier.id?
+      //    monthly_lose_total: user_qualifier.lose?
+      //    monthly_rank: user_qualifier.period?
+      //    monthly_win_total: user_qualifier.recently_win? []?
+      //    monthly_winning_streak: user_qualifier.win_streak?
+      //    wins_total: user_qualifier.max_cup?
+      // user_qualifier.is_reward?
+      // user_qualifier.period?
+      //
+      // }
+    };
+  }
+};
+handleFetchUserDetailData();
+
+const { data: userDetailData } = await useFetch<{ [key: string]: any }>(
+  "/user_detail/1",
+  {
+    method: "GET",
+    server: false,
+  }
+);
 // console.log(userDetailData.value);
-// const { data: userRelatedData } = await useFetch<{ [key: string]: any }>(
-//   "/user_related_data/1",
-//   {
-//     method: "get",
-//     server: false,
-//   }
-// );
-// console.log(userRelatedData.value);
+const { data: userRelatedData } = await useFetch<{ [key: string]: any }>(
+  "/user_related_data/1",
+  {
+    method: "get",
+    server: false,
+  }
+);
+console.log(userRelatedData.value);
 
 const exportExcelAsFileMethod = (
   sheetName: string,

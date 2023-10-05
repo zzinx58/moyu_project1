@@ -16,7 +16,7 @@ export default defineNuxtConfig({
         autoImports: ["defineStore", ["defineStore", "definePiniaStore"]],
       },
     ],
-    "@nuxtjs/color-mode",
+    // "@nuxtjs/color-mode",
     "@pinia-plugin-persistedstate/nuxt",
   ],
   devtools: {
@@ -30,8 +30,8 @@ export default defineNuxtConfig({
   },
   devServer: {
     https: {
-      key: "keys/zzx-192.key",
-      cert: "keys/zzx-192.cert",
+      key: "keys/zzx-19231.key",
+      cert: "keys/zzx-19231.cert",
     },
     port: 5050,
   },

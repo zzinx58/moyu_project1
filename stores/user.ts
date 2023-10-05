@@ -4,16 +4,22 @@ export const useUserStore = definePiniaStore("user", {
   state: (): {
     [key: string]: any;
     isLogin: boolean;
-    userInfo: {
+    userInfo: Partial<{
       [key: string]: any;
-      token: string;
-    };
+      username: string;
+      user_id: number;
+      login_type: string;
+      roles: string | number[];
+      deleted: boolean;
+      inserted_at: string;
+      updated_at: string;
+    }>;
+    token: string;
   } => {
     return {
       isLogin: false,
-      userInfo: {
-        token: "",
-      },
+      userInfo: {},
+      token: "",
       // nickName: "请登录..",
       // email: "",
       // token: "",
@@ -55,7 +61,8 @@ export const useUserStore = definePiniaStore("user", {
         };
       }
       if (userData.value?.code && userData.value.code === 200) {
-        this.userInfo.token = userData.value.data.access_token;
+        this.token = userData.value.data.access_token;
+        this.userInfo = userData.value.data.admin;
         this.isLogin = true;
         return {
           ok: true,

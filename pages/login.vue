@@ -67,6 +67,9 @@ const handleValidateClick = (e: MouseEvent) => {
       const { ok, data, message } = await userStore.login(loginFormValue.value);
       if (ok) {
         naiveMessage.success(`${message},正在跳转...`);
+        // 不需要 data.value
+        // console.log(`output->data.value`, data);
+        // console.log(`output->userStore.userInfo`, userStore.$state);
         setTimeout(() => {
           // navigateTo("/t_list");
           navigateTo(`${(route.query.callback ??= "/")}`);
