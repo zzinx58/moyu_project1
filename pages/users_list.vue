@@ -11,6 +11,9 @@ definePageMeta({
   layout: "pc",
   middleware: ["auth"],
 });
+useHead({
+  title: "U_List - 用户列表",
+});
 
 const exportExcelAsFileMethod = (
   sheetName: string,
@@ -326,7 +329,8 @@ const handleFetchPageUserListData = async (
 ) => {
   // console.log(`output->searchOptions`, searchOptions);
   const { data: usersListDataRaw, error } = await useFetch<any>(
-    "/api_cors/dashboard/users/list",
+    // "/api_cors/dashboard/users/list",
+    "/api/user/users_list",
     {
       method: "GET",
       headers: {
@@ -341,11 +345,12 @@ const handleFetchPageUserListData = async (
   );
 
   if (usersListDataRaw.value) {
-    const usersListDataTemp = usersListDataRaw.value.data.items as Array<any>;
+    const usersListDataTemp =
+      (usersListDataRaw.value.data?.items as Array<any>) ?? [];
 
-    currentPage.value = usersListDataRaw.value.data.current_page;
-    totalPageCount.value = usersListDataRaw.value.data.total_pages;
-    totalRowCount.value = usersListDataRaw.value.data.total;
+    currentPage.value = usersListDataRaw.value.data?.current_page;
+    totalPageCount.value = usersListDataRaw.value.data?.total_pages;
+    totalRowCount.value = usersListDataRaw.value.data?.total;
 
     pageUsersListData.value = usersListDataTemp.map((item) => {
       return {
