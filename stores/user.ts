@@ -46,7 +46,9 @@ export const useUserStore = definePiniaStore("user", {
         pending,
         status,
       } = await useFetch<{ code: number; data: any }>(
-        "/api_cors/admins/login",
+        "/api/manager/login",
+        // "/api_cors/admins/login",
+        // "https://api.yicloud.vip/api/admins/login",
         {
           method: "POST",
           body: loginFormData,

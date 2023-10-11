@@ -30,13 +30,13 @@ export const SiteRouteMap: SiteRoutesType = {
       label: "学员管理",
       iconMeta: "i-custom-svg:students",
       // to: '/students',
-      to: "/svg_preview",
+      // to: "/svg_preview",
     },
     {
       label: "战队管理",
       iconMeta: "i-custom-svg:teams",
       // to: '/teams',
-      to: "/test",
+      // to: "/test",
     },
     {
       label: "商城管理",
