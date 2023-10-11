@@ -5,6 +5,11 @@ import { NaiveUiResolver } from "unplugin-vue-components/resolvers";
 
 export default defineNuxtConfig({
   ssr: false,
+  app: {
+    head: {
+      titleTemplate: "%s | MOYU",
+    },
+  },
   modules: [
     "@unocss/nuxt",
     "@nuxthq/ui",
@@ -40,6 +45,8 @@ export default defineNuxtConfig({
       "/api_cors": {
         target: "https://api.yicloud.vip/api",
         changeOrigin: true,
+        // not know.
+        // prependPath: true,
       },
     },
   },

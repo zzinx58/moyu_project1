@@ -7,6 +7,9 @@ definePageMeta({
   layout: "pc",
   middleware: ["auth"],
 });
+useHead({
+  title: "Preview - 首页",
+});
 
 const preview_prefix_info: {
   iconMeta: string;

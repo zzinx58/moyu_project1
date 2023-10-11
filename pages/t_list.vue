@@ -7,6 +7,9 @@ definePageMeta({
   layout: "pc",
   middleware: ["auth"],
 });
+useHead({
+  title: "T_List - 赛事列表",
+});
 
 dayjs.extend(utc);
 dayjs.extend(timezone);

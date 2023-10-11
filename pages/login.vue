@@ -5,6 +5,9 @@ import { useUserStore } from "@/stores/user";
 definePageMeta({
   layout: "blank",
 });
+useHead({
+  title: "Login - 登录",
+});
 
 const loginFormRef = ref<FormInst | null>(null);
 const loginFormValue = ref({

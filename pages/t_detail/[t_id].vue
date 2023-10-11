@@ -15,6 +15,9 @@ definePageMeta({
   layout: "pc",
   middleware: ["auth"],
 });
+useHead({
+  title: "T_Detail - 赛事详情",
+});
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
