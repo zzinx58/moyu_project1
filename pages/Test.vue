@@ -4,10 +4,11 @@ import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 // import { useManagerStore } from "@/stores/manager";
 import { FinalFormStateType } from "./t_info.vue";
+import { useUserStore } from "@/stores/user";
 
 definePageMeta({
   layout: "pc",
-  middleware: ["auth"],
+  // middleware: ["auth"],
 });
 
 dayjs.extend(utc);
@@ -243,8 +244,8 @@ dayjs.extend(timezone);
 //   server: false,
 // });
 
-const token =
-  "SFMyNTY.g2gDdAAAAANkAAhhZG1pbl9pZGEDZAAFcm9sZXNqZAAEdHlwZWQACGV4dGVybmFsbgYAY8q-tooBYgABUYA.lqKC4rrVYbYHtmciiRbbNQgODWgt_c4tLK5THt-zMLQ";
+// const token =
+// "SFMyNTY.g2gDdAAAAANkAAhhZG1pbl9pZGEDZAAFcm9sZXNqZAAEdHlwZWQACGV4dGVybmFsbgYAY8q-tooBYgABUYA.lqKC4rrVYbYHtmciiRbbNQgODWgt_c4tLK5THt-zMLQ";
 // const { data: simpleFilteredData } = useFetch("/api_cors", {
 //   method: "GET",
 //   // baseURL: "https://api.yicloud.vip/api/dashboard",
@@ -255,30 +256,86 @@ const token =
 //   // params: Object.fromEntries([["id", "66348"]]),
 // });
 // const simpleFilteredData = await $fetch("/api_cors");
-const { data: simpleFilteredData, error } = await useFetch(
-  // "/api_cors/admins/login",
-  "/api_cors/dashboard/users/list",
-  {
-    // method: "post",
-    // body: Object.fromEntries([
-    //   ["username", "zzx"],
-    //   ["password", "123456"],
-    // ]),
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    params: Object.fromEntries([
-      ["size", "5"],
-      ["page", 166],
-    ]),
-    // query: Object.fromEntries([["size", 5]]),
-    // query: Object.fromEntries([["user_id", "66348"]]),
-  }
-);
+const userStore = useUserStore();
+
+// const { data: simpleFilteredData, error } = await useFetch(
+//   // "/api_cors/admins/login",
+//   "/api_cors/dashboard/users/list",
+//   {
+//     // method: "post",
+//     // body: Object.fromEntries([
+//     //   ["username", "zzx"],
+//     //   ["password", "123456"],
+//     // ]),
+//     method: "GET",
+//     headers: {
+//       Authorization: `Bearer ${userStore.token}`,
+//     },
+//     params: Object.fromEntries([
+//       ["size", "5"],
+//       ["page", 166],
+//     ]),
+//     // query: Object.fromEntries([["size", 5]]),
+//     // query: Object.fromEntries([["user_id", "66348"]]),
+//   }
+// );
+
+// let test = {
+//   abc: null,
+// };
+// const testRef = ref(test.abc?.asd);
+// console.log(testRef.value);
+// function convertXlsxKeys<Raw = any, Target = any>(
+//   excelData: Raw[],
+//   keysMap: Record<string, string>
+// ): Target[] {
+//   return excelData.map((excelItem) => {
+//     return Object.entries(excelItem).reduce((prevArr: any, currentArr: any) => {
+//       const [currentK, currentV] = currentArr;
+
+//       const mappedKey = keysMap[currentK];
+//       if (mappedKey) {
+//         prevArr[mappedKey] = currentV;
+//       } else {
+//         prevArr[currentK] = currentV;
+//       }
+//       return prevArr;
+//     }, {});
+//   });
+// }
+// console.log(convertXlsxKeys([{ name: "zzx" }], { 姓名: "name" }));
+
+// const loginTest = await $fetch("/api_cors/admins/login", {
+//   method: "post",
+//   body: Object.fromEntries([
+//     ["username", "zzx"],
+//     ["password", "123456"],
+//   ]),
+// });
+// console.log(loginTest);
+
+// const getTest = await useFetch("/api_cors/dashboard/users/list", {
+//   method: "GET",
+// });
+// console.log(getTest);
+// const { data } = await useFetch("/api/manager/login", {
+//   method: "post",
+//   body: {
+//     username: "zzx",
+//     password: "123456",
+//   },
+// });
+// console.log(data.value);
+const test = await $fetch("/api/user/user_detail/65942", {
+  method: "GET",
+  headers: {
+    Authorization: `Bearer ${userStore.token}`,
+  },
+});
+console.log(test);
 </script>
 <template>
-  <pre v-if="simpleFilteredData"> {{ simpleFilteredData }}</pre>
+  <!-- <pre v-if="simpleFilteredData"> {{ simpleFilteredData }}</pre>
   <div v-else>
     <pre>{{ error?.data }}</pre>
     <pre>{{ error?.message }}</pre>
@@ -286,7 +343,7 @@ const { data: simpleFilteredData, error } = await useFetch(
     <pre>{{ error?.stack }}</pre>
     <pre>{{ error?.statusCode }}</pre>
     <pre>{{ error?.statusMessage }}</pre>
-  </div>
+  </div> -->
 
   <div id="test"></div>
   <!-- <pre>{{ ChoroplethData }}</pre> -->
