@@ -71,14 +71,14 @@ const user_detail_prefix_info_arr_part2: UserDetailPrefixInfoType[] = [
     attrLabel: "道具卷：",
     key: "voucher_count",
   },
-  {
-    attrLabel: "绑定QQ：",
-    key: "binded_qq",
-  },
-  {
-    attrLabel: "绑定微信：",
-    key: "binded_wechat",
-  },
+  // {
+  //   attrLabel: "绑定QQ：",
+  //   key: "binded_qq",
+  // },
+  // {
+  //   attrLabel: "绑定微信：",
+  //   key: "binded_wechat",
+  // },
 ];
 const user_detail_prefix_info_arr_part3: UserDetailPrefixInfoType[] = [
   {
@@ -801,7 +801,7 @@ const handleFetchUserDetailData = async () => {
         identity_number: "",
         name: "",
         phone: "",
-        location: "",
+        location: "无",
       },
       points_count: (userDetailDataRawInfo.score ??= 0),
       voucher_count: (userDetailDataRawInfo.ticket ??= 0),
@@ -830,16 +830,20 @@ const handleFetchUserDetailData = async () => {
       login_channel_type: userDetailDataRawInfo.oauth_type
         ? userDetailDataRawInfo.oauth_type === 10
           ? "qq"
-          : ""
-        : "暂无字段",
+          : "暂缺业务字典"
+        : "无",
       // 暂无
       login_device_type:
         userDetailDataRawInfo?.terminal?.type &&
         userDetailDataRawInfo.terminal.type === 1
-          ? "ipad"
+          ? "安卓设备"
           : "暂无数据",
       login_cpu_model: userDetailDataRawInfo.terminal?.cpu ?? "",
-      download_channel: (userDetailDataRawInfo.channel_id ??= 0),
+      download_channel:
+        (userDetailDataRawInfo.channel_id ??= -1) &&
+        userDetailDataRawInfo.channel_id === -1
+          ? "无"
+          : "暂无业务字典",
       //暂无
       mac_address: "",
       //暂无
@@ -1327,7 +1331,7 @@ const handleExportModalClick = () => {
         <div
           class="rounded-18px w-148px h-36px bg-primary_1 flex justify-center items-center text-23px"
         >
-          ID:26532
+          ID:{{ userDetailData.wcu_id }}
         </div>
         <div class="divide-y flex flex-col">
           <div
@@ -1364,10 +1368,12 @@ const handleExportModalClick = () => {
                           : "未实名"
                       }}
                     </template>
-                    <div v-for="itemI in identity_info_detail_obj">
-                      {{ itemI.label }}：{{
-                        userDetailData?.[item.key][itemI.key]
-                      }}
+                    <div
+                      v-for="itemI in identity_info_detail_obj"
+                      v-if="userDetailData?.[item.key].identity_status === 1"
+                    >
+                      {{ itemI.label }}：
+                      <p>{{ userDetailData?.[item.key][itemI.key] }}</p>
                     </div>
                   </n-tooltip>
                 </div>
