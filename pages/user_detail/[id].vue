@@ -97,6 +97,18 @@ const user_detail_prefix_info_arr_part3: UserDetailPrefixInfoType[] = [
   {
     attrLabel: "登录设备系统：",
     key: "device_agent",
+    formatter: (typeId) => {
+      switch (typeId) {
+        case 3:
+          return "pc";
+        case 1:
+          return "安卓设备";
+        case 2:
+          return "ios设备";
+        default:
+          return "";
+      }
+    },
   },
   {
     attrLabel: "登录设备型号：",
@@ -202,6 +214,7 @@ const columns_t_rank_data_raw = [
   {
     title: "月段位/最高段位",
     key: "about_rank_data",
+    render: (rowData: any, rowIndex: any) => {},
   },
   {
     title: "月奖杯/最高奖杯",
@@ -271,27 +284,37 @@ const columns_squad_info_raw = [
   {
     title: "个人职称",
     key: "self_title_in_team",
+    render: (rowData: any, rowIndex: any) => {
+      switch (rowData.self_title_in_team) {
+        case 0:
+          return "队员";
+        case 1:
+          return "队长";
+        case 2:
+          return "副队长";
+      }
+    },
   },
   {
     title: "战队地区",
     key: "squad_region",
   },
-  {
-    title: "战队战力值/排行",
-    key: "squad_combat_value_rank",
-  },
-  {
-    title: "个人战力值/排行",
-    key: "self_combat_value_rank",
-  },
+  // {
+  //   title: "战队战力值/排行",
+  //   key: "squad_combat_value_rank",
+  // },
+  // {
+  //   title: "个人战力值/排行",
+  //   key: "self_combat_value_rank",
+  // },
   {
     title: "加入战队时间",
     key: "squad_join_time",
   },
-  {
-    title: "离开战队时间",
-    key: "squad_leaving_time",
-  },
+  // {
+  //   title: "离开战队时间",
+  //   key: "squad_leaving_time",
+  // },
 ];
 const columns_pratice_task_info = (): DataTableColumns => {
   return columns_pratice_task_info_raw;
@@ -325,6 +348,16 @@ const columns_wcu_t_data_raw = [
   {
     title: "模式",
     key: "mode",
+    render: (rowData: any, rowIndex: any) => {
+      switch (rowData.mode) {
+        case 1:
+          return "个人赛";
+        case 2:
+          return "团体赛";
+        case 3:
+          return "综合赛";
+      }
+    },
   },
   {
     title: "项目",
@@ -833,11 +866,11 @@ const handleFetchUserDetailData = async () => {
           : "暂缺业务字典"
         : "无",
       // 暂无
-      login_device_type:
-        userDetailDataRawInfo?.terminal?.type &&
-        userDetailDataRawInfo.terminal.type === 1
-          ? "安卓设备"
-          : "暂无数据",
+      login_device_type: userDetailDataRawInfo?.terminal?.type ?? "",
+      // userDetailDataRawInfo?.terminal?.type &&
+      // userDetailDataRawInfo.terminal.type === 1
+      //   ? "ipad"
+      //   : "暂无数据",
       login_cpu_model: userDetailDataRawInfo.terminal?.cpu ?? "",
       download_channel:
         (userDetailDataRawInfo.channel_id ??= -1) &&
@@ -880,7 +913,10 @@ const handleFetchUserDetailData = async () => {
             userDetailDataRawInfo.user_time_trial?.best_duration
           ) ?? 0,
         // 后端在文档中书写的不明确
-        completion_rate: "",
+        completion_rate: `${
+          userDetailDataRawInfo.user_time_trial?.finish_num /
+          userDetailDataRawInfo.user_time_trial.used_num
+        } %`,
         // 该字段及对应 UI 需要讨论
         current_ranking: "",
         // 需要与后端商讨，文档中后端声明这部分并不存在，但应该是能获取的
@@ -913,6 +949,44 @@ const handleFetchUserDetailData = async () => {
         // highest_winned_cups: userDetailDataRawInfo.user_qualifier?.max_cup ?? 0,
         */
         //  about_rank_data 暂不支持
+        about_rank_data: () => {
+          let monthly_rank_level;
+          let highest_rank_level;
+          const ranks = [
+            { level: "WR III", cups: 12001 },
+            { level: "WR II", cups: 10001 },
+            { level: "WR I", cups: 8251 },
+            { level: "CR III", cups: 6751 },
+            { level: "CR II", cups: 5501 },
+            { level: "CR I", cups: 4501 },
+            { level: "NR III", cups: 3601 },
+            { level: "NR II", cups: 2801 },
+            { level: "NR I", cups: 2101 },
+            { level: "魔方大师 III", cups: 1501 },
+            { level: "魔方大师 II", cups: 1001 },
+            { level: "魔方大师 I", cups: 626 },
+            { level: "进阶者 III", cups: 351 },
+            { level: "进阶者 II", cups: 176 },
+            { level: "进阶者 I", cups: 101 },
+            { level: "初学者 III", cups: 51 },
+            { level: "初学者 II", cups: 21 },
+            { level: "初学者 I", cups: 0 },
+          ];
+          for (let rank of ranks) {
+            if (userDetailDataRawInfo.user_qualifier.cup > rank.cups) {
+              monthly_rank_level = rank.level;
+              break;
+            }
+          }
+          for (let rank of ranks) {
+            if (userDetailDataRawInfo.user_qualifier.max_cup > rank.cups) {
+              highest_rank_level = rank.level;
+              break;
+            }
+          }
+
+          return `${monthly_rank_level}/${highest_rank_level}`;
+        },
         about_cup_data: `${userDetailDataRawInfo.user_qualifier?.cup} / ${userDetailDataRawInfo.user_qualifier?.max_cup}`,
         about_win_data: `${userDetailDataRawInfo.user_qualifier?.win} / ${userDetailDataRawInfo.user_qualifier?.total_win}`,
         about_lose_data: `${userDetailDataRawInfo.user_qualifier?.lose} / ${userDetailDataRawInfo.user_qualifier?.total_lose}`,
