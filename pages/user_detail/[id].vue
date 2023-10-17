@@ -914,8 +914,10 @@ const handleFetchUserDetailData = async () => {
           ) ?? 0,
         // 后端在文档中书写的不明确
         completion_rate: `${
-          userDetailDataRawInfo.user_time_trial?.finish_num /
-          userDetailDataRawInfo.user_time_trial.used_num
+          +resultNumberFormatter(
+            userDetailDataRawInfo.user_time_trial?.finish_num /
+              userDetailDataRawInfo.user_time_trial.used_num
+          ) * 100
         } %`,
         // 该字段及对应 UI 需要讨论
         current_ranking: "",
@@ -1063,7 +1065,8 @@ const handleFetchUserDetailData = async () => {
       // 根据后端文档相关注解，
       order_info: userDetailDataRawInfo.exchange_orders.map((item) => {
         return {
-          order_status: item.order_state,
+          // order_status: item.order_state,
+          order_status: "",
           phone: item.phone,
           receive_location: item.address,
           receiver_name: item.consignee,
@@ -1282,30 +1285,41 @@ const handleExportPlayerCompetitionData = () => {
     ]);
   }
 };
-// const handleExportPlayerTData = () => {
-//   // console.log(3);
-//   if (t_resultsData.value) {
-//     const sheetName = `Sheet1`;
-//     const fileName = `选手赛事数据导出 - ${dayjs()
-//       .utc(true)
-//       .format('YYYY-MM-DD HH:mm')
-//       .toString()}.xlsx`;
+const handleExportPlayerTData = () => {
+  if (userRelatedData?.value.wcu_t_data) {
+    const sheetName = `Sheet1`;
+    const fileName = `选手赛事数据导出 - ${dayjs()
+      .utc(true)
+      .format("YYYY-MM-DD HH:mm")
+      .toString()}.xlsx`;
 
-//     exportExcelAsFileMethod(sheetName, fileName, t_resultsData.value);
-//   }
-// };
-// const handleExportPlayerAccountInfoData = () => {
-//   // console.log(3);
-//   if (t_resultsData.value) {
-//     const sheetName = `Sheet1`;
-//     const fileName = `选手账户信息导出 - ${dayjs()
-//       .utc(true)
-//       .format('YYYY-MM-DD HH:mm')
-//       .toString()}.xlsx`;
+    exportExcelAsFileMethod(
+      sheetName,
+      fileName,
+      Object.assign({}, userRelatedData?.value.wcu_t_data)
+    );
+  }
+};
+const handleExportPlayerAccountInfoData = () => {
+  // console.log(3);
+  if (userRelatedData.value.account_info) {
+    const sheetName = `Sheet1`;
+    const fileName = `选手账户信息导出 - ${dayjs()
+      .utc(true)
+      .format("YYYY-MM-DD HH:mm")
+      .toString()}.xlsx`;
 
-//     exportExcelAsFileMethod(sheetName, fileName, t_resultsData.value);
-//   }
-// };
+    exportExcelAsFileMethod(
+      sheetName,
+      fileName,
+      Object.assign(
+        {},
+        userRelatedData?.value.account_info,
+        userRelatedData.value.order_info
+      )
+    );
+  }
+};
 
 const exportStateTemp = {
   isExportPlayerDetailData: false,
@@ -1317,8 +1331,8 @@ const exportStateObjRef = ref(structuredClone(exportStateTemp));
 const correspondExportMethodObj: Record<string, () => void> = {
   isExportPlayerDetailData: handleExportPlayerDetailData,
   isExportPlayerCompetitionData: handleExportPlayerCompetitionData,
-  // isExportPlayerTData: handleExportPlayerTData,
-  // isExportPlayerAccountInfoData: handleExportPlayerAccountInfoData,
+  isExportPlayerTData: handleExportPlayerTData,
+  isExportPlayerAccountInfoData: handleExportPlayerAccountInfoData,
 };
 const handleExportModalClick = () => {
   ElMessageBox({
