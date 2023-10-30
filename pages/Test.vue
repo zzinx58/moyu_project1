@@ -346,6 +346,7 @@ console.log(test);
   </div> -->
 
   <div id="test"></div>
+  <div class="bg-[url()]"></div>
   <!-- <pre>{{ ChoroplethData }}</pre> -->
   <!-- <n-select
     :options="[

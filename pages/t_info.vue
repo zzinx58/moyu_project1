@@ -566,6 +566,8 @@ const handleCreateTournament = async () => {
   //toRaw => 返回由 reactive() 、等创建的代理对应的原始对象
   const solved_formState = toRaw(formState.value);
 
+  // console.log(new Date(+solved_formState.apply_time_range[0] * 1000));
+
   const formValidState = await formRef.value.validate();
   formValidState &&
     (solved_formState.projects_detail = [

@@ -60,10 +60,12 @@ const themeOverrides: GlobalThemeOverrides = {
     <!-- <NuxtWelcome /> -->
     <n-config-provider :theme-overrides="themeOverrides">
       <n-message-provider>
-        <!-- <NuxtLayout name="pc" class="select-none whitespace-nowrap"> -->
-        <NuxtLayout class="select-none whitespace-nowrap">
-          <NuxtPage class="" />
-        </NuxtLayout>
+        <n-dialog-provider>
+          <!-- <NuxtLayout name="pc" class="select-none whitespace-nowrap"> -->
+          <NuxtLayout class="select-none whitespace-nowrap">
+            <NuxtPage class="" />
+          </NuxtLayout>
+        </n-dialog-provider>
       </n-message-provider>
     </n-config-provider>
   </div>

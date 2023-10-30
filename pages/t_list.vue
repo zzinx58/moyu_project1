@@ -2,6 +2,7 @@
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+import { useDialog, useMessage } from "naive-ui";
 
 definePageMeta({
   layout: "pc",
@@ -13,6 +14,10 @@ useHead({
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
+
+const naiveMessage = useMessage();
+const naiveDialog = useDialog();
+
 const selectUiMenuStyle = {};
 const selectUiStyle = {
   base: "min-w-240px max-w-260px h-36px",
@@ -223,25 +228,36 @@ const finalListData = computed(() => {
     currentPage.value * tablePageCount
   );
 });
-const handleDeleteItem = async (rowData: any) => {
+const handleDeleteItem = (rowData: any) => {
   const rowDataId = rowData.id;
 
-  const { data: deletedItem } = await useFetch("/api/t_list/t_delete", {
-    method: "POST",
-    body: {
-      id: rowDataId,
+  naiveDialog.create({
+    title: "删除赛事警告",
+    content: "赛事删除操作无法复原，确认删除？",
+    positiveText: "确定删除",
+    negativeText: "取消操作",
+    onPositiveClick: async () => {
+      const { data: deletedItem } = await useFetch("/api/t_list/t_delete", {
+        method: "POST",
+        body: {
+          id: rowDataId,
+        },
+      });
+      if (deletedItem.value) {
+        const deletedItemIndexInRowData = display_list_data.value?.findIndex(
+          (item) => {
+            return item.id === rowDataId;
+          }
+        );
+        deletedItemIndexInRowData &&
+          display_list_data.value?.splice(deletedItemIndexInRowData, 1);
+        naiveMessage.success(`删除赛事操作成功,赛事名:${rowData.sub_name}`);
+        return deletedItem.value;
+      } else {
+        naiveMessage.success(`删除赛事操作成功,赛事不存在`);
+      }
     },
   });
-  if (deletedItem.value) {
-    const deletedItemIndexInRowData = display_list_data.value?.findIndex(
-      (item) => {
-        return item.id === rowDataId;
-      }
-    );
-    deletedItemIndexInRowData &&
-      display_list_data.value?.splice(deletedItemIndexInRowData, 1);
-  }
-  return deletedItem.value;
 };
 
 const showAuditModal = ref(false);
@@ -366,6 +382,13 @@ const handleClickFailedEmailSendButton = () => {
               @click="navigateTo(`/t_info/${row.id}`)"
               >编辑</UButton
             >
+            <!-- <NDialog
+            title="删除赛事"
+            content="删除赛事操作无法回滚，确定删除赛事吗？"
+            negative-text="取消"
+            positive-text="确认删除"
+            @positive-click="handleDeleteItem(row)"
+            /> -->
             <UButton
               icon="i-mdi-delete"
               :trailing="true"

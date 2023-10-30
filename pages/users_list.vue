@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 import { NButton, type DataTableColumns, DataTableRowKey } from "naive-ui";
 import { RowData } from "naive-ui/es/data-table/src/interface";
 import gsap from "gsap";
-import _ from "lodash";
+import _, { head } from "lodash";
 import * as xlsx from "xlsx";
 import { useUserStore } from "@/stores/user";
+
+dayjs.extend(utc);
 
 definePageMeta({
   layout: "pc",
@@ -71,6 +74,36 @@ const columns = (): DataTableColumns => {
       key: "register_time",
       titleAlign: "center",
       className: "text-center!",
+      render(rowData: any) {
+        return h(
+          "div",
+          {
+            class: "justify-center flex flex-col box-border",
+          },
+          [
+            h(
+              "div",
+              {
+                class: "",
+              },
+              `${dayjs
+                .unix(+rowData.register_time)
+                .utc(true)
+                .format("YYYY年MM月DD日 ")}`
+            ),
+            h(
+              "p",
+              {
+                class: "",
+              },
+              `${dayjs
+                .unix(+rowData.register_time)
+                .utc(true)
+                .format("HH:mm:ss")}`
+            ),
+          ]
+        );
+      },
     },
     {
       title: "手机",
@@ -86,14 +119,23 @@ const columns = (): DataTableColumns => {
         return h(
           "div",
           {
-            class: "justify-center flex",
+            class: "justify-center flex items-center gap-2",
           },
-          h("div", {
-            class:
-              rowData.online_status === 1
-                ? "w-18px h-18px bg-#2CDEA7 rounded-full "
-                : " w-18px h-18px bg-#BBBBBB rounded-full",
-          })
+          [
+            h("div", {
+              class:
+                rowData.online_status === 1
+                  ? "w-18px h-18px bg-#2CDEA7 rounded-full "
+                  : " w-18px h-18px bg-#BBBBBB rounded-full",
+            }),
+            h(
+              "p",
+              {
+                class: "",
+              },
+              rowData.online_status === 1 ? "在线" : "离线"
+            ),
+          ]
         );
       },
     },
@@ -720,6 +762,11 @@ const handleClickSimpleSearchButton = async () => {
   <!-- :row-props="rowProps" -->
 </template>
 <style scoped lang="scss">
+
+// Change naive-ui DataTable's register_time padding.
+:deep(.n-data-table .n-data-table-td) {
+  padding: 0px;
+}
 
 :deep(.n-data-table-th) {
   --uno: first:rounded-l-10px last:rounded-r-10px h-60px;

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import * as dayjs from 'dayjs';
+import * as dayjs from "dayjs";
 
 //satisfies ts 字段：本配置表字段后期可能动态增加，可以不用动态写死 type，通过 satisfies 可以获取动态类型提示
 const t_detail_prefix_info: {
@@ -12,86 +12,102 @@ const t_detail_prefix_info: {
   };
 } = {
   organizer: {
-    iconMeta: 'i-custom-svg:d-t-organizer',
-    attrLabel: '主办方',
+    iconMeta: "i-custom-svg:d-t-organizer",
+    attrLabel: "主办方",
   },
   apply_web_url: {
-    iconMeta: 'i-custom-svg:d-t-apply-weburl',
-    attrLabel: '报名链接',
+    iconMeta: "i-custom-svg:d-t-apply-weburl",
+    attrLabel: "报名链接",
     formatter: (web_url: string) => ({
       isOutLink: true,
       web_url: web_url,
     }),
   },
   location: {
-    iconMeta: 'i-custom-svg:d-t-location',
-    attrLabel: '地点',
+    iconMeta: "i-custom-svg:d-t-location",
+    attrLabel: "地点",
   },
   //Bug 点
   //name:
   mode: {
-    iconMeta: 'i-custom-svg:d-t-mode',
-    attrLabel: '比赛模式',
+    iconMeta: "i-custom-svg:d-t-mode",
+    attrLabel: "比赛模式",
     formatter: (objWithIdAndLabel: Record<string, any>) =>
       objWithIdAndLabel.label,
   },
   groups: {
-    iconMeta: 'i-custom-svg:d-t-groups',
-    attrLabel: '组别',
+    iconMeta: "i-custom-svg:d-t-groups",
+    attrLabel: "组别",
   },
   apply_condition: {
-    iconMeta: 'i-custom-svg:d-t-apply-conditions',
-    attrLabel: '报名条件',
+    iconMeta: "i-custom-svg:d-t-apply-conditions",
+    attrLabel: "报名条件",
   },
   organizer_web_url: {
-    iconMeta: 'i-custom-svg:d-t-weburl',
-    attrLabel: '主办方网站',
+    iconMeta: "i-custom-svg:d-t-weburl",
+    attrLabel: "主办方网站",
     formatter: (web_url: string) => ({
       isOutLink: true,
       web_url: web_url,
     }),
   },
   apply_time_range: {
-    iconMeta: 'i-custom-svg:d-t-apply-time-range',
-    attrLabel: '报名截止日期',
+    iconMeta: "i-custom-svg:d-t-apply-time-range",
+    attrLabel: "报名截止日期",
     formatter: (time_range: [string, string]) => {
       //Bug 点
       if (time_range) {
-        return `${dayjs.unix(+time_range[0]).format('YYYY年MM月DD日')}-${dayjs
+        return `${dayjs.unix(+time_range[0]).format("YYYY年MM月DD日")}-${dayjs
           .unix(+time_range[1])
-          .format('MM月DD日')}`;
+          .format("MM月DD日")}`;
       } else {
-        return '赛事未设置报名截止日期';
+        // return "赛事未设置报名截止日期";
+        return "";
       }
     },
   },
   time_range: {
-    iconMeta: 'i-custom-svg:d-t-time-range',
-    attrLabel: '比赛时间',
+    iconMeta: "i-custom-svg:d-t-time-range",
+    attrLabel: "比赛时间",
     formatter: (time_range: [string, string]) => {
       if (time_range) {
-        return `${dayjs.unix(+time_range[0]).format('YYYY年MM月DD日')}-${dayjs
+        if (
+          dayjs.unix(+time_range[0]).diff(dayjs.unix(+time_range[1]), "day") <=
+          1
+        ) {
+          return `${dayjs.unix(+time_range[0]).format("YYYY年MM月DD日")}`;
+        }
+        if (
+          dayjs.unix(+time_range[0]).year() !==
+          dayjs.unix(+time_range[1]).year()
+        ) {
+          return `${dayjs.unix(+time_range[0]).format("YYYY年MM月DD日")}-${dayjs
+            .unix(+time_range[1])
+            .format("YYYY年MM月DD日")}`;
+        }
+        return `${dayjs.unix(+time_range[0]).format("YYYY年MM月DD日")}-${dayjs
           .unix(+time_range[1])
-          .format('MM月DD日')}`;
+          .format("MM月DD日")}`;
       } else {
-        return '赛事未设置比赛时间';
+        // return "赛事未设置比赛时间";
+        return "";
       }
     },
   },
   type: {
-    iconMeta: 'i-custom-svg:d-t-type',
-    attrLabel: '比赛类型',
+    iconMeta: "i-custom-svg:d-t-type",
+    attrLabel: "比赛类型",
     formatter: (typeObj: { id: number; label: string }) => {
       return typeObj.label;
     },
   },
   projects: {
-    iconMeta: 'i-custom-svg:d-t-projects',
-    attrLabel: '比赛项目',
+    iconMeta: "i-custom-svg:d-t-projects",
+    attrLabel: "比赛项目",
   },
   apply_quota: {
-    iconMeta: 'i-custom-svg:d-t-apply-quota',
-    attrLabel: '报名名额',
+    iconMeta: "i-custom-svg:d-t-apply-quota",
+    attrLabel: "报名名额",
     formatter: (apply_quota: number) => {
       return `${apply_quota}人`;
     },
@@ -107,15 +123,15 @@ const t_detail_prefix_info: {
 const calcRoundsName = (roundsTotal: number) => {
   switch (roundsTotal) {
     case 1:
-      return ['决赛'];
+      return ["决赛"];
     case 2:
-      return ['初赛', '决赛'];
+      return ["初赛", "决赛"];
     case 3:
-      return ['初赛', '复赛', '决赛'];
+      return ["初赛", "复赛", "决赛"];
     case 4:
-      return ['初赛', '复赛', '半决赛', '决赛'];
+      return ["初赛", "复赛", "半决赛", "决赛"];
     case 5:
-      return ['初赛', '复赛', '四分之一决赛', '半决赛', '决赛'];
+      return ["初赛", "复赛", "四分之一决赛", "半决赛", "决赛"];
   }
 };
 
@@ -131,8 +147,8 @@ type AdvanceDetailPrefixType = Partial<{
     label: string;
     iconMeta: string;
   }>;
-  'label-attribute-name': string;
-  'iconMeta-attribute-name': string;
+  "label-attribute-name": string;
+  "iconMeta-attribute-name": string;
 }>;
 type BaseDetailPrefixUIType = Partial<{
   iconMeta: string;
@@ -147,12 +163,12 @@ type BaseDetailPrefixUIType = Partial<{
   // ui: { wrapper: string; label: string; container: string; [key: string]: any };
 }>;
 
-const DetailPrefixUIPreset: BaseDetailPrefixUIType['ui'] = {
-  container: 'flex text-white items-center',
-  wrapper: 'flex items-center text-18px mr-3 gap-2',
-  label: 'font-bold',
+const DetailPrefixUIPreset: BaseDetailPrefixUIType["ui"] = {
+  container: "flex text-white items-center",
+  wrapper: "flex items-center text-18px mr-3 gap-2",
+  label: "font-bold",
   // content: 'text-16px leading-20px',
-  content: 'text-16px leading-20px whitespace-pre-wrap',
+  content: "text-16px leading-20px whitespace-pre-wrap",
 };
 
 const props = defineProps<{
@@ -161,8 +177,8 @@ const props = defineProps<{
 const display_infoData = toRef(props.t_info_data);
 
 function isValidURL(str: string) {
-  if (typeof str === 'string') {
-    return str.startsWith('https://');
+  if (typeof str === "string") {
+    return str.startsWith("https://");
   } else return false;
 }
 const tDetailInfoTemplateObjArr = () => {
@@ -229,7 +245,8 @@ const tDetailInfoObjArr = tDetailInfoTemplateObjArr();
         >{{
           content.web_url && isValidURL(content.web_url)
             ? content.web_url
-            : `链接不合规，请重新核查`
+            : // : `链接不合规，请重新核查`
+              ``
         }}</NuxtLink
       >
       <p v-else :class="`${contentClass ? contentClass : ui?.content}`">
