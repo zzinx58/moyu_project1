@@ -317,7 +317,8 @@ const formState = ref<FinalFormStateType>({
   display_order: 0,
   banner: {
     name: "zzx58",
-    url: "https://p9-passport.byteacctimg.com/img/user-avatar/59296777f828ae4101819744e0ef154c~64x64.awebp",
+    // url: "https://p9-passport.byteacctimg.com/img/user-avatar/59296777f828ae4101819744e0ef154c~64x64.awebp",
+    url: "about:blank",
     uploadApiUrl: "",
   },
   projects_detail: [],
