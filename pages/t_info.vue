@@ -817,6 +817,7 @@ watch(
       label="比赛名称"
       name="name"
       :style="{ 'align-items': 'start' }"
+      required
     >
       <UInput :ui="inputUiStyle" v-model="formState.name" :disabled="false" />
     </UFormGroup>
@@ -826,6 +827,7 @@ watch(
         label="比赛模式"
         name="mode"
         :style="{ 'align-items': 'start' }"
+        required
       >
         <USelectMenu
           v-model="formState.mode"
@@ -841,6 +843,7 @@ watch(
         label="比赛类型"
         name="type"
         :style="{ 'align-items': 'start' }"
+        required
       >
         <!-- value-attribute="type_id" -->
         <USelectMenu
@@ -895,6 +898,7 @@ watch(
         class="items-center"
         :style="{ 'align-items': 'start' }"
         name="time_range"
+        required
       >
         <el-date-picker
           type="datetimerange"
@@ -912,6 +916,7 @@ watch(
         class="items-center"
         :style="{ 'align-items': 'start' }"
         name="apply_time_range"
+        required
       >
         <el-date-picker
           type="datetimerange"
