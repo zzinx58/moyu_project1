@@ -112,10 +112,11 @@ const columns: {
     label: "操作",
     key: "actions",
   },
-  {
-    label: "审核",
-    key: "audit_status",
-  },
+  // Hidden for now. 2023-10-31.
+  // {
+  //   label: "审核",
+  //   key: "audit_status",
+  // },
 ];
 
 //BUG 点，dayjs 获取当前时间的秒时间戳不需要进行 utc(true) 转换。

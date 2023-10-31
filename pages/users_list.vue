@@ -765,7 +765,7 @@ const handleClickSimpleSearchButton = async () => {
 
 // Change naive-ui DataTable's register_time padding.
 :deep(.n-data-table .n-data-table-td) {
-  padding: 0px;
+  padding: 0 8px 0 8px;
 }
 
 :deep(.n-data-table-th) {

@@ -244,9 +244,9 @@ const tDetailInfoObjArr = tDetailInfoTemplateObjArr();
         }`"
         >{{
           content.web_url && isValidURL(content.web_url)
-            ? content.web_url
-            : // : `链接不合规，请重新核查`
-              ``
+            ? // : `链接不合规，请重新核查`
+              content.web_url
+            : ``
         }}</NuxtLink
       >
       <p v-else :class="`${contentClass ? contentClass : ui?.content}`">
