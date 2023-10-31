@@ -709,11 +709,33 @@ const applyTimeRangeDisabledHour = () => {
 };
 const applyTimeRangeDisabledMinute = () => {
   if (formState.value.time_range) {
-    const targetMinutes = new Date(
+    const selectedTime = formState.value.apply_time_range[1]
+      ? new Date(+formState.value.apply_time_range[1] * 1000)
+      : new Date(+formState.value.time_range[0] * 1000);
+    let targetMinuteAt = 0;
+    const isSameDay = (dateA: Date, dateB: Date) => {
+      return (
+        dateA.getUTCFullYear() === dateB.getUTCFullYear() &&
+        dateA.getUTCMonth() === dateB.getUTCMonth() &&
+        dateA.getUTCDate() === dateB.getUTCDate()
+      );
+    };
+    const t_applyPeriod_startDateObj = selectedTime;
+    const t_hostPeriod_startDateObj = new Date(
       +formState.value.time_range[0] * 1000
-    ).getMinutes();
+    );
+    targetMinuteAt = isSameDay(
+      t_applyPeriod_startDateObj,
+      t_hostPeriod_startDateObj
+    )
+      ? t_hostPeriod_startDateObj.getMinutes()
+      : 0;
+
+    // const targetMinutes = new Date(
+    //   +formState.value.time_range[0] * 1000
+    // ).getMinutes();
     const resultMinutesArr = Array.from({ length: 60 }, (_, index) => {
-      if (index < targetMinutes) return index;
+      if (index < targetMinuteAt) return index;
       // return undefined;
       return -1;
     });
