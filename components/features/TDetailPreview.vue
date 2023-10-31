@@ -33,7 +33,7 @@ const t_detail_prefix_info: {
     iconMeta: "i-custom-svg:d-t-mode",
     attrLabel: "比赛模式",
     formatter: (mode: Record<string, any>) => {
-      debugger;
+      // debugger;
       return mode.label;
     },
   },
