@@ -32,8 +32,10 @@ const t_detail_prefix_info: {
   mode: {
     iconMeta: "i-custom-svg:d-t-mode",
     attrLabel: "比赛模式",
-    formatter: (objWithIdAndLabel: Record<string, any>) =>
-      objWithIdAndLabel.label,
+    formatter: (mode: Record<string, any>) => {
+      debugger;
+      return mode.label;
+    },
   },
   groups: {
     iconMeta: "i-custom-svg:d-t-groups",
@@ -243,9 +245,8 @@ const tDetailInfoObjArr = tDetailInfoTemplateObjArr();
             : `/t_list`
         }`"
         >{{
-          content.web_url && isValidURL(content.web_url)
-            ? // : `链接不合规，请重新核查`
-              content.web_url
+          content.web_url && isValidURL(content.web_url) // : `链接不合规，请重新核查`
+            ? content.web_url
             : ``
         }}</NuxtLink
       >

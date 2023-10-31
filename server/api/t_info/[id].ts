@@ -1,4 +1,4 @@
-import prisma from '../../database/client';
+import prisma from "../../database/client";
 
 export default defineEventHandler(async (e) => {
   const targetId = e.context.params?.id
@@ -9,7 +9,7 @@ export default defineEventHandler(async (e) => {
       e,
       createError({
         statusCode: 400,
-        statusMessage: '缺少查询 id',
+        statusMessage: "缺少查询 id",
       })
     );
   }
@@ -20,11 +20,11 @@ export default defineEventHandler(async (e) => {
     },
   });
   let stringItem = JSON.stringify(specific_T, (key, value) => {
-    if (typeof value === 'bigint') return value.toString();
+    if (typeof value === "bigint") return value.toString();
     return value;
   });
   let result_temp = JSON.parse(stringItem);
-  // console.log('id-result-temp:', result_temp);
+  // console.log("id-result-temp:", result_temp);
 
   let type_temp = {
     id: result_temp.type_id,
@@ -35,29 +35,30 @@ export default defineEventHandler(async (e) => {
   if (result_temp.on_off_line === 1) {
     mode_temp = {
       id: 1,
-      label: '线下赛',
+      label: "线下赛",
     };
   }
   if (result_temp.on_off_line === 2) {
     mode_temp = {
       id: 2,
-      label: '线上赛',
+      label: "线上赛",
     };
   }
 
-  result_temp['mode'] = mode_temp;
-  result_temp['type'] = type_temp;
-  result_temp['name'] = result_temp.sub_name;
+  result_temp["mode"] = mode_temp;
+  result_temp["type"] = type_temp;
+  result_temp["name"] = result_temp.sub_name;
 
-  if (!result_temp['banner']) {
-    result_temp['banner'] = {
-      name: 'zzx58',
-      url: 'https://p9-passport.byteacctimg.com/img/user-avatar/59296777f828ae4101819744e0ef154c~64x64.awebp',
-      uploadApiUrl: '',
+  if (!result_temp["banner"]) {
+    result_temp["banner"] = {
+      name: "zzx",
+      url: "about:blank",
+      uploadApiUrl: "",
     };
   }
 
   const result = result_temp;
+  // console.log(result);
 
   return result;
 });

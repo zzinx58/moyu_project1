@@ -354,6 +354,8 @@ onBeforeMount(async () => {
     }
     if (t_data.value) {
       formState.value = t_data.value;
+      // Bug point. Notice the asynchronous problem between formState variable and preview_formInfo variable.
+      // debugger;
       t_exist.value = true;
 
       //Success!
@@ -745,11 +747,13 @@ const applyTimeRangeDisabledMinute = () => {
 };
 
 const showAuditModal = ref(false);
-const preview_formInfo = ref(formState.value);
+// Bug point. About asynchronous problem.
+// const preview_formInfo = ref(formState.value);
 const handleClickPreviewButton = async () => {
   if (await formRef.value.validate()) {
     showAuditModal.value = true;
-
+    // Bug point. About asynchronous problem.
+    const preview_formInfo = formState.value;
     preview_formInfo.value.projects_detail = [
       // ...solved_custom_projects_detail,
       ...toRaw(t_create_preset_selected_projects_detail.value),
@@ -1552,8 +1556,9 @@ watch(
       class="bg-#B0B0C4! min-w-800px! max-w-1200px!"
     >
       <FeaturesTDetailPreview
-        v-bind:t_info_data="preview_formInfo"
+        v-bind:t_info_data="formState"
       ></FeaturesTDetailPreview>
+      <!-- v-bind:t_info_data="preview_formInfo" -->
       <!-- v-bind:t_info_data="formState" -->
     </n-card>
   </n-modal>
