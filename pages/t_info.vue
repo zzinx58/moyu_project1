@@ -3,6 +3,7 @@ spanspan
 import type { UploadInstance, UploadProps, UploadRawFile } from "element-plus";
 import { genFileId } from "element-plus";
 import type { FormEvent, FormError } from "@nuxthq/ui/dist/runtime/types";
+import { Dayjs } from "dayjs";
 
 definePageMeta({
   layout: "pc",
@@ -667,11 +668,36 @@ const applyTimeRangeDisabledTime = (selectedTime: Date) =>
   });
 const applyTimeRangeDisabledHour = () => {
   if (formState.value.time_range) {
-    const targetHours = new Date(
+    const selectedTime = formState.value.apply_time_range[1]
+      ? new Date(+formState.value.apply_time_range[1] * 1000)
+      : new Date(+formState.value.time_range[0] * 1000);
+    let targetHourAt = 0;
+    const isSameDay = (dateA: Date, dateB: Date) => {
+      return (
+        dateA.getUTCFullYear() === dateB.getUTCFullYear() &&
+        dateA.getUTCMonth() === dateB.getUTCMonth() &&
+        dateA.getUTCDate() === dateB.getUTCDate()
+      );
+    };
+    // Is selected apply_start day available in here?
+    const t_applyPeriod_startDateObj = selectedTime;
+    const t_hostPeriod_startDateObj = new Date(
       +formState.value.time_range[0] * 1000
-    ).getHours();
+    );
+    // console.log(
+    //   isSameDay(t_applyPeriod_startDateObj, t_hostPeriod_startDateObj)
+    // );
+    targetHourAt = isSameDay(
+      t_applyPeriod_startDateObj,
+      t_hostPeriod_startDateObj
+    )
+      ? t_hostPeriod_startDateObj.getHours()
+      : 0;
+    // const targetHours = new Date(
+    //   +formState.value.time_range[0] * 1000
+    // ).getHours();
     const resultHourArr = Array.from({ length: 24 }, (_, index) => {
-      if (index < targetHours) return index;
+      if (index < targetHourAt) return index;
       return -1;
       // return undefined;
     });
