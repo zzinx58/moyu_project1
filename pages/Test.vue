@@ -14,6 +14,8 @@ definePageMeta({
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
+const userStore = useUserStore();
+
 // const managerEntity = useManagerStore();
 // console.log(managerEntity.$state);
 // const test = $fetch('https://www.baidu.com');
@@ -256,7 +258,6 @@ dayjs.extend(timezone);
 //   // params: Object.fromEntries([["id", "66348"]]),
 // });
 // const simpleFilteredData = await $fetch("/api_cors");
-const userStore = useUserStore();
 
 // const { data: simpleFilteredData, error } = await useFetch(
 //   // "/api_cors/admins/login",
@@ -326,15 +327,19 @@ const userStore = useUserStore();
 //   },
 // });
 // console.log(data.value);
-const test = await $fetch("/api/user/user_detail/65942", {
-  method: "GET",
-  headers: {
-    Authorization: `Bearer ${userStore.token}`,
-  },
-});
-console.log(test);
+// const test = await $fetch("/api/user/user_detail/65942", {
+//   method: "GET",
+//   headers: {
+//     Authorization: `Bearer ${userStore.token}`,
+//   },
+// });
+// console.log(test);
+
+const { data: t_data } = await useFetch("/api/t_info/60");
 </script>
 <template>
+  <FeaturesTRaceSchedule :time_range_related_obj="t_data" />
+  <pre>{{ t_data.projects_detail }}</pre>
   <!-- <pre v-if="simpleFilteredData"> {{ simpleFilteredData }}</pre>
   <div v-else>
     <pre>{{ error?.data }}</pre>
@@ -345,8 +350,8 @@ console.log(test);
     <pre>{{ error?.statusMessage }}</pre>
   </div> -->
 
-  <div id="test"></div>
-  <div class="bg-[url()]"></div>
+  <!-- <div id="test"></div>
+  <div class="bg-[url()]"></div> -->
   <!-- <pre>{{ ChoroplethData }}</pre> -->
   <!-- <n-select
     :options="[
