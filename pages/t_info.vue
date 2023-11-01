@@ -258,6 +258,7 @@ export interface ProjectDetailType {
   label: string;
   iconMeta?: string;
   passline: string | number;
+  //还原时限？怎么用了这个名字，reduction - 还原。
   reduction_limit: string | number;
   rule_content: string;
   groups: string[];
@@ -553,6 +554,16 @@ const validateRules = (): FormError[] => {
   if (formState.value.apply_time_range?.[0] === "")
     errors.push({ path: "apply_time_range", message: "赛事类型必填" });
 
+  if (!formState.value.organizer)
+    errors.push({ path: "organizer", message: "主办方名称必填" });
+  if (!formState.value.apply_quota)
+    errors.push({ path: "apply_quota", message: "报名名额必填" });
+  if (!formState.value.apply_web_url)
+    errors.push({ path: "apply_web_url", message: "报名网址必填" });
+  if (!formState.value.location)
+    errors.push({ path: "location", message: "比赛地点必填" });
+  if (!formState.value.projects_detail.length)
+    errors.push({ path: "projects_detail", message: "比赛项目必选" });
   // console.log(errors);
   return errors;
   // return [];
@@ -865,7 +876,12 @@ watch(
     </div>
     <!-- <div class="flex space-x-9"> -->
     <div class="flex flex-wrap gap-5">
-      <UFormGroup :ui="formGroupUiStyle" label="主办方">
+      <UFormGroup
+        :ui="formGroupUiStyle"
+        label="主办方"
+        required
+        name="organizer"
+      >
         <UInput
           class="min-w-200px"
           :ui="inputUiStyle"
@@ -881,7 +897,12 @@ watch(
           :disabled="false"
         />
       </UFormGroup>
-      <UFormGroup :ui="formGroupUiStyle" label="报名网站">
+      <UFormGroup
+        :ui="formGroupUiStyle"
+        label="报名网站"
+        required
+        name="apply_web_url"
+      >
         <UInput
           class="min-w-200px"
           :ui="inputUiStyle"
@@ -933,7 +954,12 @@ watch(
         />
       </UFormGroup>
     </div>
-    <UFormGroup :ui="formGroupUiStyle" label="比赛地点">
+    <UFormGroup
+      :ui="formGroupUiStyle"
+      label="比赛地点"
+      required
+      name="location"
+    >
       <UInput
         class="min-w-340px"
         :ui="inputUiStyle"
@@ -957,7 +983,12 @@ watch(
           :disabled="false"
         />
       </UFormGroup>
-      <UFormGroup :ui="formGroupUiStyle" label="报名名额">
+      <UFormGroup
+        :ui="formGroupUiStyle"
+        label="报名名额"
+        required
+        name="apply_quota"
+      >
         <UInput
           :ui="inputUiStyle"
           v-model="formState.apply_quota"
@@ -978,6 +1009,8 @@ watch(
           })
         "
         label="比赛项目"
+        required
+        name="projects_detail"
       >
         <CustomCheckGroup
           :model-value="t_create_preset_selected_projects"
