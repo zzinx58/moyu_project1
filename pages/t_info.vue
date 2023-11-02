@@ -562,7 +562,8 @@ const validateRules = (): FormError[] => {
     errors.push({ path: "apply_web_url", message: "报名网址必填" });
   if (!formState.value.location)
     errors.push({ path: "location", message: "比赛地点必填" });
-  if (!formState.value.projects_detail.length)
+  // t_create_preset_selected_projects_detail is the present of custom select projects.
+  if (t_create_preset_selected_projects_detail.value.length === 0)
     errors.push({ path: "projects_detail", message: "比赛项目必选" });
   // console.log(errors);
   return errors;
