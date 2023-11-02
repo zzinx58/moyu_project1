@@ -1,4 +1,4 @@
-import prisma from '../../database/client';
+import prisma from "../../database/client";
 export default defineEventHandler(async (e) => {
   //读取Route Param载体，判空
   //读取不到 方法限制的原因？post？
@@ -8,7 +8,7 @@ export default defineEventHandler(async (e) => {
   //   : undefined;
   // console.log(contextTest);
   const { id: updateTargetId, t_create_form } = await readBody(e);
-  if (!t_create_form) return sendError(e, createError('赛事创建表单不可为空'));
+  if (!t_create_form) return sendError(e, createError("赛事创建表单不可为空"));
   // console.log(updateTargetId);
   // console.log('raw_tcreateForm:', t_create_form);
 
@@ -86,13 +86,13 @@ export default defineEventHandler(async (e) => {
   let groups_temp_temp = t_create_form.projects_detail.map((item: any) => {
     return item.groups;
   });
-  let groups_temp = [...new Set(groups_temp_temp.flat())].join('、');
+  let groups_temp = [...new Set(groups_temp_temp.flat())].join("、");
   // console.log(groups_temp);
   let projects_temp = t_create_form.projects_detail
     .map((item: any) => {
       return item.label;
     })
-    .join('、');
+    .join("、");
   // console.log(projects_temp);
 
   // console.log('t_create_form', t_create_form);
@@ -127,12 +127,12 @@ export default defineEventHandler(async (e) => {
   });
 
   // console.log(t_create_form.project_detail);
-  let stringItem = JSON.stringify(test5, (key, value) => {
-    if (typeof value === 'bigint') return value.toString();
-    return value;
-  });
-  let result_temp = JSON.parse(stringItem);
+  // let stringItem = JSON.stringify(test5, (key, value) => {
+  //   if (typeof value === 'bigint') return value.toString();
+  //   return value;
+  // });
+  // let result_temp = JSON.parse(stringItem);
   // console.log('test5:', result_temp);
 
-  return 'Operation Success!';
+  return "Operation Success!";
 });

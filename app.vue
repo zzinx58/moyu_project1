@@ -54,6 +54,8 @@ const themeOverrides: GlobalThemeOverrides = {
     itemBorderActive: "none",
   },
 };
+// Vueuse provided hooks.
+useLocalStorage("z-version-check", "2023-11-02");
 </script>
 <template>
   <div>

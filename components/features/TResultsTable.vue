@@ -1,43 +1,43 @@
 <script setup lang="ts">
-import { TResultType } from 'server/api/t_detail/t_results/[t_id].get';
-import { genFileId } from 'element-plus';
-import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';
-import * as xlsx from 'xlsx';
+import { TResultType } from "server/api/t_detail/t_results/[t_id].get";
+import { genFileId } from "element-plus";
+import type { UploadInstance, UploadProps, UploadRawFile } from "element-plus";
+import * as xlsx from "xlsx";
 
 const tableUiStyle = {
   th: {
-    color: 'text-white bg-primary_2',
-    base: 'h-48px text-left trl:text-right',
-    padding: 'py-0 px-3',
+    color: "text-white bg-primary_2",
+    base: "h-48px text-left trl:text-right",
+    padding: "py-0 px-3",
   },
   tr: {
-    base: 'even:bg-#EDF1FE h-36px',
+    base: "even:bg-#EDF1FE h-36px",
   },
   td: {
-    padding: 'px-3 py-1',
-    base: 'whitespace-nowrap',
+    padding: "px-3 py-1",
+    base: "whitespace-nowrap",
   },
   // tbody: ' divide-y divide-gray-200 dark:divide-gray-800',
-  tbody: '',
-  base: 'min-w-full table-fixed',
+  tbody: "",
+  base: "min-w-full table-fixed",
 };
 const formGroupUiStyle = {
-  wrapper: 'flex items-center',
+  wrapper: "flex items-center",
   label: {
-    base: 'mr-3 font-sans text-18px w-40px whitespace-pre-wrap text-center',
+    base: "mr-3 font-sans text-18px w-40px whitespace-pre-wrap text-center",
   },
-  container: 'mt-0',
-  error: 'text-red-400 dark:text-red-400 mt-1 text-14px',
+  container: "mt-0",
+  error: "text-red-400 dark:text-red-400 mt-1 text-14px",
 };
 const inputUiStyle = {
-  rounded: 'rounded-10px',
+  rounded: "rounded-10px",
   color: {
     white: {
       outline:
-        'shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary_1 dark:focus:ring-primary-400',
+        "shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary_1 dark:focus:ring-primary-400",
     },
   },
-  base: 'relative block w-full disabled:cursor-not-allowed disabled:bg-#E5E5E5 focus:outline-none border-0 min-w-100px',
+  base: "relative block w-full disabled:cursor-not-allowed disabled:bg-#E5E5E5 focus:outline-none border-0 min-w-100px",
 };
 
 const props = defineProps<{
@@ -51,23 +51,23 @@ const t_phase_options: {
   label: string;
 }[] = [
   {
-    label: '1',
+    label: "1",
     phase: 1,
   },
   {
-    label: '2',
+    label: "2",
     phase: 2,
   },
   {
-    label: '3',
+    label: "3",
     phase: 3,
   },
   {
-    label: '4',
+    label: "4",
     phase: 4,
   },
   {
-    label: '5',
+    label: "5",
     phase: 5,
   },
 ];
@@ -76,46 +76,46 @@ type NuxtUITableColumnAttrType = {
   key: string;
   label: string;
   sortable?: boolean;
-  direction?: 'asc' | 'desc';
+  direction?: "asc" | "desc";
   class?: string;
 };
 const columnsStable: NuxtUITableColumnAttrType[] = [
   {
-    label: '姓名',
-    key: 'name',
+    label: "姓名",
+    key: "name",
   },
   {
-    label: '编号',
-    key: 't_number',
+    label: "编号",
+    key: "t_number",
   },
   {
-    label: 'WCU id',
-    key: 'user_id',
+    label: "WCU id",
+    key: "user_id",
     // key: 'wcu_id',
   },
   {
-    label: '|',
-    key: 'interval',
+    label: "|",
+    key: "interval",
   },
 ];
 const columnsFlexible: NuxtUITableColumnAttrType[] = [
   {
-    label: '最好成绩(s/秒)',
-    key: 'best_duration',
+    label: "最好成绩(s/秒)",
+    key: "best_duration",
   },
   {
-    label: '平均成绩(s/秒)',
-    key: 'avg_duration',
+    label: "平均成绩(s/秒)",
+    key: "avg_duration",
   },
   {
-    label: '详情 [r1,r2,r...] (s/秒)',
-    key: 'overviewResults',
+    label: "详情 [r1,r2,r...] (s/秒)",
+    key: "overviewResults",
   },
   {
-    label: '晋级',
-    key: 'is_rise',
+    label: "晋级",
+    key: "is_rise",
     sortable: true,
-    direction: 'asc',
+    direction: "asc",
   },
 ];
 
@@ -148,15 +148,15 @@ const display_resultsData = computed(() => {
       .map((itemA, indexA) => {
         const itemAOverviewResults: [string, number][] = [];
         Object.entries(itemA).forEach(([key, value]) => {
-          if (key.startsWith('r') && key.endsWith('_duration')) {
-            const _durationStrIndex = key.indexOf('_duration');
+          if (key.startsWith("r") && key.endsWith("_duration")) {
+            const _durationStrIndex = key.indexOf("_duration");
             let keySimplified = key.slice(0, _durationStrIndex);
 
             itemAOverviewResults.push(
               // Object.fromEntries([[keySimplified, value]])
               [
                 keySimplified,
-                typeof value === 'number' ? value : parseInt('' + value),
+                typeof value === "number" ? value : parseInt("" + value),
               ]
             );
           }
@@ -226,16 +226,16 @@ const route = useRoute();
 const router = useRouter();
 const routeParamId = route.params.t_id;
 const formStateObjTemp = {
-  name: '',
-  user_id: '',
-  t_number: '',
+  name: "",
+  user_id: "",
+  t_number: "",
   phase: undefined,
   projects: undefined,
-  r1_duration: '',
-  r2_duration: '',
-  r3_duration: '',
-  r4_duration: '',
-  r5_duration: '',
+  r1_duration: "",
+  r2_duration: "",
+  r3_duration: "",
+  r4_duration: "",
+  r5_duration: "",
 };
 const manuallyEnterFormState = ref<{
   name: string;
@@ -251,7 +251,7 @@ const manuallyEnterFormState = ref<{
 }>(structuredClone(formStateObjTemp));
 
 const uploadApplicantsExcelRef = ref<UploadInstance>();
-const handleFileExceed: UploadProps['onExceed'] = (files) => {
+const handleFileExceed: UploadProps["onExceed"] = (files) => {
   uploadApplicantsExcelRef.value!.clearFiles();
   const file = files[0] as UploadRawFile;
   file.uid = genFileId();
@@ -270,12 +270,12 @@ const handleUploadFileOnChange = (
     fileReader.onloadend = (loadEndEvent) => {
       // console.log(loadEndEvent.target?.result);
       const fileArrBuff = loadEndEvent.target?.result;
-      const workbook = xlsx.read(fileArrBuff, { type: 'buffer' });
+      const workbook = xlsx.read(fileArrBuff, { type: "buffer" });
       const sheetNames = workbook.SheetNames;
       const sheet1 = workbook.Sheets[sheetNames[0]];
       const sheet1Data = xlsx.utils.sheet_to_json(sheet1);
-      $fetch('/api/t_detail/t_results/createMany', {
-        method: 'POST',
+      $fetch("/api/t_detail/t_results/createMany", {
+        method: "POST",
         body: {
           t_id: routeParamId,
           data: sheet1Data,
@@ -287,7 +287,7 @@ const handleUploadFileOnChange = (
 
 const handleManualEnterPlayerResults = () => {
   if (props.t_projects.length === 0) {
-    alert('赛事项目为空，不可录入相关数据');
+    alert("赛事项目为空，不可录入相关数据");
   } else {
     const r1_duration = +manuallyEnterFormState.value.r1_duration;
     const r2_duration = +manuallyEnterFormState.value.r2_duration;
@@ -320,15 +320,16 @@ const handleManualEnterPlayerResults = () => {
         }, 0) / durationResultArr.length,
       best_duration: Math.min(...durationResultArr),
     };
-    console.log(finalFormData);
-    $fetch('/api/t_detail/t_results/createMany', {
-      method: 'POST',
+    // console.log(finalFormData);
+    $fetch("/api/t_detail/t_results/createMany", {
+      method: "POST",
       body: {
         data: [finalFormData],
       },
     }).then((e) => {
-      console.log(e);
-      alert('手动录入选手信息' + e);
+      // console.log(e);
+      if (e === 1) alert("手动录入选手信息成功");
+      if (e === 0) alert("手动录入选手信息失败");
     });
   }
 };
@@ -583,7 +584,7 @@ const selectedPhase = ref();
                       .map((item: [string, number], index: number) => {
                         return resultNumberFormatter(item[1] / 1000);
                       })
-                      .join('&nbsp&nbsp&nbsp&nbsp&nbsp')
+                      .join("&nbsp&nbsp&nbsp&nbsp&nbsp")
                   }}
                 </span>
               </template>
@@ -593,7 +594,7 @@ const selectedPhase = ref();
                     row.is_rise ? 'bg-green text-white' : ''
                   }`"
                 >
-                  {{ row.is_rise ? '是' : '否' }}
+                  {{ row.is_rise ? "是" : "否" }}
                 </div>
               </template>
             </UTable>

@@ -241,6 +241,7 @@ const handleClickCollapseItem: CollapseProps["onItemHeaderClick"] = ({
             <div class="absolute"></div>
           </template>
           <template #default>
+            <!-- Bugs point -->
             <FeaturesTApplicantsTable
               v-if="t_applicantsData && t_infoData"
               :t_projects="

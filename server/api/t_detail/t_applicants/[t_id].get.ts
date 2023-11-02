@@ -1,4 +1,4 @@
-import prisma from '../../../database/client';
+import prisma from "../../../database/client";
 export interface ApplicantType {
   id: number;
   t_id: number;
@@ -27,7 +27,7 @@ export default defineEventHandler(async (e) => {
       e,
       createError({
         statusCode: 400,
-        statusMessage: '缺少查询 id',
+        statusMessage: "缺少查询 id",
         // message: 'asd',
       })
     );
@@ -41,10 +41,11 @@ export default defineEventHandler(async (e) => {
 
   // console.log(targetData);
   const result_temp = JSON.stringify(targetData, (key, value) => {
-    if (typeof value === 'bigint') return value.toString();
+    if (typeof value === "bigint") return value.toString();
     return value;
   });
   const result = JSON.parse(result_temp);
+  // console.log(result);
 
   // return `request get: ${t_id}`;
   return result;

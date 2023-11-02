@@ -1,5 +1,5 @@
-import prisma from '../../../database/client';
-import * as xlsx from 'xlsx';
+import prisma from "../../../database/client";
+import * as xlsx from "xlsx";
 
 export default defineEventHandler(async (e) => {
   // const bodyPayload = await readBody(e);
@@ -13,21 +13,27 @@ export default defineEventHandler(async (e) => {
         // message: '赛事id 或 表单数据不可为空',
         // statusMessage: '赛事id 或 表单数据不可为空',
         // statusText: '赛事id 或 表单数据不可为空',
-        statusText: 'id and data could not be null',
-        statusMessage: 'id and data could not be null - statusMessage',
-        message: 'id and data could not be null - message',
+        statusText: "id and data could not be null",
+        statusMessage: "id and data could not be null - statusMessage",
+        message: "id and data could not be null - message",
       })
     );
   }
-  console.log(uploadExcelDataArr);
+  // console.log(uploadExcelDataArr);
 
   let result = await prisma.tournament_apply_t.createMany({
     data: uploadExcelDataArr,
     skipDuplicates: true,
   });
-  // console.log(result);
+  console.log("enter applicant_info result:", result);
 
   // console.log(t_id, excelJson);
   //   if (!t_create_form) return sendError(e, createError('赛事创建表单不可为空'));
-  return '操作完成';
+  if (result.count > 0) {
+    // return "操作完成";
+    return 1;
+  } else {
+    // return "操作失败";
+    return 0;
+  }
 });

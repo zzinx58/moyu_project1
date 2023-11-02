@@ -1,44 +1,44 @@
 <script setup lang="ts">
-import { ApplicantType } from 'server/api/t_detail/t_applicants/[t_id].get';
-import { genFileId } from 'element-plus';
-import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus';
-import { ReadStream } from 'fs';
-import * as xlsx from 'xlsx';
+import { ApplicantType } from "server/api/t_detail/t_applicants/[t_id].get";
+import { genFileId } from "element-plus";
+import type { UploadInstance, UploadProps, UploadRawFile } from "element-plus";
+import { ReadStream } from "fs";
+import * as xlsx from "xlsx";
 
 const formGroupUiStyle = {
-  wrapper: 'flex items-center',
+  wrapper: "flex items-center",
   label: {
-    base: 'mr-3 font-sans text-18px w-40px whitespace-pre-wrap text-center',
+    base: "mr-3 font-sans text-18px w-40px whitespace-pre-wrap text-center",
   },
-  container: 'mt-0',
-  error: 'text-red-400 dark:text-red-400 mt-1 text-14px',
+  container: "mt-0",
+  error: "text-red-400 dark:text-red-400 mt-1 text-14px",
 };
 const inputUiStyle = {
-  rounded: 'rounded-10px',
+  rounded: "rounded-10px",
   color: {
     white: {
       outline:
-        'shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary_1 dark:focus:ring-primary-400',
+        "shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary_1 dark:focus:ring-primary-400",
     },
   },
-  base: 'relative block w-full disabled:cursor-not-allowed disabled:bg-#E5E5E5 focus:outline-none border-0 min-w-100px',
+  base: "relative block w-full disabled:cursor-not-allowed disabled:bg-#E5E5E5 focus:outline-none border-0 min-w-100px",
 };
 const tableUiStyle = {
   // tbody: 'h-588px',
   th: {
-    color: 'text-white bg-primary_2',
-    base: 'h-48px text-left trl:text-right',
-    padding: 'px-3 py-0',
+    color: "text-white bg-primary_2",
+    base: "h-48px text-left trl:text-right",
+    padding: "px-3 py-0",
   },
   tr: {
-    base: 'even:bg-#EDF1FE h-36px',
+    base: "even:bg-#EDF1FE h-36px",
   },
   td: {
-    padding: 'px-3 py-1',
+    padding: "px-3 py-1",
   },
   // tbody: ' divide-y divide-gray-200 dark:divide-gray-800',
-  tbody: '',
-  base: 'min-w-full table-fixed',
+  tbody: "",
+  base: "min-w-full table-fixed",
 };
 
 const props = defineProps<{
@@ -53,26 +53,26 @@ type NuxtUITableColumnAttrType = {
   key: string;
   label: string;
   sortable?: boolean;
-  direction?: 'asc' | 'desc';
+  direction?: "asc" | "desc";
   class?: string;
 };
 const columnsStable: NuxtUITableColumnAttrType[] = [
   {
-    label: '姓名',
-    key: 'name',
+    label: "姓名",
+    key: "name",
   },
   {
-    label: '编号',
-    key: 't_number',
+    label: "编号",
+    key: "t_number",
   },
   {
-    label: 'WCU id',
+    label: "WCU id",
     // key: 'wcu_id',
-    key: 'user_id',
+    key: "user_id",
   },
   {
-    label: '|',
-    key: 'interval',
+    label: "|",
+    key: "interval",
   },
 ];
 // const columnsAttrs = props.t_projectsDetail
@@ -97,6 +97,7 @@ const columnsAttrs = display_applicantsData.value
     return selfArray.findIndex((i) => i.key === item.key) === index;
   });
 // console.log(columnsAttrs);
+
 const rows = display_applicantsData.value.map((item, index) => {
   return {
     name: item.name,
@@ -127,7 +128,7 @@ for (const itemA of props.t_applicantsData) {
 test.forEach((itemA) => {
   const finalObj = itemA.user_projects.reduce(
     (accObj: { [key: string]: any }, item): { [key: string]: any } => {
-      accObj[`p_id-${item}`] = '√';
+      accObj[`p_id-${item}`] = "√";
       return accObj;
     },
     {}
@@ -163,9 +164,9 @@ const pageTotal = computed(() => {
 });
 
 const formStateObjTemp = {
-  name: '',
-  t_number: '',
-  user_id: '',
+  name: "",
+  t_number: "",
+  user_id: "",
   selectedProjects: [],
 };
 const manuallyEnterFormState = ref<{
@@ -177,7 +178,7 @@ const manuallyEnterFormState = ref<{
 }>(structuredClone(formStateObjTemp));
 
 const uploadApplicantsExcelRef = ref<UploadInstance>();
-const handleFileExceed: UploadProps['onExceed'] = (files) => {
+const handleFileExceed: UploadProps["onExceed"] = (files) => {
   uploadApplicantsExcelRef.value!.clearFiles();
   const file = files[0] as UploadRawFile;
   file.uid = genFileId();
@@ -188,6 +189,7 @@ const applicantsExcelFileList = ref([]);
 const route = useRoute();
 const router = useRouter();
 const routeParamId = route.params.t_id;
+
 const handleUploadFileOnChange = (
   fileObj: Record<string, any>,
   // fileObj: { raw: File; [key: string]: any },
@@ -200,14 +202,14 @@ const handleUploadFileOnChange = (
     fileReader.onloadend = (loadEndEvent) => {
       // console.log(loadEndEvent.target?.result);
       const fileArrBuff = loadEndEvent.target?.result;
-      const workbook = xlsx.read(fileArrBuff, { type: 'buffer' });
+      const workbook = xlsx.read(fileArrBuff, { type: "buffer" });
       const sheetNames = workbook.SheetNames;
       const sheet1 = workbook.Sheets[sheetNames[0]];
       const sheet1Data = xlsx.utils.sheet_to_json(sheet1);
       // console.log(sheet1Data);
       // console.log();
-      $fetch('/api/t_detail/t_applicants/createMany', {
-        method: 'POST',
+      $fetch("/api/t_detail/t_applicants/createMany", {
+        method: "POST",
         body: {
           t_id: routeParamId,
           data: sheet1Data,
@@ -224,10 +226,12 @@ const handleUploadFileOnChange = (
     };
   }
 };
-const handleManualEnterApplicant = () => {
+const handleManualEnterApplicant = async () => {
   if (manuallyEnterFormState.value.selectedProjects.length === 0)
-    alert('赛事项目为空，不可相关录入数据');
-  manuallyEnterFormState.value.selectedProjects.forEach((item, index) => {
+    alert("赛事项目为空，不可相关录入数据");
+  const asyncTasksArr: Promise<number>[] = [];
+
+  manuallyEnterFormState.value.selectedProjects.forEach(async (item, index) => {
     const finalApplicantData = {
       t_number: +manuallyEnterFormState.value.t_number,
       user_id: +manuallyEnterFormState.value.user_id,
@@ -236,16 +240,23 @@ const handleManualEnterApplicant = () => {
       p_id: item.id,
       t_id: +routeParamId,
     };
-    $fetch('/api/t_detail/t_applicants/createMany', {
-      method: 'POST',
-      body: {
-        data: [finalApplicantData],
-      },
-    }).then((e) => {
-      console.log(e);
-      alert('手动录入选手信息' + e);
-    });
+    const enterDataTaskResult = $fetch(
+      "/api/t_detail/t_applicants/createMany",
+      {
+        method: "POST",
+        body: {
+          data: [finalApplicantData],
+        },
+      }
+    );
+    asyncTasksArr.push(enterDataTaskResult);
   });
+
+  const asyncOperationResult = await Promise.all(asyncTasksArr);
+
+  if (asyncOperationResult.every((item) => item === 1)) {
+    alert("手动录入选手信息成功");
+  } else alert("手动录入选手信息失败");
 };
 const handleResetFormState = () => {
   manuallyEnterFormState.value = structuredClone(formStateObjTemp);
@@ -302,7 +313,7 @@ const handleResetFormState = () => {
                         >{{
                           manuallyEnterFormState.selectedProjects
                             .map((item) => item.label)
-                            .join(',')
+                            .join(",")
                         }}</span
                       >
                       <span v-else>请设置参赛组别..</span>
