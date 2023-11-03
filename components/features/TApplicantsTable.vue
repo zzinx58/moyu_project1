@@ -211,7 +211,6 @@ const handleUploadFileOnChange = (
       $fetch("/api/t_detail/t_applicants/createMany", {
         method: "POST",
         body: {
-          t_id: routeParamId,
           data: sheet1Data,
         },
       });

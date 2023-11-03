@@ -25,7 +25,7 @@ export default defineEventHandler(async (e) => {
     data: uploadExcelDataArr,
     skipDuplicates: true,
   });
-  console.log("enter applicant_info result:", result);
+  // console.log("enter applicant_info result:", result);
 
   // console.log(t_id, excelJson);
   //   if (!t_create_form) return sendError(e, createError('赛事创建表单不可为空'));

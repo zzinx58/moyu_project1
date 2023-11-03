@@ -33,12 +33,13 @@ if (!t_infoData.value) {
   router.push("/t_list");
   alert("赛事不存在");
 }
-const { data: t_applicantsData } = await useFetch<ApplicantType[] | null>(
-  `/api/t_detail/t_applicants/${routeParamTId}`
-);
-const { data: t_resultsData } = await useFetch<TResultType[] | null>(
-  `/api/t_detail/t_results/${routeParamTId}`
-);
+const { data: t_applicantsData, refresh: refresh_applicantsData } =
+  await useFetch<ApplicantType[] | null>(
+    `/api/t_detail/t_applicants/${routeParamTId}`
+  );
+const { data: t_resultsData, refresh: refresh_resultsData } = await useFetch<
+  TResultType[] | null
+>(`/api/t_detail/t_results/${routeParamTId}`);
 // console.log(t_infoData.value, t_applicantsData.value, t_resultsData.value);
 
 // const isExportModalOpen = ref(false);
