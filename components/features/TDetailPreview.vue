@@ -207,6 +207,39 @@ const tDetailInfoTemplateObjArr = () => {
 };
 const tDetailInfoObjArr = tDetailInfoTemplateObjArr();
 // console.log('detailObjArr:', tDetailInfoObjArr);
+
+const raw_tournament_state = [
+  {
+    id: 1,
+    label: "报名未开始",
+    color: "bg-#F19EC2",
+  },
+  {
+    id: 2,
+    label: "报名中",
+    color: "bg-#88ABDA",
+  },
+  {
+    id: 3,
+    label: "报名已结束 比赛未开始",
+    color: "bg-#89C997",
+  },
+  {
+    id: 4,
+    label: "比赛中",
+    color: "bg-#F29B76",
+  },
+  {
+    id: 5,
+    label: "比赛已结束 未公示",
+    color: "bg-#8F82BC",
+  },
+  {
+    id: 6,
+    label: "比赛已结束 公示中",
+    color: "bg-#535353",
+  },
+];
 </script>
 <template>
   <!-- <pre>{{ props.t_info_data }}</pre> -->

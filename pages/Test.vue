@@ -339,7 +339,7 @@ const { data: t_data } = await useFetch("/api/t_info/60");
 </script>
 <template>
   <FeaturesTRaceSchedule :time_range_related_obj="t_data" />
-  <pre>{{ t_data.projects_detail }}</pre>
+  <!-- <pre>{{ t_data.projects_detail }}</pre> -->
   <!-- <pre v-if="simpleFilteredData"> {{ simpleFilteredData }}</pre>
   <div v-else>
     <pre>{{ error?.data }}</pre>

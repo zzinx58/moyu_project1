@@ -1,4 +1,129 @@
 <script setup lang="ts">
+import dayjs from "dayjs";
+import { utc } from "dayjs";
+import _ from "lodash";
+import * as JSONPathPack from "jsonpath-plus";
+const { JSONPath } = JSONPathPack;
+
+const t_format_options = [
+  {
+    id: 3,
+    label: "五次去头去尾取平均",
+  },
+  {
+    id: 4,
+    label: "三次取平均",
+  },
+  {
+    id: 2,
+    label: "三次取最快",
+  },
+  {
+    id: 5,
+    label: "两次取最快",
+  },
+  {
+    id: 1,
+    label: "单次",
+  },
+];
+const projectItemList: {
+  project_id: number;
+  project_label: string;
+  iconMeta: string;
+}[] = [
+  {
+    project_id: 9,
+    project_label: "智能三阶",
+    iconMeta: "i-custom-svg:ai-third-order",
+  },
+  {
+    project_id: 1,
+    project_label: "三阶",
+    iconMeta: "i-custom-svg:third-order",
+  },
+  {
+    project_id: 3,
+    project_label: "二阶",
+    iconMeta: "i-custom-svg:second-order",
+  },
+  {
+    project_id: 5,
+    project_label: "四阶",
+    iconMeta: "i-custom-svg:fourth-order",
+  },
+  {
+    project_id: 10,
+    project_label: "五阶",
+    iconMeta: "i-custom-svg:fifth-order",
+  },
+  {
+    project_id: 11,
+    project_label: "六阶",
+    iconMeta: "i-custom-svg:sixth-order",
+  },
+  {
+    project_id: 12,
+    project_label: "七阶",
+    iconMeta: "i-custom-svg:seventh-order",
+  },
+  {
+    project_id: 8,
+    project_label: "三盲",
+    iconMeta: "i-custom-svg:blindness-third-order",
+  },
+  {
+    project_id: 18,
+    project_label: "最少步",
+    iconMeta: "i-custom-svg:minimal-steps",
+  },
+  {
+    project_id: 7,
+    project_label: "单手",
+    iconMeta: "i-custom-svg:single-handedly",
+  },
+  {
+    project_id: 19,
+    project_label: "魔表",
+    iconMeta: "i-custom-svg:magic-watch",
+  },
+  {
+    project_id: 14,
+    project_label: "五魔方",
+    iconMeta: "i-custom-svg:megaminx",
+  },
+  {
+    project_id: 2,
+    project_label: "金字塔",
+    iconMeta: "i-custom-svg:pyramid",
+  },
+  {
+    project_id: 4,
+    project_label: "斜转",
+    iconMeta: "i-custom-svg:oblique-rotation",
+  },
+  {
+    project_id: 13,
+    project_label: "SQ1",
+    iconMeta: "i-custom-svg:sq1",
+  },
+  {
+    project_id: 15,
+    project_label: "四盲",
+    iconMeta: "i-custom-svg:blindness-fourth-order",
+  },
+  {
+    project_id: 16,
+    project_label: "五盲",
+    iconMeta: "i-custom-svg:blindness-fifth-order",
+  },
+  {
+    project_id: 17,
+    project_label: "多盲",
+    iconMeta: "i-custom-svg:multiple-blindness",
+  },
+];
+
 const tableHeaderInfo: {
   label: string;
   key: string;
@@ -9,7 +134,7 @@ const tableHeaderInfo: {
   },
   {
     label: "项目",
-    key: "project_label",
+    key: "project_info_obj",
   },
   {
     label: "轮次",
@@ -87,8 +212,86 @@ Advanced：赛事时间相关项之间规则假定
 制约关系：
 - 报名时间不能晚于比赛持续时间的开始时间。
 - 除了报名时间，所有时间都需要在比赛持续时间内进行排期。
--
 */
+
+// Notice the unorder rules of obj.
+const mockMainRowData: FinalRaceScheduleMainRowDataType[] = [
+  {
+    time_range: "8:30-9:00",
+    project_info_obj: {
+      iconMeta: "i-custom-svg:third-order",
+      label: "三阶",
+    },
+    current_rounds: "初赛",
+    t_format: "三次还原最快",
+    passline: "60秒",
+    reduction_limit: "3分钟",
+    promotion_quota: "前30",
+  },
+  {
+    time_range: "8:30-9:00",
+    project_info_obj: {
+      iconMeta: "i-custom-svg:third-order",
+      label: "三阶",
+    },
+    current_rounds: "初赛",
+    t_format: "三次还原最快",
+    passline: "60秒",
+    reduction_limit: "3分钟",
+    promotion_quota: "前30",
+  },
+  {
+    time_range: "8:30-9:00",
+    project_info_obj: {
+      iconMeta: "i-custom-svg:third-order",
+      label: "三阶",
+    },
+    current_rounds: "初赛",
+    t_format: "三次还原最快",
+    passline: "60秒",
+    reduction_limit: "3分钟",
+    promotion_quota: "前30",
+  },
+  {
+    time_range: "8:30-9:00",
+    project_info_obj: {
+      iconMeta: "i-custom-svg:third-order",
+      label: "三阶",
+    },
+    current_rounds: "初赛",
+    t_format: "三次还原最快",
+    passline: "60秒",
+    reduction_limit: "3分钟",
+    promotion_quota: "前30",
+  },
+  {
+    time_range: "8:30-9:00",
+    project_info_obj: {
+      iconMeta: "i-custom-svg:third-order",
+      label: "三阶",
+    },
+    current_rounds: "初赛",
+    t_format: "三次还原最快",
+    passline: "60秒",
+    reduction_limit: "3分钟",
+    promotion_quota: "前30",
+  },
+  {
+    time_range: "8:30-9:00",
+    project_info_obj: {
+      iconMeta: "i-custom-svg:third-order",
+      label: "三阶",
+    },
+    current_rounds: "初赛",
+    t_format: "三次还原最快",
+    passline: "60秒",
+    reduction_limit: "3分钟",
+    promotion_quota: "前30",
+  },
+];
+mockMainRowData.unshift({
+  content: "第一天 星期六 (2023年07月08日)",
+});
 
 const calcRoundsName = (roundsTotal: number) => {
   switch (roundsTotal) {
@@ -105,23 +308,249 @@ const calcRoundsName = (roundsTotal: number) => {
   }
 };
 
+type FinalRaceScheduleMainRowDataType =
+  | {
+      time_range: string;
+      project_info_obj: {
+        iconMeta: string;
+        label: string;
+      };
+      current_rounds?: string;
+      t_format?: string;
+      passline?: string;
+      reduction_limit?: string;
+      promotion_quota?: string;
+    }
+  | { content: string };
+
 const props = defineProps<{
-  time_range_related_obj: {
-    apply_time_range: [string, string];
-    tournament_during_time_range: [string, string];
-    signin_time_range: [string, string];
-    award_time_range: [string, string];
-    breaktime_jsonObj: {
-      id: number;
-      time_range: [string, string];
-    }[];
-    lottery_time_range: {
-      id: number;
-      time_range: [string, string];
-    }[];
-    project_details_jsonObj: Record<string, any>;
-  };
+  time_range_related_obj: any;
 }>();
+
+const organized_sigin_time_range = {
+  time_range: props.time_range_related_obj.signin_time_range,
+  project_info_obj: {
+    label: "签到",
+  },
+  current_rounds: "",
+  t_format: "",
+  passline: "",
+  reduction_limit: "",
+  promotion_quota: "",
+};
+const organized_award_time_range = {
+  time_range: props.time_range_related_obj.award_time_range,
+  project_info_obj: {
+    label: "颁奖",
+  },
+  current_rounds: "公布获奖名单",
+  t_format: "",
+  passline: "",
+  reduction_limit: "",
+  promotion_quota: "",
+};
+const organized_break_time_data_arr = (
+  props.time_range_related_obj.break_time as Array<any>
+).map((breakTimeItem, index) => {
+  return {
+    time_range: breakTimeItem.time_range,
+    project_info_obj: {
+      label: "休息",
+    },
+    current_rounds: "公布晋级名单",
+    t_format: "",
+    passline: "",
+    reduction_limit: "",
+    promotion_quota: "",
+  };
+});
+const organized_lottery_time_data_arr = (
+  props.time_range_related_obj.break_time as Array<any>
+).map((lotteryTimeItem, index) => {
+  return {
+    time_range: lotteryTimeItem.time_range,
+    project_info_obj: {
+      label: "抽奖",
+    },
+    current_rounds: "公布抽奖名单",
+    t_format: "",
+    passline: "",
+    reduction_limit: "",
+    promotion_quota: "",
+  };
+});
+
+// {
+//     time_range: "8:30-9:00",
+//     project_info_obj: {
+//       iconMeta: "i-custom-svg:third-order",
+//       label: "三阶",
+//     },
+//     current_rounds: "初赛",
+//     t_format: "三次还原最快",
+//     passline: "60秒",
+//     reduction_limit: "3分钟",
+//     promotion_quota: "前30",
+//   },
+
+const organized_projects_detail_data_arr = (
+  props.time_range_related_obj.projects_detail as Array<any>
+).map((projectItem, index) => {
+  const currentProjectItemRaceScheduleTotalRounds = projectItem.rounds.total;
+  const currentProjectItemRoundNamesArr = calcRoundsName(
+    currentProjectItemRaceScheduleTotalRounds
+  );
+  // Notice the type error.
+  // Notice the attrs order!!
+  const result = (projectItem.rounds.detail as Array<any>).map(
+    (roundItem, index): FinalRaceScheduleMainRowDataType => {
+      const roundItemTimeRangeArr = JSONPath({
+        path: "$.time_range.*",
+        json: roundItem,
+      });
+      return {
+        time_range: roundItemTimeRangeArr ?? "",
+        project_info_obj: {
+          iconMeta: projectItem.iconMeta ?? "",
+          label: projectItem.label ?? "",
+        },
+        current_rounds: currentProjectItemRoundNamesArr![index] ?? "",
+        t_format:
+          t_format_options.find((item) => item.id === roundItem.t_format)
+            ?.label ?? "",
+        passline: (projectItem.passline ?? "") + "秒",
+        // Needed handle at create page.
+        reduction_limit:
+          ((projectItem.reduction_limit / 60).toFixed(2) ?? "") + "分钟",
+        promotion_quota:
+          roundItem.promotion_quota === 0
+            ? ""
+            : "前" + roundItem.promotion_quota,
+      };
+    }
+  );
+  return result;
+});
+
+const raw_main_row_data_arr = [
+  organized_sigin_time_range,
+  organized_award_time_range,
+  organized_break_time_data_arr,
+  organized_lottery_time_data_arr,
+  organized_projects_detail_data_arr,
+];
+const organized_main_row_data_arr = _.flatMapDeep(
+  raw_main_row_data_arr as Array<any>
+);
+
+// StartDate oriented sorting.
+const sorted_main_row_data_arr = organized_main_row_data_arr.sort(
+  (A, B) => A.time_range[0] - B.time_range[0]
+);
+
+const final_main_row_data_arr = sorted_main_row_data_arr.map((item) => {
+  // 'YYYY年MM月DD日 HH:mm:ss'
+  const dayFormatFunc = (time_range: ["", ""]) => {
+    return `${dayjs.unix(item.time_range[0]).utc(true).format("HH:mm")}-${dayjs
+      .unix(item.time_range[1])
+      .utc(true)
+      .format("HH:mm")}`;
+  };
+  return {
+    ...item,
+    time_range: dayFormatFunc(item.time_range),
+  };
+});
+
+// const final_schedule_date_row_data = {};
+// {
+//   content: "第一天 星期六 (2023年07月08日)",
+// }
+// Cool to learn.!!
+const test = () => {
+  //Notice format resolve, about '-'.
+  const finalDayHaveRacesArr = sorted_main_row_data_arr
+    .map((item) => {
+      return {
+        time_range: item.time_range,
+        content: dayjs.unix(item.time_range[0]).utc(true).format("YYYY-MM-DD"),
+      };
+    })
+    .filter((valueObj, index, self) => {
+      const currentIndex = self.findIndex(
+        (item) => item.content === valueObj.content
+      );
+      return currentIndex === index;
+    });
+
+  const test = finalDayHaveRacesArr.map((item, index) => {
+    const itemDayStamp = dayjs(item.content).unix();
+    return [{ ...item, itemDayStamp }, ...sorted_main_row_data_arr];
+  });
+
+  console.log(test);
+};
+test();
+
+type DayGroupRowDatasType = {
+  dayGroupRowData: FinalRaceScheduleMainRowDataType[];
+};
+const [DefineDayGroupRowDatasTable, DayGroupRowDatasTable] =
+  createReusableTemplate<DayGroupRowDatasType>();
 </script>
-<template></template>
+<template>
+  <DefineDayGroupRowDatasTable v-slot="{ dayGroupRowData }">
+    <td
+      class="text-center text-20px leading-44px odd:bg-#F1F2FD even:bg-#FFFFFF"
+      :colspan="tableHeaderInfo.length"
+    >
+      {{ (dayGroupRowData[0] as any).content }}
+    </td>
+    <div
+      class="table-row h-32px odd:bg-#F1F2FD even:bg-#FFFFFF"
+      v-for="RowItemDataObj in dayGroupRowData.slice(1)"
+    >
+      <div
+        v-for="(item, key) in RowItemDataObj"
+        class="table-cell text-center text-14px leading-32px"
+      >
+        <div
+          v-if="key === 'project_info_obj'"
+          class="flex justify-center items-center gap-2"
+        >
+          <div
+            v-if="(item as any).iconMeta"
+            :class="(item as any).iconMeta"
+          ></div>
+          <p class="">{{ (item as any).label }}</p>
+        </div>
+        <div v-else>{{ item }}</div>
+      </div>
+    </div>
+  </DefineDayGroupRowDatasTable>
+  <div class="table w-full text-#6F6F8B bg-#FFFFFF">
+    <!-- table-header -->
+    <div class="table-header-group">
+      <div class="table-row h-32px">
+        <div
+          class="table-cell text-center text-16px leading-32px font-bold"
+          v-for="item in tableHeaderInfo"
+        >
+          <div>
+            {{ item.label }}
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- table-row-group -->
+    <div class="table-row-group">
+      <DayGroupRowDatasTable :day-group-row-data="mockMainRowData" />
+      <DayGroupRowDatasTable :day-group-row-data="final_main_row_data_arr" />
+    </div>
+  </div>
+  <!-- table -->
+  <hr class="my-10" />
+  <!-- test -->
+  <pre>{{ final_main_row_data_arr }}</pre>
+</template>
 <style lang="scss" scoped></style>
