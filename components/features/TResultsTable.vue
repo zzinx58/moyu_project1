@@ -24,7 +24,8 @@ const tableUiStyle = {
 const formGroupUiStyle = {
   wrapper: "flex items-center",
   label: {
-    base: "mr-3 font-sans text-18px w-40px whitespace-pre-wrap text-center",
+    // base: "mr-3 font-sans text-18px w-40px whitespace-pre-wrap text-center",
+    base: "mr-3 font-sans text-18px w-40px whitespace-no-wrap text-center",
   },
   container: "mt-0",
   error: "text-red-400 dark:text-red-400 mt-1 text-14px",
@@ -309,8 +310,8 @@ const handleManualEnterPlayerResults = () => {
       phase: +manuallyEnterFormState.value.phase?.phase,
       user_id: +manuallyEnterFormState.value.user_id,
       name: manuallyEnterFormState.value.name,
-      // t_number: +manuallyEnterFormState.value.t_number,
-      t_number: manuallyEnterFormState.value.t_number,
+      t_number: +manuallyEnterFormState.value.t_number,
+      // t_number: manuallyEnterFormState.value.t_number,
       t_id: +routeParamId,
       r1_duration: r1_duration,
       r2_duration: r2_duration,
@@ -371,33 +372,48 @@ const selectedPhase = ref();
                 class="flex flex-col gap-3"
                 :state="manuallyEnterFormState"
               >
-                <UFormGroup label="项目" :ui="formGroupUiStyle">
+                <UFormGroup label="项目" :ui="formGroupUiStyle" required>
                   <USelectMenu
                     v-model="manuallyEnterFormState.projects"
                     :options="props.t_projects"
                     placeholder="请选择比赛项目.."
                   />
                 </UFormGroup>
-                <UFormGroup label="轮次" :ui="formGroupUiStyle">
+                <UFormGroup label="轮次" :ui="formGroupUiStyle" required>
                   <USelectMenu
                     v-model="manuallyEnterFormState.phase"
                     :options="t_phase_options"
                     placeholder="请选择比赛轮次.."
                   />
                 </UFormGroup>
-                <UFormGroup label="编号" :ui="formGroupUiStyle">
+                <UFormGroup label="编号" :ui="formGroupUiStyle" required>
                   <UInput
                     :ui="inputUiStyle"
                     v-model="manuallyEnterFormState.t_number"
+                    type="number"
+                    min="0"
                   />
                 </UFormGroup>
-                <UFormGroup label="WCU id" :ui="formGroupUiStyle">
+                <UFormGroup
+                  label="WCU id"
+                  :ui="{
+                    wrapper: 'flex items-center',
+                    label: {
+                      base: 'mr-3 font-sans text-18px w-40px whitespace-pre-wrap text-center',
+                    },
+                    container: 'mt-0',
+                    error: 'text-red-400 dark:text-red-400 mt-1 text-14px',
+                  }"
+                  required
+                >
                   <UInput
                     :ui="inputUiStyle"
                     v-model="manuallyEnterFormState.user_id"
+                    type="number"
+                    min="0"
                   />
                 </UFormGroup>
-                <UFormGroup label="姓名" :ui="formGroupUiStyle">
+                <UFormGroup label="姓名" :ui="formGroupUiStyle" required>
                   <UInput
                     :ui="inputUiStyle"
                     v-model="manuallyEnterFormState.name"
@@ -408,17 +424,20 @@ const selectedPhase = ref();
                   :ui="{
                     wrapper: 'flex items-start',
                     label: {
-                      base: 'mr-3 font-sans text-18px w-40px whitespace-pre-wrap text-center mt-1 leading-20px',
+                      base: 'mr-3 font-sans text-18px w-40px whitespace-no-wrap text-center mt-1 leading-20px',
                     },
                     container: 'mt-0 flex flex-col gap-2',
                     error: 'text-red-400 dark:text-red-400 mt-1 text-14px',
                   }"
+                  required
                 >
                   <div class="flex items-center gap-1">
                     <span>第一局</span>
                     <UInput
                       :ui="inputUiStyle"
                       v-model="manuallyEnterFormState.r1_duration"
+                      type="number"
+                      min="0"
                     />
                   </div>
                   <div class="flex items-center gap-1">
@@ -426,6 +445,8 @@ const selectedPhase = ref();
                     <UInput
                       :ui="inputUiStyle"
                       v-model="manuallyEnterFormState.r2_duration"
+                      type="number"
+                      min="0"
                     />
                   </div>
                   <div class="flex items-center gap-1">
@@ -433,6 +454,8 @@ const selectedPhase = ref();
                     <UInput
                       :ui="inputUiStyle"
                       v-model="manuallyEnterFormState.r3_duration"
+                      type="number"
+                      min="0"
                     />
                   </div>
                   <div class="flex items-center gap-1">
@@ -440,6 +463,8 @@ const selectedPhase = ref();
                     <UInput
                       :ui="inputUiStyle"
                       v-model="manuallyEnterFormState.r4_duration"
+                      type="number"
+                      min="0"
                     />
                   </div>
                   <div class="flex items-center gap-1">
@@ -447,6 +472,8 @@ const selectedPhase = ref();
                     <UInput
                       :ui="inputUiStyle"
                       v-model="manuallyEnterFormState.r5_duration"
+                      type="number"
+                      min="0"
                     />
                   </div>
                 </UFormGroup>

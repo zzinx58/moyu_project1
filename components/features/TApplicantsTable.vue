@@ -4,11 +4,14 @@ import { genFileId } from "element-plus";
 import type { UploadInstance, UploadProps, UploadRawFile } from "element-plus";
 import { ReadStream } from "fs";
 import * as xlsx from "xlsx";
+import { FormError } from "@nuxthq/ui/dist/runtime/types";
+import { useMessage } from "naive-ui";
+// import type { FormErrorEvent } from '@nuxthq/ui/dist/types'
 
 const formGroupUiStyle = {
   wrapper: "flex items-center",
   label: {
-    base: "mr-3 font-sans text-18px w-40px whitespace-pre-wrap text-center",
+    base: "mr-3 font-sans text-18px w-40px whitespace-no-wrap text-center",
   },
   container: "mt-0",
   error: "text-red-400 dark:text-red-400 mt-1 text-14px",
@@ -85,6 +88,8 @@ const columnsStable: NuxtUITableColumnAttrType[] = [
 //   .filter((item, index, selfArray) => {
 //     return selfArray.findIndex((i) => i.label === item.label) === index;
 //   });
+const naiveMessage = useMessage();
+
 const columnsAttrs = display_applicantsData.value
   .map((item: any) => {
     return {
@@ -176,6 +181,20 @@ const manuallyEnterFormState = ref<{
   // selectedProjects: Record<string, any>[];
   selectedProjects: { label: string; id: number; iconMeta: string }[];
 }>(structuredClone(formStateObjTemp));
+const applicantFormRef = ref();
+
+const validateFormFunc = (): FormError[] => {
+  const errors = [];
+  if (!manuallyEnterFormState.value.name)
+    errors.push({ path: "name", message: "选手姓名必填" });
+  if (!manuallyEnterFormState.value.t_number)
+    errors.push({ path: "t_number", message: "赛事编号必填" });
+  if (!manuallyEnterFormState.value.user_id)
+    errors.push({ path: "user_id", message: "用户 WCU_id 必填" });
+  if (!(manuallyEnterFormState.value.selectedProjects.length !== 0))
+    errors.push({ path: "selectedProjects", message: "项目必选" });
+  return errors;
+};
 
 const uploadApplicantsExcelRef = ref<UploadInstance>();
 const handleFileExceed: UploadProps["onExceed"] = (files) => {
@@ -227,35 +246,45 @@ const handleUploadFileOnChange = (
 };
 const handleManualEnterApplicant = async () => {
   if (manuallyEnterFormState.value.selectedProjects.length === 0)
-    alert("赛事项目为空，不可相关录入数据");
-  const asyncTasksArr: Promise<number>[] = [];
-
-  manuallyEnterFormState.value.selectedProjects.forEach(async (item, index) => {
-    const finalApplicantData = {
-      t_number: +manuallyEnterFormState.value.t_number,
-      user_id: +manuallyEnterFormState.value.user_id,
-      name: manuallyEnterFormState.value.name,
-      p_name: item.label,
-      p_id: item.id,
-      t_id: +routeParamId,
-    };
-    const enterDataTaskResult = $fetch(
-      "/api/t_detail/t_applicants/createMany",
-      {
-        method: "POST",
-        body: {
-          data: [finalApplicantData],
-        },
+    naiveMessage.error("赛事项目未选，不可录入相关数据");
+  console.log(await applicantFormRef.value.getErrors());
+  if (await applicantFormRef.value.validate()) {
+    // alert("赛事项目为空，不可相关录入数据");
+    const asyncTasksArr: Promise<number>[] = [];
+    manuallyEnterFormState.value.selectedProjects.forEach(
+      async (item, index) => {
+        const finalApplicantData = {
+          t_number: +manuallyEnterFormState.value.t_number,
+          user_id: +manuallyEnterFormState.value.user_id,
+          name: manuallyEnterFormState.value.name,
+          p_name: item.label,
+          p_id: item.id,
+          t_id: +routeParamId,
+        };
+        const enterDataTaskResult = $fetch(
+          "/api/t_detail/t_applicants/createMany",
+          {
+            method: "POST",
+            body: {
+              data: [finalApplicantData],
+            },
+          }
+        );
+        asyncTasksArr.push(enterDataTaskResult);
       }
     );
-    asyncTasksArr.push(enterDataTaskResult);
-  });
 
-  const asyncOperationResult = await Promise.all(asyncTasksArr);
+    const asyncOperationResult = await Promise.all(asyncTasksArr);
 
-  if (asyncOperationResult.every((item) => item === 1)) {
-    alert("手动录入选手信息成功");
-  } else alert("手动录入选手信息失败");
+    if (asyncOperationResult.every((item) => item === 1)) {
+      alert("手动录入选手信息成功");
+    } else alert("手动录入选手信息失败");
+  } else {
+    naiveMessage.error("输入有误，请检查必填项及各项内容是否填写正确");
+  }
+};
+const onError = async (event: any) => {
+  naiveMessage.error("输入有误，请检查必填项及各项内容是否填写正确");
 };
 const handleResetFormState = () => {
   manuallyEnterFormState.value = structuredClone(formStateObjTemp);
@@ -280,26 +309,44 @@ const handleResetFormState = () => {
               <UForm
                 class="flex flex-col gap-3"
                 :state="manuallyEnterFormState"
+                :validate="validateFormFunc"
+                ref="applicantFormRef"
+                @error="onError"
               >
-                <UFormGroup label="姓名" :ui="formGroupUiStyle">
+                <UFormGroup label="姓名" :ui="formGroupUiStyle" required>
                   <UInput
                     :ui="inputUiStyle"
                     v-model="manuallyEnterFormState.name"
                   />
                 </UFormGroup>
-                <UFormGroup label="编号" :ui="formGroupUiStyle">
+                <UFormGroup label="编号" :ui="formGroupUiStyle" required>
                   <UInput
                     :ui="inputUiStyle"
                     v-model="manuallyEnterFormState.t_number"
+                    type="number"
+                    min="0"
                   />
                 </UFormGroup>
-                <UFormGroup label="WCU id" :ui="formGroupUiStyle">
+                <UFormGroup
+                  label="WCU id"
+                  :ui="{
+                    wrapper: 'flex items-center',
+                    label: {
+                      base: 'mr-3 font-sans text-18px w-40px whitespace-pre-wrap text-center',
+                    },
+                    container: 'mt-0',
+                    error: 'text-red-400 dark:text-red-400 mt-1 text-14px',
+                  }"
+                  required
+                >
                   <UInput
                     :ui="inputUiStyle"
                     v-model="manuallyEnterFormState.user_id"
+                    type="number"
+                    min="0"
                   />
                 </UFormGroup>
-                <UFormGroup label="项目" :ui="formGroupUiStyle">
+                <UFormGroup label="项目" :ui="formGroupUiStyle" required>
                   <USelectMenu
                     :options="t_projects_options"
                     placeholder="请选择参赛项目.."
@@ -324,9 +371,11 @@ const handleResetFormState = () => {
             <div class="flex gap-3 justify-center">
               <UButton
                 class="bg-primary_2 active:opacity-80 rounded-24px w-96px h-42px flex justify-center"
+                type="reset"
                 @click="handleResetFormState"
                 >重置</UButton
               >
+              <!-- <input type="reset" value="Reset" /> -->
               <UButton
                 class="bg-primary_1 active:opacity-80 rounded-24px w-96px h-42px flex justify-center leading-42px"
                 @click="handleManualEnterApplicant"
