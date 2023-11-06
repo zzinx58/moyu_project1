@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import dayjs from "dayjs";
+import packagejson from "./package.json";
 import { NConfigProvider, GlobalThemeOverrides } from "naive-ui";
 // import { worker } from './mocks/browser';
 // worker.start();
@@ -54,8 +56,12 @@ const themeOverrides: GlobalThemeOverrides = {
     itemBorderActive: "none",
   },
 };
+
 // Vueuse provided hooks.
-useLocalStorage("z-version-check", "2023-11-02");
+// useLocalStorage("z-version-check", dayjs().format("YYYY-MM-DD HH:mm")).value =
+// dayjs().format("YYYY-MM-DD HH:mm");
+useLocalStorage("z-version-check", dayjs().format("YYYY-MM-DD HH:mm")).value =
+  packagejson.version;
 </script>
 <template>
   <div>
