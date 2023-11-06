@@ -454,30 +454,13 @@ const organized_main_row_data_arr = _.flatMapDeep(
   raw_main_row_data_arr as Array<any>
 );
 
+console.log(organized_main_row_data_arr);
+
 // StartDate oriented sorting.
 const sorted_main_row_data_arr = organized_main_row_data_arr.sort(
   (A, B) => A.time_range[0] - B.time_range[0]
 );
 
-const final_main_row_data_arr = sorted_main_row_data_arr.map((item) => {
-  // 'YYYY年MM月DD日 HH:mm:ss'
-  const dayFormatFunc = (time_range: ["", ""]) => {
-    return `${dayjs.unix(item.time_range[0]).utc(true).format("HH:mm")}-${dayjs
-      .unix(item.time_range[1])
-      .utc(true)
-      .format("HH:mm")}`;
-  };
-  return {
-    ...item,
-    time_range: dayFormatFunc(item.time_range),
-  };
-});
-
-// const final_schedule_date_row_data = {};
-// {
-//   content: "第一天 星期六 (2023年07月08日)",
-// }
-// Cool to learn.!!
 const itemDay = (
   itemWithTimeRange: { time_range: ["", ""] } & Record<string, any>
 ) => {

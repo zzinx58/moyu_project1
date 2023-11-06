@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import * as dayjs from "dayjs";
+import dayjs from "dayjs";
 
 //satisfies ts 字段：本配置表字段后期可能动态增加，可以不用动态写死 type，通过 satisfies 可以获取动态类型提示
 const t_detail_prefix_info: {
@@ -240,6 +240,42 @@ const raw_tournament_state = [
     color: "bg-#535353",
   },
 ];
+//BUG 点，dayjs 获取当前时间的秒时间戳不需要进行 utc(true) 转换。
+const currentTimeUnix = dayjs().utc(false).unix();
+// const currentTimeUnix = dayjs().utc(true).unix();
+function isValidTimeRange(time_range: [string, string] | null) {
+  return (
+    time_range !== null &&
+    Array.prototype.includes.call(time_range, "") === false
+  );
+}
+const calcStatus = (
+  currentTimeUnix: number,
+  apply_time_range: [string, string],
+  time_range: [string, string]
+) => {
+  if (isValidTimeRange(time_range) && isValidTimeRange(apply_time_range)) {
+    switch (true) {
+      case currentTimeUnix < +apply_time_range[0]:
+        return raw_tournament_state[0];
+      case currentTimeUnix > +apply_time_range[0] &&
+        currentTimeUnix < +apply_time_range[1]:
+        return raw_tournament_state[1];
+      case currentTimeUnix > +apply_time_range[1] &&
+        currentTimeUnix < +time_range[0]:
+        return raw_tournament_state[2];
+      case currentTimeUnix > +time_range[0] && currentTimeUnix < +time_range[1]:
+        return raw_tournament_state[3];
+      case currentTimeUnix > +time_range[1]:
+        return {
+          id: 5,
+          // label: "比赛结束，公示错误:字段暂未给出",
+          label: "比赛结束",
+          color: "#535353",
+        };
+    }
+  }
+};
 </script>
 <template>
   <!-- <pre>{{ props.t_info_data }}</pre> -->
@@ -297,7 +333,25 @@ const raw_tournament_state = [
         {{ t_info_data.name }}
       </h1>
       <span class="flex items-end mb-1.5">
-        <UBadge :class="`text-14px bg-red h-20px`">{{ `报名中` }}</UBadge>
+        <!-- <UBadge :class="`text-14px bg-red h-20px`">{{ `报名中` }}</UBadge> -->
+        <UBadge
+          :class="`text-14px bg-${
+            calcStatus(
+              currentTimeUnix,
+              props.t_info_data.apply_time_range,
+              props.t_info_data.time_range
+            )?.color ?? '#000'
+          } h-20px`"
+          >{{
+            `${
+              calcStatus(
+                currentTimeUnix,
+                props.t_info_data.apply_time_range,
+                props.t_info_data.time_range
+              )?.label ?? ""
+            }`
+          }}</UBadge
+        >
       </span>
     </div>
     <!-- <div class="grid grid-cols-2 grid-rows-6 gap-3 grid-flow-col"> -->
