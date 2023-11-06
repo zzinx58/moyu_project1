@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import dayjs from "dayjs";
-import { utc } from "dayjs";
+// import { utc } from "dayjs";
+import utc from "dayjs/plugin/utc";
 import _ from "lodash";
 import * as JSONPathPack from "jsonpath-plus";
 const { JSONPath } = JSONPathPack;
+
+dayjs.extend(utc);
 
 const t_format_options = [
   {
@@ -324,61 +327,69 @@ type FinalRaceScheduleMainRowDataType =
   | { content: string };
 
 const props = defineProps<{
-  time_range_related_obj: any;
+  t_info: any;
 }>();
 
-const organized_sigin_time_range = {
-  time_range: props.time_range_related_obj.signin_time_range,
-  project_info_obj: {
-    label: "签到",
-  },
-  current_rounds: "",
-  t_format: "",
-  passline: "",
-  reduction_limit: "",
-  promotion_quota: "",
-};
-const organized_award_time_range = {
-  time_range: props.time_range_related_obj.award_time_range,
-  project_info_obj: {
-    label: "颁奖",
-  },
-  current_rounds: "公布获奖名单",
-  t_format: "",
-  passline: "",
-  reduction_limit: "",
-  promotion_quota: "",
-};
-const organized_break_time_data_arr = (
-  props.time_range_related_obj.break_time as Array<any>
-).map((breakTimeItem, index) => {
-  return {
-    time_range: breakTimeItem.time_range,
-    project_info_obj: {
-      label: "休息",
-    },
-    current_rounds: "公布晋级名单",
-    t_format: "",
-    passline: "",
-    reduction_limit: "",
-    promotion_quota: "",
-  };
-});
-const organized_lottery_time_data_arr = (
-  props.time_range_related_obj.break_time as Array<any>
-).map((lotteryTimeItem, index) => {
-  return {
-    time_range: lotteryTimeItem.time_range,
-    project_info_obj: {
-      label: "抽奖",
-    },
-    current_rounds: "公布抽奖名单",
-    t_format: "",
-    passline: "",
-    reduction_limit: "",
-    promotion_quota: "",
-  };
-});
+const organized_sigin_time_range =
+  props.t_info.signin_time_range[0] === ""
+    ? null
+    : {
+        time_range: props.t_info.signin_time_range,
+        project_info_obj: {
+          label: "签到",
+        },
+        current_rounds: "",
+        t_format: "",
+        passline: "",
+        reduction_limit: "",
+        promotion_quota: "",
+      };
+const organized_award_time_range =
+  props.t_info.award_time_range[0] === ""
+    ? null
+    : {
+        time_range: props.t_info.award_time_range,
+        project_info_obj: {
+          label: "颁奖",
+        },
+        current_rounds: "公布获奖名单",
+        t_format: "",
+        passline: "",
+        reduction_limit: "",
+        promotion_quota: "",
+      };
+const organized_break_time_data_arr =
+  props.t_info.break_time[0].time_range[0] === ""
+    ? null
+    : (props.t_info.break_time as Array<any>).map((breakTimeItem, index) => {
+        return {
+          time_range: breakTimeItem.time_range,
+          project_info_obj: {
+            label: "休息",
+          },
+          current_rounds: "公布晋级名单",
+          t_format: "",
+          passline: "",
+          reduction_limit: "",
+          promotion_quota: "",
+        };
+      });
+const organized_lottery_time_data_arr =
+  props.t_info.lottery_time[0].time_range[0] === ""
+    ? null
+    : (props.t_info.break_time as Array<any>).map((lotteryTimeItem, index) => {
+        return {
+          time_range: lotteryTimeItem.time_range,
+          project_info_obj: {
+            label: "抽奖",
+          },
+          current_rounds: "公布抽奖名单",
+          t_format: "",
+          passline: "",
+          reduction_limit: "",
+          promotion_quota: "",
+        };
+      });
 
 // {
 //     time_range: "8:30-9:00",
@@ -394,7 +405,7 @@ const organized_lottery_time_data_arr = (
 //   },
 
 const organized_projects_detail_data_arr = (
-  props.time_range_related_obj.projects_detail as Array<any>
+  props.t_info.projects_detail as Array<any>
 ).map((projectItem, index) => {
   const currentProjectItemRaceScheduleTotalRounds = projectItem.rounds.total;
   const currentProjectItemRoundNamesArr = calcRoundsName(
@@ -438,7 +449,7 @@ const raw_main_row_data_arr = [
   organized_break_time_data_arr,
   organized_lottery_time_data_arr,
   organized_projects_detail_data_arr,
-];
+].filter((item) => item !== null);
 const organized_main_row_data_arr = _.flatMapDeep(
   raw_main_row_data_arr as Array<any>
 );
@@ -467,13 +478,41 @@ const final_main_row_data_arr = sorted_main_row_data_arr.map((item) => {
 //   content: "第一天 星期六 (2023年07月08日)",
 // }
 // Cool to learn.!!
+const itemDay = (
+  itemWithTimeRange: { time_range: ["", ""] } & Record<string, any>
+) => {
+  const itemDay = dayjs.unix(+itemWithTimeRange.time_range[0]).utc(true).day();
+  switch (itemDay) {
+    case 0:
+      return "星期天";
+    case 1:
+      return "星期一";
+    case 2:
+      return "星期二";
+    case 3:
+      return "星期三";
+    case 4:
+      return "星期四";
+    case 5:
+      return "星期五";
+    case 6:
+      return "星期六";
+    default:
+      return "item 时间信息缺失";
+  }
+};
 const test = () => {
   //Notice format resolve, about '-'.
   const finalDayHaveRacesArr = sorted_main_row_data_arr
     .map((item) => {
       return {
         time_range: item.time_range,
-        content: dayjs.unix(item.time_range[0]).utc(true).format("YYYY-MM-DD"),
+        // Use of the format.
+        // content: dayjs.unix(item.time_range[0]).utc(true).format("YYYY-MM-DD"),
+        content:
+          itemDay(item) +
+          " " +
+          dayjs.unix(item.time_range[0]).utc(true).format("YYYY年MM月DD日"),
       };
     })
     .filter((valueObj, index, self) => {
@@ -483,27 +522,90 @@ const test = () => {
       return currentIndex === index;
     });
 
-  const test = finalDayHaveRacesArr.map((item, index) => {
-    const itemDayStamp = dayjs(item.content).unix();
-    return [{ ...item, itemDayStamp }, ...sorted_main_row_data_arr];
+  const dayGroupMainRowItems = finalDayHaveRacesArr.map(
+    (groupLeadDay, index) => {
+      // const groupLeadDayTimeStamp = dayjs(+groupLeadDay.time_range[0]).unix();
+      const filteredItems = sorted_main_row_data_arr.filter(
+        (item, index, selfArr) => {
+          return (
+            dayjs.unix(+item.time_range[0]).utc(true).format("YYYY-MM-DD") ===
+            dayjs
+              .unix(+groupLeadDay.time_range[0])
+              .utc(true)
+              .format("YYYY-MM-DD")
+          );
+        }
+      );
+      return filteredItems;
+    }
+  );
+
+  const dayGroupedRowItems = dayGroupMainRowItems.map((item, index) => {
+    item.unshift(finalDayHaveRacesArr[index]);
+    item = item.map((itemB: any) => {
+      return {
+        ...itemB,
+        time_range: `${dayjs
+          .unix(+itemB.time_range[0])
+          .utc(true)
+          .format("HH:mm")}-${dayjs
+          .unix(+itemB.time_range[1])
+          .utc(true)
+          .format("HH:mm")}`,
+      };
+    });
+    // console.log(item);
+    return item;
   });
 
-  console.log(test);
+  // console.log("dayGroupMainRowItems:", dayGroupMainRowItems);
+  // console.log("dayGroupedRowItems:", dayGroupedRowItems);
+  return dayGroupedRowItems;
 };
-test();
+const test2 = test();
 
 type DayGroupRowDatasType = {
   dayGroupRowData: FinalRaceScheduleMainRowDataType[];
+  current_index: number;
 };
 const [DefineDayGroupRowDatasTable, DayGroupRowDatasTable] =
   createReusableTemplate<DayGroupRowDatasType>();
+const numberToDayCalc = (numberOfDay: number) => {
+  switch (numberOfDay) {
+    case 0:
+      return "一";
+    case 1:
+      return "二";
+    case 2:
+      return "三";
+    case 3:
+      return "四";
+    case 4:
+      return "五";
+    case 5:
+      return "六";
+    case 6:
+      return "七";
+    case 7:
+      return "八";
+    case 8:
+      return "九";
+    case 9:
+      return "十";
+    case 10:
+      return "十一";
+    default:
+      return "number error.";
+  }
+};
 </script>
 <template>
-  <DefineDayGroupRowDatasTable v-slot="{ dayGroupRowData }">
+  <DefineDayGroupRowDatasTable v-slot="{ dayGroupRowData, current_index }">
     <td
       class="text-center text-20px leading-44px odd:bg-#F1F2FD even:bg-#FFFFFF"
       :colspan="tableHeaderInfo.length"
     >
+      第{{ numberToDayCalc(current_index) }}天
       {{ (dayGroupRowData[0] as any).content }}
     </td>
     <div
@@ -544,13 +646,17 @@ const [DefineDayGroupRowDatasTable, DayGroupRowDatasTable] =
     </div>
     <!-- table-row-group -->
     <div class="table-row-group">
-      <DayGroupRowDatasTable :day-group-row-data="mockMainRowData" />
-      <DayGroupRowDatasTable :day-group-row-data="final_main_row_data_arr" />
+      <!-- <DayGroupRowDatasTable :day-group-row-data="mockMainRowData" /> -->
+      <DayGroupRowDatasTable
+        v-for="(dayGroupItem, currentIndex) in test2"
+        :day-group-row-data="dayGroupItem"
+        :current_index="currentIndex"
+      />
     </div>
   </div>
   <!-- table -->
-  <hr class="my-10" />
+  <!-- <hr class="my-10" /> -->
   <!-- test -->
-  <pre>{{ final_main_row_data_arr }}</pre>
+  <!-- <pre>{{ final_main_row_data_arr }}</pre> -->
 </template>
 <style lang="scss" scoped></style>

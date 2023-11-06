@@ -340,7 +340,7 @@ const raw_tournament_state = [
           :icon-meta="`i-custom-svg:d-t-schedule`"
           :ui="DetailPrefixUIPreset"
         />
-        <div></div>
+        <FeaturesTRaceSchedule :t_info="props.t_info_data" />
       </div>
     </div>
   </div>
