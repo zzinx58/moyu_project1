@@ -377,19 +377,21 @@ const organized_break_time_data_arr =
 const organized_lottery_time_data_arr =
   props.t_info.lottery_time[0].time_range[0] === ""
     ? null
-    : (props.t_info.break_time as Array<any>).map((lotteryTimeItem, index) => {
-        return {
-          time_range: lotteryTimeItem.time_range,
-          project_info_obj: {
-            label: "抽奖",
-          },
-          current_rounds: "公布抽奖名单",
-          t_format: "",
-          passline: "",
-          reduction_limit: "",
-          promotion_quota: "",
-        };
-      });
+    : (props.t_info.lottery_time as Array<any>).map(
+        (lotteryTimeItem, index) => {
+          return {
+            time_range: lotteryTimeItem.time_range,
+            project_info_obj: {
+              label: "抽奖",
+            },
+            current_rounds: "公布抽奖名单",
+            t_format: "",
+            passline: "",
+            reduction_limit: "",
+            promotion_quota: "",
+          };
+        }
+      );
 
 // {
 //     time_range: "8:30-9:00",
