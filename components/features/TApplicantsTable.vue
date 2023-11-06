@@ -247,7 +247,7 @@ const handleUploadFileOnChange = (
 const handleManualEnterApplicant = async () => {
   if (manuallyEnterFormState.value.selectedProjects.length === 0)
     naiveMessage.error("赛事项目未选，不可录入相关数据");
-  console.log(await applicantFormRef.value.getErrors());
+  console.log(await applicantFormRef.value.validate());
   if (await applicantFormRef.value.validate()) {
     // alert("赛事项目为空，不可相关录入数据");
     const asyncTasksArr: Promise<number>[] = [];
