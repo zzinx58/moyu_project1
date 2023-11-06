@@ -180,10 +180,12 @@ const display_resultsData = computed(() => {
           overviewResults: itemAOverviewResults,
           p_id: itemA.p_id,
           phase: itemA.phase,
+          t_number: itemA.t_number,
         };
       })
   );
 });
+// console.log(display_resultsData.value);
 const selectedRowForIsRise = computed(() => {
   return display_resultsData.value.map((itemA, index) => {
     if (itemA.is_rise) {
@@ -307,7 +309,8 @@ const handleManualEnterPlayerResults = () => {
       phase: +manuallyEnterFormState.value.phase?.phase,
       user_id: +manuallyEnterFormState.value.user_id,
       name: manuallyEnterFormState.value.name,
-      t_number: +manuallyEnterFormState.value.t_number,
+      // t_number: +manuallyEnterFormState.value.t_number,
+      t_number: manuallyEnterFormState.value.t_number,
       t_id: +routeParamId,
       r1_duration: r1_duration,
       r2_duration: r2_duration,

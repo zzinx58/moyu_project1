@@ -456,7 +456,7 @@ const organized_main_row_data_arr = _.flatMapDeep(
   raw_main_row_data_arr as Array<any>
 );
 
-console.log(organized_main_row_data_arr);
+// console.log(organized_main_row_data_arr);
 
 // StartDate oriented sorting.
 const sorted_main_row_data_arr = organized_main_row_data_arr.sort(

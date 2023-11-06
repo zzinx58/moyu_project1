@@ -1,4 +1,4 @@
-import prisma from '../../../database/client';
+import prisma from "../../../database/client";
 export type TResultType = {
   id: string;
   t_id: number;
@@ -26,6 +26,7 @@ export type TResultType = {
   del_time: string;
   result: number;
   is_del: number;
+  t_number: string;
 };
 export default defineEventHandler(async (e) => {
   const t_id = e.context.params?.t_id
@@ -37,7 +38,7 @@ export default defineEventHandler(async (e) => {
       e,
       createError({
         statusCode: 400,
-        statusMessage: '缺少查询 id',
+        statusMessage: "缺少查询 id",
         // message: 'asd',
       })
     );
@@ -51,7 +52,7 @@ export default defineEventHandler(async (e) => {
 
   //   console.log(targetData);
   const result_temp = JSON.stringify(targetData, (key, value) => {
-    if (typeof value === 'bigint') return value.toString();
+    if (typeof value === "bigint") return value.toString();
     return value;
   });
   const result = JSON.parse(result_temp);
