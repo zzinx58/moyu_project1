@@ -25,7 +25,7 @@ module.exports = {
         NODE_ENV: "production", //使用production模式 pm2 start ecosystem.config.js --env production
         PORT: "5050",
         DEV_DATABASE_URL: "mysql://cube_dev:123456@127.0.0.1:3306/cube_dev",
-        PROJECT_ENV: "HK_DEV",
+        VITE_PROJECT_ENV: "HK_DEV",
       },
       exec_mode: "cluster",
       instances: "2", // max表示最大的 应用启动实例个数，仅在 cluster 模式有效 默认为 fork
