@@ -54,6 +54,11 @@ const people = [
   { id: 10, label: "Emil Schaefer" },
 ];
 const selected = ref([]);
+
+const projectEnv =
+  import.meta.env.VITE_PROJECT_ENV ??
+  //  "ENV_UNSET";
+  "FORMAL";
 </script>
 <template>
   <div class="h-100vh w-100vw bg-#F1F2FD flex">
@@ -140,6 +145,7 @@ const selected = ref([]);
           <n-avatar round :size="50" class="bg-white!">
             <div class="i-mdi:account text-35px text-#E7E6E8" />
           </n-avatar>
+          <div class="absolute right-2 top-1 text-#fff">{{ projectEnv }}</div>
         </div>
       </div>
       <div

@@ -103,10 +103,14 @@ const columnsFlexible: NuxtUITableColumnAttrType[] = [
   {
     label: "最好成绩(s/秒)",
     key: "best_duration",
+    sortable: true,
+    direction: "asc",
   },
   {
     label: "平均成绩(s/秒)",
     key: "avg_duration",
+    sortable: true,
+    direction: "asc",
   },
   {
     label: "详情 [r1,r2,r...] (s/秒)",
@@ -344,6 +348,7 @@ const handleResetFormState = () => {
 const selectedProjectItems = ref<{ [key: string]: string }[]>([]);
 const selectedPhase = ref();
 // watchEffect(() => console.log(typeof selectedPhase.value));
+console.log(import.meta.env.VITE_PROJECT_ENV);
 </script>
 <template>
   <!-- <CustomSelectGroup
@@ -563,23 +568,23 @@ const selectedPhase = ref();
               placeholder="请选择比赛轮次.."
               :options="[
                 {
-                  label: '第一局',
+                  label: '第一轮',
                   phase_id: '1',
                 },
                 {
-                  label: '第二局',
+                  label: '第二轮',
                   phase_id: '2',
                 },
                 {
-                  label: '第三局',
+                  label: '第三轮',
                   phase_id: '3',
                 },
                 {
-                  label: '第四局',
+                  label: '第四轮',
                   phase_id: '4',
                 },
                 {
-                  label: '第五局',
+                  label: '第五轮',
                   phase_id: '5',
                 },
               ]"
@@ -624,7 +629,15 @@ const selectedPhase = ref();
                     row.is_rise ? 'bg-green text-white' : ''
                   }`"
                 >
-                  {{ row.is_rise ? "是" : "否" }}
+                  <!-- {{ row.is_rise ? "是" : "否" }} -->
+                  <select
+                    name="is_rise"
+                    id="is_rise_select"
+                    :value="row.is_rise"
+                  >
+                    <option value="1" class="bg-green!">是</option>
+                    <option value="0">否</option>
+                  </select>
                 </div>
               </template>
             </UTable>

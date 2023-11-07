@@ -1,6 +1,6 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
-import * as xlsx from 'xlsx';
+import * as xlsx from "xlsx";
 
 export default prisma;
 
@@ -9,15 +9,15 @@ async function main() {
   //   by: ['user_id'],
   // });
   // console.log(test2);
-  const test3 = await prisma.tournament_apply_t.findMany({
-    select: {
-      p_name: true,
-      user_id: true,
-      name: true,
-    },
-    // distinct: ['name', ],
-  });
-  console.log(test3);
+  // const test3 = await prisma.tournament_apply_t.findMany({
+  //   select: {
+  //     p_name: true,
+  //     user_id: true,
+  //     name: true,
+  //   },
+  //   // distinct: ['name', ],
+  // });
+  // console.log(test3);
   // const test4 = await prisma.tournament_result_t.findMany({
   //   select: {
   //     name: true,

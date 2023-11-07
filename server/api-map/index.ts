@@ -21,17 +21,17 @@ export const api_map = {
     baseurl: "https://api.yicloud.vip/api",
     users: {
       // user_detail: token, {user_id}.
-      user_detail: "https://api.yicloud.vip/api/dashboard/users/",
+      user_detail: "/dashboard/users/",
       // user_filter_by: token, q_phone, q_user_id, q_size, q_current_page.
-      user_filter_by: "https://api.yicloud.vip/api/dashboard/users/list",
+      user_filter_by: "/dashboard/users/list",
       // list: token, q_page, q_size.
-      list: "https://api.yicloud.vip/api/dashboard/users/list",
+      list: "/dashboard/users/list",
     },
     admin: {
       // signup: token, username, password.
-      signup: "https://api.yicloud.vip/api/admins",
+      signup: "/admins",
       // signin: username, password
-      signin: "https://api.yicloud.vip/api/admins/login",
+      signin: "/admins/login",
     },
   },
 };
