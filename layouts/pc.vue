@@ -55,10 +55,13 @@ const people = [
 ];
 const selected = ref([]);
 
-const projectEnv =
-  import.meta.env.VITE_PROJECT_ENV ??
-  //  "ENV_UNSET";
-  "FORMAL";
+// const projectEnv =
+//   import.meta.env.VITE_PROJECT_ENV ??
+//   //  "ENV_UNSET";
+//   "FORMAL";
+const projectInfo = $fetch("/api/project-info");
+// console.log(projectInfo);
+const projectENV = projectInfo;
 </script>
 <template>
   <div class="h-100vh w-100vw bg-#F1F2FD flex">
@@ -145,7 +148,7 @@ const projectEnv =
           <n-avatar round :size="50" class="bg-white!">
             <div class="i-mdi:account text-35px text-#E7E6E8" />
           </n-avatar>
-          <div class="absolute right-2 top-1 text-#fff">{{ projectEnv }}</div>
+          <div class="absolute right-2 top-1 text-#fff">{{ projectENV }}</div>
         </div>
       </div>
       <div
