@@ -286,6 +286,8 @@ const handleClickCollapseItem: CollapseProps["onItemHeaderClick"] = ({
                   id: item.id,
                   label: item.label,
                   iconMeta: item.iconMeta!,
+                  rounds_total: item.rounds.total,
+                  rounds_detail: item.rounds.detail
                 };
               })
       "

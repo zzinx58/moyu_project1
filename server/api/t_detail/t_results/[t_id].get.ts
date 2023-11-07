@@ -27,6 +27,7 @@ export type TResultType = {
   result: number;
   is_del: number;
   t_number: string;
+  round_format: number;
 };
 export default defineEventHandler(async (e) => {
   const t_id = e.context.params?.t_id

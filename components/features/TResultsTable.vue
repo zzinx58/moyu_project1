@@ -43,35 +43,21 @@ const inputUiStyle = {
 
 const props = defineProps<{
   t_resultsData: TResultType[];
-  t_projects: { id: number | undefined; label: string; iconMeta: string }[];
+  t_projects: {
+    id: number | undefined;
+    label: string;
+    iconMeta: string;
+    rounds_total: number;
+    rounds_detail:
+      | []
+      | {
+          promotion_quota: number;
+          time_range: [string, string];
+          t_format: number;
+        }[];
+  }[];
   // t_projects: { id: number; label: string; iconMeta: string }[];
 }>();
-
-const t_phase_options: {
-  phase: number;
-  label: string;
-}[] = [
-  {
-    label: "1",
-    phase: 1,
-  },
-  {
-    label: "2",
-    phase: 2,
-  },
-  {
-    label: "3",
-    phase: 3,
-  },
-  {
-    label: "4",
-    phase: 4,
-  },
-  {
-    label: "5",
-    phase: 5,
-  },
-];
 
 type NuxtUITableColumnAttrType = {
   key: string;
@@ -111,6 +97,10 @@ const columnsFlexible: NuxtUITableColumnAttrType[] = [
     key: "avg_duration",
     sortable: true,
     direction: "asc",
+  },
+  {
+    label: "赛制",
+    key: "round_format",
   },
   {
     label: "详情 [r1,r2,r...] (s/秒)",
@@ -186,6 +176,9 @@ const display_resultsData = computed(() => {
           p_id: itemA.p_id,
           phase: itemA.phase,
           t_number: itemA.t_number,
+          round_format: round_format_avg_strategy.find(
+            (item) => item.id === itemA.round_format
+          )?.label,
         };
       })
   );
@@ -292,6 +285,139 @@ const handleUploadFileOnChange = (
   }
 };
 
+const round_format_avg_strategy = [
+  {
+    id: 3,
+    label: "五次去头去尾取平均",
+    calcRule: (durationResultArr: Array<number>) => {
+      const filtered_and_sorted_duration_arr = durationResultArr.sort(
+        (a, b) => a - b
+      );
+      const avg_result =
+        filtered_and_sorted_duration_arr
+          .slice(1, 4)
+          .reduce((a, b) => a + b, 0) / 3;
+      // filtered_and_sorted_duration_arr.length;
+      return {
+        avg: avg_result,
+        best_duration: filtered_and_sorted_duration_arr.shift() ?? 0,
+      };
+    },
+  },
+  {
+    id: 4,
+    label: "三次取平均",
+    calcRule: (durationResultArr: Array<number>) => {
+      const filtered_and_sorted_duration_arr = durationResultArr
+        .filter((item) => item !== 0)
+        .sort((a, b) => a - b);
+      const avg_result =
+        filtered_and_sorted_duration_arr.reduce((a, b) => a + b, 0) / 3;
+      // filtered_and_sorted_duration_arr.length;
+      return {
+        avg: avg_result,
+        best_duration: filtered_and_sorted_duration_arr.shift() ?? 0,
+      };
+    },
+  },
+  {
+    id: 2,
+    label: "三次取最快",
+    calcRule: (durationResultArr: Array<number>) => {
+      const filtered_and_sorted_duration_arr = durationResultArr
+        .filter((item) => item !== 0)
+        .sort((a, b) => a - b);
+      const avg_result =
+        filtered_and_sorted_duration_arr.reduce((a, b) => a + b, 0) /
+        filtered_and_sorted_duration_arr.length;
+      return {
+        avg: avg_result,
+        best_duration: filtered_and_sorted_duration_arr.shift() ?? 0,
+      };
+    },
+  },
+  {
+    id: 5,
+    label: "两次取最快",
+    calcRule: (durationResultArr: Array<number>) => {
+      const filtered_and_sorted_duration_arr = durationResultArr
+        .filter((item) => item !== 0)
+        .sort((a, b) => a - b);
+      const avg_result =
+        durationResultArr.reduce((a, b) => a + b, 0) / durationResultArr.length;
+      return {
+        avg: avg_result,
+        best_duration: filtered_and_sorted_duration_arr.shift() ?? 0,
+      };
+    },
+  },
+  {
+    id: 1,
+    label: "单次",
+    calcRule: (durationResultArr: Array<number>) => {
+      const filtered_and_sorted_duration_arr = durationResultArr
+        .filter((item) => item !== 0)
+        .sort((a, b) => a - b);
+      const avg_result =
+        durationResultArr.reduce((a, b) => a + b, 0) / durationResultArr.length;
+      return {
+        avg: avg_result,
+        best_duration: filtered_and_sorted_duration_arr.shift() ?? 0,
+      };
+    },
+  },
+];
+
+const roundFormatBasedAvgCalc = (
+  durationResultArr: Array<number>,
+  round_format: number
+): { avg: number; best_duration: number } => {
+  return (
+    round_format_avg_strategy
+      .find((strategy) => strategy.id === round_format)
+      ?.calcRule(durationResultArr) ?? {
+      best_duration: 0,
+      avg: 0,
+    }
+  );
+};
+
+const t_phase_options: {
+  phase: number;
+  label: string;
+}[] = [
+  {
+    label: "1",
+    phase: 1,
+  },
+  {
+    label: "2",
+    phase: 2,
+  },
+  {
+    label: "3",
+    phase: 3,
+  },
+  {
+    label: "4",
+    phase: 4,
+  },
+  {
+    label: "5",
+    phase: 5,
+  },
+];
+
+const ref_t_phase_options = ref(t_phase_options);
+watchEffect(() => {
+  const currentProjectId = manuallyEnterFormState.value.projects?.id ?? 0;
+  const rounds_total =
+    props.t_projects.find((project) => project.id == currentProjectId)
+      ?.rounds_total ?? 0;
+  // console.log(rounds_total);
+  ref_t_phase_options.value = t_phase_options.slice(0, rounds_total);
+});
+
 const handleManualEnterPlayerResults = () => {
   if (props.t_projects.length === 0) {
     alert("赛事项目为空，不可录入相关数据");
@@ -308,6 +434,14 @@ const handleManualEnterPlayerResults = () => {
       r4_duration,
       r5_duration,
     ];
+
+    const currentProjectId = manuallyEnterFormState.value.projects!.id;
+    const currentRoundIndex = manuallyEnterFormState.value.phase!.phase;
+    const currentRoundFormat = props.t_projects
+      .find((project) => project.id === currentProjectId)
+      ?.rounds_detail.find((round, index) => index === currentRoundIndex - 1)
+      ?.t_format!;
+
     const finalFormData = {
       p_name: manuallyEnterFormState.value.projects?.label,
       p_id: +manuallyEnterFormState.value.projects?.id,
@@ -322,13 +456,16 @@ const handleManualEnterPlayerResults = () => {
       r3_duration: r3_duration,
       r4_duration: r4_duration,
       r5_duration: r5_duration,
-      avg:
-        durationResultArr.reduce((sum, durationItem) => {
-          return sum + durationItem;
-        }, 0) / durationResultArr.length,
-      best_duration: Math.min(...durationResultArr),
+      // avg:
+      //   durationResultArr.reduce((sum, durationItem) => {
+      //     return sum + durationItem;
+      //   }, 0) / durationResultArr.length,
+      // best_duration: Math.min(...durationResultArr),
+      ...roundFormatBasedAvgCalc(durationResultArr, currentRoundFormat),
+      round_format: currentRoundFormat,
     };
-    // console.log(finalFormData);
+    console.log(finalFormData);
+    console.log(finalFormData.avg, finalFormData.best_duration);
     $fetch("/api/t_detail/t_results/createMany", {
       method: "POST",
       body: {
@@ -348,7 +485,6 @@ const handleResetFormState = () => {
 const selectedProjectItems = ref<{ [key: string]: string }[]>([]);
 const selectedPhase = ref();
 // watchEffect(() => console.log(typeof selectedPhase.value));
-console.log(import.meta.env.VITE_PROJECT_ENV);
 </script>
 <template>
   <!-- <CustomSelectGroup
@@ -387,9 +523,10 @@ console.log(import.meta.env.VITE_PROJECT_ENV);
                 <UFormGroup label="轮次" :ui="formGroupUiStyle" required>
                   <USelectMenu
                     v-model="manuallyEnterFormState.phase"
-                    :options="t_phase_options"
+                    :options="ref_t_phase_options"
                     placeholder="请选择比赛轮次.."
                   />
+                  <!-- :options="t_phase_options" -->
                 </UFormGroup>
                 <UFormGroup label="编号" :ui="formGroupUiStyle" required>
                   <UInput
@@ -443,6 +580,7 @@ console.log(import.meta.env.VITE_PROJECT_ENV);
                       v-model="manuallyEnterFormState.r1_duration"
                       type="number"
                       min="0"
+                      :disabled="ref_t_phase_options.length < 1"
                     />
                   </div>
                   <div class="flex items-center gap-1">
@@ -452,6 +590,7 @@ console.log(import.meta.env.VITE_PROJECT_ENV);
                       v-model="manuallyEnterFormState.r2_duration"
                       type="number"
                       min="0"
+                      :disabled="ref_t_phase_options.length < 2"
                     />
                   </div>
                   <div class="flex items-center gap-1">
@@ -461,6 +600,7 @@ console.log(import.meta.env.VITE_PROJECT_ENV);
                       v-model="manuallyEnterFormState.r3_duration"
                       type="number"
                       min="0"
+                      :disabled="ref_t_phase_options.length < 3"
                     />
                   </div>
                   <div class="flex items-center gap-1">
@@ -470,6 +610,7 @@ console.log(import.meta.env.VITE_PROJECT_ENV);
                       v-model="manuallyEnterFormState.r4_duration"
                       type="number"
                       min="0"
+                      :disabled="ref_t_phase_options.length < 4"
                     />
                   </div>
                   <div class="flex items-center gap-1">
@@ -479,6 +620,7 @@ console.log(import.meta.env.VITE_PROJECT_ENV);
                       v-model="manuallyEnterFormState.r5_duration"
                       type="number"
                       min="0"
+                      :disabled="ref_t_phase_options.length < 5"
                     />
                   </div>
                 </UFormGroup>
