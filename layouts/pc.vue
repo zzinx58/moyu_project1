@@ -59,7 +59,7 @@ const selected = ref([]);
 //   import.meta.env.VITE_PROJECT_ENV ??
 //   //  "ENV_UNSET";
 //   "FORMAL";
-const projectInfo = $fetch("/api/project-info");
+const projectInfo = await $fetch("/api/project-info");
 // console.log(projectInfo);
 const projectENV = projectInfo;
 </script>
