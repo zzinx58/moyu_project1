@@ -97,7 +97,7 @@ const projectENV = projectInfo;
 
 <template>
   <div class="bg-white w-400px rounded-lg shadow-lg p-8">
-    <div class="absolute right-2 top-1 text-#fff">{{ projectENV }}</div>
+    <div class="absolute right-2 top-1 text-#6F6F8B">{{ projectENV }}</div>
     <div class="i-custom-svg:nav-logo w-98px h-57px bg-black" />
     <div id="login" class="mt-16 text-24px mb-32">
       <div class="text-center mb-10 grid gap-6">

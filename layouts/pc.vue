@@ -146,9 +146,11 @@ const projectENV = projectInfo;
             {{ userStore.userInfo.username }}
           </div>
           <n-avatar round :size="50" class="bg-white!">
-            <div class="i-mdi:account text-35px text-#E7E6E8" />
+            <div class="i-mdi:account text-35px text-#70708C" />
           </n-avatar>
-          <div class="absolute right-2 top-1 text-#fff">{{ projectENV }}</div>
+          <div class="absolute right-2 top-1 text-#6F6F8B">
+            {{ projectENV }}
+          </div>
         </div>
       </div>
       <div
