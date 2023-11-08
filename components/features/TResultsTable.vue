@@ -134,56 +134,6 @@ const selectedColumns = ref([...columns]);
 //   }[]
 // >([props.t_projects[0]]);
 
-const display_resultsData = computed(() => {
-  return (
-    props.t_resultsData
-      // .filter((item, index, selfArr) => {
-      //   return selectedProject.value.id === item.p_id;
-      // })
-      .map((itemA, indexA) => {
-        const itemAOverviewResults: [string, number][] = [];
-        Object.entries(itemA).forEach(([key, value]) => {
-          if (key.startsWith("r") && key.endsWith("_duration")) {
-            const _durationStrIndex = key.indexOf("_duration");
-            let keySimplified = key.slice(0, _durationStrIndex);
-
-            itemAOverviewResults.push(
-              // Object.fromEntries([[keySimplified, value]])
-              [
-                keySimplified,
-                typeof value === "number" ? value : parseInt("" + value),
-              ]
-            );
-          }
-        });
-        itemAOverviewResults.sort(
-          (preVal: [string, number], curVal: [string, number]) => {
-            //逆，5,4,3,2,1; judge>0
-            // return +curVal[0].slice(-1) - +preVal[0].slice(-1);
-            //正，1,2,3,4,5; judge<0
-            return +preVal[0].slice(-1) - +curVal[0].slice(-1);
-          }
-        );
-        return {
-          name: itemA.name,
-          user_id: itemA.user_id,
-          wcu_id: null,
-          best_duration: resultNumberFormatter(itemA.best_duration / 1000),
-          avg_duration: resultNumberFormatter(itemA.avg / 1000),
-          is_rise: itemA.is_rise,
-          // is_rise: itemA.is_rise ? '是' : '否',
-          overviewResults: itemAOverviewResults,
-          p_id: itemA.p_id,
-          phase: itemA.phase,
-          t_number: itemA.t_number,
-          round_format: round_format_grade_calc_strategy.find(
-            (item) => item.id === itemA.round_format
-          )?.label,
-        };
-      })
-  );
-});
-// console.log(display_resultsData.value);
 const selectedRowForIsRise = computed(() => {
   return display_resultsData.value.map((itemA, index) => {
     if (itemA.is_rise) {
@@ -192,31 +142,6 @@ const selectedRowForIsRise = computed(() => {
   });
 });
 // console.log(display_resultsData.value);
-
-const currentPage = ref(1);
-const tablePageCount = 15;
-const finalListData = computed(() => {
-  if (selectedProjectItems.value.length === 0) {
-    return display_resultsData.value?.slice(
-      (currentPage.value - 1) * tablePageCount,
-      currentPage.value * tablePageCount
-    );
-  }
-  let filterListData = display_resultsData.value
-    .filter((item, index, selfArr) => {
-      return selectedProjectItems.value.some(
-        (itemA) => +itemA.id === item.p_id
-      );
-    })
-    //Bug 小点
-    .filter((item) => {
-      return item.phase === +selectedPhase.value;
-    });
-  return filterListData.slice(
-    (currentPage.value - 1) * tablePageCount,
-    currentPage.value * tablePageCount
-  );
-});
 
 const route = useRoute();
 const router = useRouter();
@@ -435,6 +360,89 @@ watchEffect(() => {
   ref_round_games_total.value = currentRoundGamesTotal;
 });
 
+const selectedProjectItems = ref<{ [key: string]: string }[]>([]);
+const selectedPhase = ref();
+// watchEffect(() => console.log(typeof selectedPhase.value));
+
+const currentPage = ref(1);
+const tablePageCount = 15;
+
+const display_resultsData = computed(() => {
+  return (
+    props.t_resultsData
+      // .filter((item, index, selfArr) => {
+      //   return selectedProject.value.id === item.p_id;
+      // })
+      .map((itemA, indexA) => {
+        const itemAOverviewResults: [string, number][] = [];
+        Object.entries(itemA).forEach(([key, value]) => {
+          if (key.startsWith("r") && key.endsWith("_duration")) {
+            const _durationStrIndex = key.indexOf("_duration");
+            let keySimplified = key.slice(0, _durationStrIndex);
+
+            itemAOverviewResults.push(
+              // Object.fromEntries([[keySimplified, value]])
+              [
+                keySimplified,
+                typeof value === "number" ? value : parseInt("" + value),
+              ]
+            );
+          }
+        });
+        itemAOverviewResults.sort(
+          (preVal: [string, number], curVal: [string, number]) => {
+            //逆，5,4,3,2,1; judge>0
+            // return +curVal[0].slice(-1) - +preVal[0].slice(-1);
+            //正，1,2,3,4,5; judge<0
+            return +preVal[0].slice(-1) - +curVal[0].slice(-1);
+          }
+        );
+        return {
+          name: itemA.name,
+          user_id: itemA.user_id,
+          wcu_id: null,
+          best_duration: resultNumberFormatter(itemA.best_duration / 1000),
+          avg_duration: resultNumberFormatter(itemA.avg / 1000),
+          is_rise: itemA.is_rise,
+          // is_rise: itemA.is_rise ? '是' : '否',
+          overviewResults: itemAOverviewResults,
+          p_id: itemA.p_id,
+          phase: itemA.phase,
+          t_number: itemA.t_number,
+          round_format: round_format_grade_calc_strategy.find(
+            (item) => item.id === itemA.round_format
+          )?.label,
+        };
+      })
+  );
+});
+// console.log(display_resultsData.value);
+
+const finalListData = computed(() => {
+  if (selectedProjectItems.value.length === 0) {
+    return display_resultsData.value?.slice(
+      (currentPage.value - 1) * tablePageCount,
+      currentPage.value * tablePageCount
+    );
+  }
+  let filterListData = display_resultsData.value
+    .filter((item, index, selfArr) => {
+      return selectedProjectItems.value.some(
+        (itemA) => +itemA.id === item.p_id
+      );
+    })
+    //Bug 小点
+    .filter((item) => {
+      return item.phase === +selectedPhase.value;
+    });
+  return filterListData.slice(
+    (currentPage.value - 1) * tablePageCount,
+    currentPage.value * tablePageCount
+  );
+});
+
+console.log(finalListData.value.length);
+
 const handleManualEnterPlayerResults = () => {
   if (props.t_projects.length === 0) {
     alert("赛事项目为空，不可录入相关数据");
@@ -493,10 +501,6 @@ const handleManualEnterPlayerResults = () => {
 const handleResetFormState = () => {
   manuallyEnterFormState.value = structuredClone(formStateObjTemp);
 };
-
-const selectedProjectItems = ref<{ [key: string]: string }[]>([]);
-const selectedPhase = ref();
-// watchEffect(() => console.log(typeof selectedPhase.value));
 </script>
 <template>
   <!-- <CustomSelectGroup
