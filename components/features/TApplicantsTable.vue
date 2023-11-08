@@ -165,7 +165,9 @@ const finalListData = computed(() => {
   );
 });
 const pageTotal = computed(() => {
-  return display_applicantsData.value.length;
+  return display_applicantsData.value.length === 0
+    ? 1
+    : display_applicantsData.value.length;
 });
 
 const formStateObjTemp = {
