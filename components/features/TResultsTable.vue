@@ -3,6 +3,7 @@ import { TResultType } from "server/api/t_detail/t_results/[t_id].get";
 import { genFileId } from "element-plus";
 import type { UploadInstance, UploadProps, UploadRawFile } from "element-plus";
 import * as xlsx from "xlsx";
+import { JSONPath } from "jsonpath-plus";
 
 const tableUiStyle = {
   th: {
@@ -363,6 +364,39 @@ watchEffect(() => {
 const selectedProjectItems = ref<{ [key: string]: string }[]>([]);
 const selectedPhase = ref();
 // watchEffect(() => console.log(typeof selectedPhase.value));
+const ref_filter_round_options = ref([
+  {
+    label: "第一轮",
+    phase_id: "1",
+  },
+  {
+    label: "第二轮",
+    phase_id: "2",
+  },
+  {
+    label: "第三轮",
+    phase_id: "3",
+  },
+  {
+    label: "第四轮",
+    phase_id: "4",
+  },
+  {
+    label: "第五轮",
+    phase_id: "5",
+  },
+]);
+watchEffect(() => {
+  const projectsMaxRoundsTotal = JSONPath({
+    path: "$.*.rounds_total",
+    json: props.t_projects,
+  });
+  // console.log(Math.max(...projectsMaxRoundsTotal));
+  ref_filter_round_options.value = ref_filter_round_options.value.slice(
+    0,
+    Math.max(...projectsMaxRoundsTotal)
+  );
+});
 
 const currentPage = ref(1);
 const tablePageCount = 15;
@@ -418,8 +452,8 @@ const display_resultsData = computed(() => {
 });
 // console.log(display_resultsData.value);
 const filterListDataLength = computed(() => {
-  return (
-    display_resultsData.value
+  if (selectedProjectItems.value.length > 0) {
+    const filteredDataLength = display_resultsData.value
       .filter((item, index, selfArr) => {
         return selectedProjectItems.value.some(
           (itemA) => +itemA.id === item.p_id
@@ -428,8 +462,11 @@ const filterListDataLength = computed(() => {
       //Bug 小点
       .filter((item) => {
         return item.phase === +selectedPhase.value;
-      }).length
-  );
+      }).length;
+    return filteredDataLength === 0 ? 1 : filteredDataLength;
+  } else {
+    return display_resultsData.value.length;
+  }
 });
 
 const finalListData = computed(() => {
@@ -736,28 +773,7 @@ const handleResetFormState = () => {
               label-field="label"
               class="w-180px!"
               placeholder="请选择比赛轮次.."
-              :options="[
-                {
-                  label: '第一轮',
-                  phase_id: '1',
-                },
-                {
-                  label: '第二轮',
-                  phase_id: '2',
-                },
-                {
-                  label: '第三轮',
-                  phase_id: '3',
-                },
-                {
-                  label: '第四轮',
-                  phase_id: '4',
-                },
-                {
-                  label: '第五轮',
-                  phase_id: '5',
-                },
-              ]"
+              :options="ref_filter_round_options"
             />
           </n-form-item>
 
