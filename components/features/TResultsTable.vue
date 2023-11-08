@@ -417,6 +417,20 @@ const display_resultsData = computed(() => {
   );
 });
 // console.log(display_resultsData.value);
+const filterListDataLength = computed(() => {
+  return (
+    display_resultsData.value
+      .filter((item, index, selfArr) => {
+        return selectedProjectItems.value.some(
+          (itemA) => +itemA.id === item.p_id
+        );
+      })
+      //Bug 小点
+      .filter((item) => {
+        return item.phase === +selectedPhase.value;
+      }).length
+  );
+});
 
 const finalListData = computed(() => {
   if (selectedProjectItems.value.length === 0) {
@@ -440,8 +454,6 @@ const finalListData = computed(() => {
     currentPage.value * tablePageCount
   );
 });
-
-console.log(finalListData.value.length);
 
 const handleManualEnterPlayerResults = () => {
   if (props.t_projects.length === 0) {
@@ -805,7 +817,7 @@ const handleResetFormState = () => {
         <div class="w-full flex justify-center mt-4 basis-100%">
           <UPagination
             :page-count="tablePageCount"
-            :total="finalListData.length"
+            :total="filterListDataLength"
             v-model="currentPage"
             :prev-button="{
               label: '上一页',
