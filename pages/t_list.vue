@@ -165,7 +165,7 @@ onBeforeMount(async () => {
     alert("数据获取失败");
   }
   if (t_list.value) {
-    const solvedListData = t_list.value.map((item) => {
+    const solvedListData = (t_list.value as Array<any>).map((item) => {
       let statusItemObj = calcStatus(
         currentTimeUnix,
         item.apply_time_range,
@@ -352,11 +352,11 @@ const handleClickFailedEmailSendButton = () => {
                 : `${dayjs
                     .unix(+row.time_range[0])
                     .utc(true)
-                    .format("YYYY.MM.DD")
+                    .format("YYYY年MM月DD日 HH:mm")
                     .toString()} - ${dayjs
                     .unix(+row.time_range[1])
                     .utc(true)
-                    .format("YYYY.MM.DD")
+                    .format("YYYY年MM月DD日 HH:mm")
                     .toString()}`
             }`
           }}</span>

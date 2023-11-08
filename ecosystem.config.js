@@ -15,23 +15,23 @@ module.exports = {
     {
       name: "MOYU",
       env: {
-        // 环境参数，当前指定为开发环境
+        // 环境参数，当前指定为本地开发环境
         NODE_ENV: "development",
         PORT: "5050",
         DEV_DATABASE_URL: "mysql://cube_dev:123456@192.168.1.25:3306/cube_dev",
+      },
+      env_staging: {
+        // 环境参数,当前指定为预发布环境
+        NODE_ENV: "staging", //使用production模式 pm2 start ecosystem.config.js --env production
+        PORT: "5050",
+        DEV_DATABASE_URL: "mysql://cube_dev:123456@127.0.0.1:3306/cube_dev",
+        VITE_PROJECT_ENV: "HK_DEV",
       },
       env_production: {
         // 环境参数,当前指定为生产环境
         NODE_ENV: "production", //使用production模式 pm2 start ecosystem.config.js --env production
         PORT: "5050",
-        DEV_DATABASE_URL: "mysql://cube_dev:123456@127.0.0.1:3306/cube_dev",
-        VITE_PROJECT_ENV: "HK_DEV",
-      },
-      env_formal: {
-        // 环境参数,当前指定为生产环境
-        NODE_ENV: "formal", //使用production模式 pm2 start ecosystem.config.js --env production
-        PORT: "5050",
-        DEV_DATABASE_URL: "mysql://cube_dev:123456@127.0.0.1:3306/cube_dev",
+        // DEV_DATABASE_URL: "mysql://cube_dev:123456@127.0.0.1:3306/cube_dev",
         VITE_PROJECT_ENV: "FORMAL",
       },
       exec_mode: "cluster",
