@@ -218,10 +218,6 @@ const finalListData = computed(() => {
   );
 });
 
-const pageTotal = computed(() => {
-  return display_resultsData.value.length;
-});
-
 const route = useRoute();
 const router = useRouter();
 const routeParamId = route.params.t_id;
@@ -805,7 +801,7 @@ const selectedPhase = ref();
         <div class="w-full flex justify-center mt-4 basis-100%">
           <UPagination
             :page-count="tablePageCount"
-            :total="pageTotal"
+            :total="finalListData.length"
             v-model="currentPage"
             :prev-button="{
               label: '上一页',
