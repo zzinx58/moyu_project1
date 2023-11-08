@@ -807,7 +807,8 @@ console.log(finalListData.value);
                     row.overviewResults
                       .map((item: [string, number], index: number) => {
                         // return resultNumberFormatter(item[1] / 1000);
-                        return item[1];
+                        // return item[1];
+                        return (item[1] / 1000).toFixed(2);
                       })
                       .join("&nbsp&nbsp&nbsp&nbsp&nbsp")
                   }}
