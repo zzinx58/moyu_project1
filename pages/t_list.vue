@@ -349,15 +349,27 @@ const handleClickFailedEmailSendButton = () => {
                 ? "日期为 Null"
                 : Array.prototype.includes.call(row.time_range, "")
                 ? "日期错误，日期数组中有空元素"
-                : `${dayjs
-                    .unix(+row.time_range[0])
-                    .utc(true)
-                    .format("YYYY年MM月DD日 HH:mm")
-                    .toString()} - ${dayjs
-                    .unix(+row.time_range[1])
-                    .utc(true)
-                    .format("YYYY年MM月DD日 HH:mm")
-                    .toString()}`
+                : `${
+                    dayjs
+                      .unix(+row.time_range[0])
+                      .utc(true)
+                      .format("YYYY.MM.DD") ===
+                    dayjs
+                      .unix(+row.time_range[1])
+                      .utc(true)
+                      .format("YYYY.MM.DD")
+                      ? `${dayjs
+                          .unix(+row.time_range[0])
+                          .utc(true)
+                          .format("YYYY.MM.DD")}`
+                      : `${dayjs
+                          .unix(+row.time_range[0])
+                          .utc(true)
+                          .format("YYYY.MM.DD")} - ${dayjs
+                          .unix(+row.time_range[1])
+                          .utc(true)
+                          .format("YYYY.MM.DD")}`
+                  }`
             }`
           }}</span>
         </template>
