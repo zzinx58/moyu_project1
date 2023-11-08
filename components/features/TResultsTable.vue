@@ -4,6 +4,7 @@ import { genFileId } from "element-plus";
 import type { UploadInstance, UploadProps, UploadRawFile } from "element-plus";
 import * as xlsx from "xlsx";
 import { JSONPath } from "jsonpath-plus";
+import { useMessage } from "naive-ui";
 
 const tableUiStyle = {
   th: {
@@ -59,6 +60,8 @@ const props = defineProps<{
   }[];
   // t_projects: { id: number; label: string; iconMeta: string }[];
 }>();
+
+const naiveMessage = useMessage();
 
 type NuxtUITableColumnAttrType = {
   key: string;
@@ -448,6 +451,7 @@ const display_resultsData = computed(() => {
           round_format: round_format_grade_calc_strategy.find(
             (item) => item.id === itemA.round_format
           )?.label,
+          t_id: itemA.t_id,
         };
       })
   );
@@ -535,8 +539,8 @@ const handleManualEnterPlayerResults = () => {
       ...roundFormatBasedGradeCalc(durationResultArr, currentRoundFormat),
       round_format: currentRoundFormat,
     };
-    console.log(finalFormData);
-    console.log(finalFormData.avg, finalFormData.best_duration);
+    // console.log(finalFormData);
+    // console.log(finalFormData.avg, finalFormData.best_duration);
     $fetch("/api/t_detail/t_results/createMany", {
       method: "POST",
       body: {
@@ -552,7 +556,28 @@ const handleManualEnterPlayerResults = () => {
 const handleResetFormState = () => {
   manuallyEnterFormState.value = structuredClone(formStateObjTemp);
 };
-console.log(finalListData.value);
+// console.log(finalListData.value);
+
+const handleSelectItemRise = async (rowData: any) => {
+  console.log(rowData);
+  const { data, error } = await useFetch(
+    "/api/t_detail/t_results/setItemRise",
+    {
+      method: "post",
+      body: {
+        t_id: rowData.t_id,
+        item_user_id: rowData.user_id,
+        p_id: rowData.p_id,
+        phase_id: rowData.phase,
+        is_rise: rowData.is_rise === 1 ? true : false,
+      },
+    }
+  );
+  // console.log(error.value, data.value);
+  data.value
+    ? naiveMessage.success(data.value as string)
+    : naiveMessage.error(error.value?.statusMessage as string);
+};
 </script>
 <template>
   <!-- <CustomSelectGroup
@@ -823,7 +848,8 @@ console.log(finalListData.value);
               <template #is_rise-data="{ row }">
                 <div
                   :class="`text-center ${
-                    row.is_rise ? 'bg-green text-white' : ''
+                    // row.is_rise ? 'bg-green text-white' : ''
+                    ''
                   }`"
                 >
                   <!-- {{ row.is_rise ? "是" : "否" }} -->
@@ -831,9 +857,10 @@ console.log(finalListData.value);
                     name="is_rise"
                     id="is_rise_select"
                     :value="row.is_rise"
-                    @change="console.log(row)"
+                    @change="handleSelectItemRise(row)"
+                    :class="`${row.is_rise ? 'bg-green text-white' : ''}`"
                   >
-                    <option value="1" class="bg-green!">是</option>
+                    <option value="1">是</option>
                     <option value="0">否</option>
                   </select>
                 </div>
