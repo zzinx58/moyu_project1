@@ -176,7 +176,7 @@ const display_resultsData = computed(() => {
           p_id: itemA.p_id,
           phase: itemA.phase,
           t_number: itemA.t_number,
-          round_format: round_format_avg_strategy.find(
+          round_format: round_format_grade_calc_strategy.find(
             (item) => item.id === itemA.round_format
           )?.label,
         };
@@ -285,10 +285,11 @@ const handleUploadFileOnChange = (
   }
 };
 
-const round_format_avg_strategy = [
+const round_format_grade_calc_strategy = [
   {
     id: 3,
     label: "五次去头去尾取平均",
+    games_total: 5,
     calcRule: (durationResultArr: Array<number>) => {
       const filtered_and_sorted_duration_arr = durationResultArr.sort(
         (a, b) => a - b
@@ -307,6 +308,7 @@ const round_format_avg_strategy = [
   {
     id: 4,
     label: "三次取平均",
+    games_total: 3,
     calcRule: (durationResultArr: Array<number>) => {
       const filtered_and_sorted_duration_arr = durationResultArr
         .filter((item) => item !== 0)
@@ -323,6 +325,7 @@ const round_format_avg_strategy = [
   {
     id: 2,
     label: "三次取最快",
+    games_total: 3,
     calcRule: (durationResultArr: Array<number>) => {
       const filtered_and_sorted_duration_arr = durationResultArr
         .filter((item) => item !== 0)
@@ -339,6 +342,7 @@ const round_format_avg_strategy = [
   {
     id: 5,
     label: "两次取最快",
+    games_total: 2,
     calcRule: (durationResultArr: Array<number>) => {
       const filtered_and_sorted_duration_arr = durationResultArr
         .filter((item) => item !== 0)
@@ -354,6 +358,7 @@ const round_format_avg_strategy = [
   {
     id: 1,
     label: "单次",
+    games_total: 1,
     calcRule: (durationResultArr: Array<number>) => {
       const filtered_and_sorted_duration_arr = durationResultArr
         .filter((item) => item !== 0)
@@ -368,12 +373,12 @@ const round_format_avg_strategy = [
   },
 ];
 
-const roundFormatBasedAvgCalc = (
+const roundFormatBasedGradeCalc = (
   durationResultArr: Array<number>,
   round_format: number
 ): { avg: number; best_duration: number } => {
   return (
-    round_format_avg_strategy
+    round_format_grade_calc_strategy
       .find((strategy) => strategy.id === round_format)
       ?.calcRule(durationResultArr) ?? {
       best_duration: 0,
@@ -387,23 +392,23 @@ const t_phase_options: {
   label: string;
 }[] = [
   {
-    label: "1",
+    label: "第1轮",
     phase: 1,
   },
   {
-    label: "2",
+    label: "第2轮",
     phase: 2,
   },
   {
-    label: "3",
+    label: "第3轮",
     phase: 3,
   },
   {
-    label: "4",
+    label: "第4轮",
     phase: 4,
   },
   {
-    label: "5",
+    label: "第5轮",
     phase: 5,
   },
 ];
@@ -414,8 +419,24 @@ watchEffect(() => {
   const rounds_total =
     props.t_projects.find((project) => project.id == currentProjectId)
       ?.rounds_total ?? 0;
-  // console.log(rounds_total);
   ref_t_phase_options.value = t_phase_options.slice(0, rounds_total);
+});
+
+const ref_round_games_total = ref(5);
+watchEffect(() => {
+  const currentProjectId = manuallyEnterFormState.value.projects?.id ?? 0;
+  const currentRoundIndex = manuallyEnterFormState.value.phase?.phase - 1 ?? 0;
+  const currentRoundFormat = props.t_projects
+    .find((project) => project.id == currentProjectId)
+    ?.rounds_detail.find(
+      (item, index) => index === currentRoundIndex
+    )?.t_format;
+  const currentRoundGamesTotal =
+    round_format_grade_calc_strategy.find(
+      (item) => item.id === currentRoundFormat
+    )?.games_total ?? 0;
+
+  ref_round_games_total.value = currentRoundGamesTotal;
 });
 
 const handleManualEnterPlayerResults = () => {
@@ -456,12 +477,7 @@ const handleManualEnterPlayerResults = () => {
       r3_duration: r3_duration,
       r4_duration: r4_duration,
       r5_duration: r5_duration,
-      // avg:
-      //   durationResultArr.reduce((sum, durationItem) => {
-      //     return sum + durationItem;
-      //   }, 0) / durationResultArr.length,
-      // best_duration: Math.min(...durationResultArr),
-      ...roundFormatBasedAvgCalc(durationResultArr, currentRoundFormat),
+      ...roundFormatBasedGradeCalc(durationResultArr, currentRoundFormat),
       round_format: currentRoundFormat,
     };
     console.log(finalFormData);
@@ -580,7 +596,7 @@ const selectedPhase = ref();
                       v-model="manuallyEnterFormState.r1_duration"
                       type="number"
                       min="0"
-                      :disabled="ref_t_phase_options.length < 1"
+                      :disabled="ref_round_games_total < 1"
                     />
                   </div>
                   <div class="flex items-center gap-1">
@@ -590,7 +606,7 @@ const selectedPhase = ref();
                       v-model="manuallyEnterFormState.r2_duration"
                       type="number"
                       min="0"
-                      :disabled="ref_t_phase_options.length < 2"
+                      :disabled="ref_round_games_total < 2"
                     />
                   </div>
                   <div class="flex items-center gap-1">
@@ -600,7 +616,7 @@ const selectedPhase = ref();
                       v-model="manuallyEnterFormState.r3_duration"
                       type="number"
                       min="0"
-                      :disabled="ref_t_phase_options.length < 3"
+                      :disabled="ref_round_games_total < 3"
                     />
                   </div>
                   <div class="flex items-center gap-1">
@@ -610,7 +626,7 @@ const selectedPhase = ref();
                       v-model="manuallyEnterFormState.r4_duration"
                       type="number"
                       min="0"
-                      :disabled="ref_t_phase_options.length < 4"
+                      :disabled="ref_round_games_total < 4"
                     />
                   </div>
                   <div class="flex items-center gap-1">
@@ -620,7 +636,7 @@ const selectedPhase = ref();
                       v-model="manuallyEnterFormState.r5_duration"
                       type="number"
                       min="0"
-                      :disabled="ref_t_phase_options.length < 5"
+                      :disabled="ref_round_games_total < 5"
                     />
                   </div>
                 </UFormGroup>
