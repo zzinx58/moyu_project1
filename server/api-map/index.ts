@@ -14,7 +14,7 @@ export const api_map = {
       // signup: token, username, password.
       signup: "/admins",
       // signin: username, password
-      signin: "/login",
+      signin: "/admins/login",
     },
   },
   dev: {
