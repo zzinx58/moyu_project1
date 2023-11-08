@@ -115,12 +115,12 @@ const columnsFlexible: NuxtUITableColumnAttrType[] = [
   },
 ];
 
-const resultNumberFormatter = (targetNumber: number) => {
-  return new Intl.NumberFormat(undefined, {
-    maximumFractionDigits: 2,
-    minimumFractionDigits: 2,
-  }).format(targetNumber);
-};
+// const resultNumberFormatter = (targetNumber: number) => {
+//   return new Intl.NumberFormat(undefined, {
+//     maximumFractionDigits: 2,
+//     minimumFractionDigits: 2,
+//   }).format(targetNumber);
+// };
 const columns = [...columnsStable, ...columnsFlexible];
 const selectedColumns = ref([...columns]);
 
@@ -435,8 +435,10 @@ const display_resultsData = computed(() => {
           name: itemA.name,
           user_id: itemA.user_id,
           wcu_id: null,
-          best_duration: resultNumberFormatter(itemA.best_duration / 1000),
-          avg_duration: resultNumberFormatter(itemA.avg / 1000),
+          // best_duration: resultNumberFormatter(itemA.best_duration / 1000),
+          // avg_duration: resultNumberFormatter(itemA.avg / 1000),
+          best_duration: itemA.best_duration,
+          avg_duration: itemA.avg,
           is_rise: itemA.is_rise,
           // is_rise: itemA.is_rise ? '是' : '否',
           overviewResults: itemAOverviewResults,
@@ -550,6 +552,7 @@ const handleManualEnterPlayerResults = () => {
 const handleResetFormState = () => {
   manuallyEnterFormState.value = structuredClone(formStateObjTemp);
 };
+console.log(finalListData.value);
 </script>
 <template>
   <!-- <CustomSelectGroup
@@ -803,11 +806,18 @@ const handleResetFormState = () => {
                   {{
                     row.overviewResults
                       .map((item: [string, number], index: number) => {
-                        return resultNumberFormatter(item[1] / 1000);
+                        // return resultNumberFormatter(item[1] / 1000);
+                        return item[1];
                       })
                       .join("&nbsp&nbsp&nbsp&nbsp&nbsp")
                   }}
                 </span>
+              </template>
+              <template #avg_duration-data="{ row }">
+                <div>{{ (row.avg_duration / 1000).toFixed(2) }}</div>
+              </template>
+              <template #best_duration-data="{ row }">
+                <div>{{ (row.best_duration / 1000).toFixed(2) }}</div>
               </template>
               <template #is_rise-data="{ row }">
                 <div
@@ -820,6 +830,7 @@ const handleResetFormState = () => {
                     name="is_rise"
                     id="is_rise_select"
                     :value="row.is_rise"
+                    @change="console.log(row)"
                   >
                     <option value="1" class="bg-green!">是</option>
                     <option value="0">否</option>
