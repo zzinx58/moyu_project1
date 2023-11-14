@@ -28,7 +28,7 @@ const apiForEnv =
   currentEnv === "HK_DEV"
     ? api_map.dev.baseurl + api_map.dev.admin.signin
     : api_map.formal.baseurl + api_map.formal.admin.signin;
-console.log(apiForEnv);
+// console.log(apiForEnv);
 export default defineEventHandler(async (event) => {
   const { username, password } = await readBody(event);
   // const result = await $fetch("https://api.yicloud.vip/api/admins/login", {

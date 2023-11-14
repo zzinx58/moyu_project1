@@ -1,3 +1,4 @@
+// Could use baseurl alone to swap between different environments.
 export const api_map = {
   formal: {
     baseurl:
@@ -9,6 +10,7 @@ export const api_map = {
       user_filter_by: "/dashboard/users/list",
       // list: token, q_page, q_size.
       list: "/dashboard/users/list",
+      bulk_mail_send: "/dashboard/informs",
     },
     admin: {
       // signup: token, username, password.
@@ -26,6 +28,7 @@ export const api_map = {
       user_filter_by: "/dashboard/users/list",
       // list: token, q_page, q_size.
       list: "/dashboard/users/list",
+      bulk_mail_send: "/dashboard/informs",
     },
     admin: {
       // signup: token, username, password.

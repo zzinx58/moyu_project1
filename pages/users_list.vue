@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
-import { NButton, type DataTableColumns, DataTableRowKey } from "naive-ui";
+import {
+  NButton,
+  type DataTableColumns,
+  DataTableRowKey,
+  useMessage,
+} from "naive-ui";
 import { RowData } from "naive-ui/es/data-table/src/interface";
 import gsap from "gsap";
 import _, { head } from "lodash";
@@ -9,6 +14,7 @@ import * as xlsx from "xlsx";
 import { useUserStore } from "@/stores/user";
 
 dayjs.extend(utc);
+const naiveMessage = useMessage();
 
 definePageMeta({
   layout: "pc",
@@ -218,6 +224,11 @@ const columns = (): DataTableColumns => {
                     class: "i-custom-svg:u-l-contact",
                   });
                 },
+                onClick(e) {
+                  // TODO: Could improve.
+                  selectedUserIdArr.value.push(rowData.user_id);
+                  isBulkMailModalShow.value = true;
+                },
               },
               "沟通"
             ),
@@ -252,13 +263,64 @@ const handleSelectedUsers = (rowKeys: DataTableRowKey[]) => {
   selectedUserRowsRef.value = rowKeys;
 };
 const handleExportSelectedUsers = () => {
-  if (selectedUserRowsRef.value) {
+  if (selectedUserRowsRef.value.length > 0) {
     const sheetName = `Sheet1`;
     const fileName = `勾选用户数据导出 - ${dayjs()
       .utc(true)
       .format("YYYY-MM-DD HH\:mm")
       .toString()}.xlsx`;
     exportExcelAsFileMethod(sheetName, fileName, selectedUserRowsRef.value);
+  }
+};
+const isBulkMailModalShow = ref(false);
+const bulkMailSetInfoTemplate = {
+  templateIdentifier: null,
+  mailSendScheduleTimestamp: null,
+  title: "",
+  content: "",
+  // Will not be used.
+  // user_ids: [],
+};
+const bulkMailSetInfo = ref(Object.assign({}, bulkMailSetInfoTemplate));
+const selectedUserIdArr = ref<Array<any>>([]);
+watch(
+  selectedUserRowsRef,
+  () => {
+    selectedUserIdArr.value = selectedUserRowsRef.value.map(
+      (item) => item.user_id
+    );
+  },
+  {
+    // deep: true,
+  }
+);
+
+const handleBulkMailSend = async () => {
+  if (selectedUserIdArr.value.length > 0) {
+    const bulkMailFormObj = (({ title, content }) => ({
+      title,
+      content,
+      user_ids: selectedUserIdArr.value,
+    }))(bulkMailSetInfo.value);
+    const { data, error } = await useFetch("/api/user/bulk_mail_send", {
+      method: "post",
+      body: {
+        data: bulkMailFormObj,
+      },
+      headers: {
+        Authorization: `Bearer ${userStore.token}`,
+      },
+    });
+
+    bulkMailSetInfo.value = Object.assign({}, bulkMailSetInfoTemplate);
+    selectedUserRowsRef.value = [];
+    selectedUserIdArr.value = [];
+
+    data.value &&
+      naiveMessage.success(`${data.value as any}`) &&
+      (isBulkMailModalShow.value = false);
+  } else {
+    naiveMessage.info("需要群发消息的用户栏不可为空");
   }
 };
 
@@ -308,6 +370,21 @@ const search_options = [
     value: "phone",
   },
 ];
+const mailTemplateOptions = ref([
+  {
+    label: "赛事通知",
+    value: "t_notice",
+  },
+  {
+    label: "奖励通知",
+    value: "award_notice",
+  },
+  {
+    label: "新品通知",
+    value: "new_product_notice",
+  },
+]);
+const manualAddedMailTemplateOptions = ref([]);
 
 const collapseItem = ref();
 const isCollapsed = ref(true);
@@ -737,6 +814,12 @@ const handleClickSimpleSearchButton = async () => {
         @click="handleExportSelectedUsers"
         >导出选中用户</n-button
       >
+      <n-button
+        type="primary"
+        class="rounded-10px!"
+        @click="isBulkMailModalShow = true"
+        >发送邮件</n-button
+      >
     </div>
   </div>
   <div class="flex justify-center mt-7">
@@ -760,6 +843,116 @@ const handleClickSimpleSearchButton = async () => {
     </n-pagination>
   </div>
   <!-- :row-props="rowProps" -->
+  <n-modal v-model:show="isBulkMailModalShow">
+    <n-card
+      :bordered="false"
+      class="h-550px! w-888px! rounded-20px!"
+      content-style="padding: 0px"
+    >
+      <div>
+        <div
+          class="rounded-t-20px w-888px h-50px h-100px bg-#70708C text-white flex justify-center text-28px items-center relative select-none"
+        >
+          <div>邮件</div>
+          <div
+            class="i-mdi-close text-white absolute right-5 hover:opacity-70 hover:cursor-pointer"
+            @click="
+              () => {
+                isBulkMailModalShow = false;
+                selectedUserIdArr = [];
+              }
+            "
+          ></div>
+        </div>
+        <div class="pt-10 px-8">
+          <n-form
+            label-placement="left"
+            label-width="80px"
+            :model="bulkMailSetInfo"
+          >
+            <div class="grid grid-cols-3 gap-8 w-full">
+              <n-form-item label="模版:" label-style="font-size: 20px">
+                <n-select
+                  v-model:value="bulkMailSetInfo.templateIdentifier"
+                  :options="mailTemplateOptions"
+                  placeholder="可选邮件模版"
+                >
+                  <!-- <template #action>
+                    <n-dynamic-input
+                      :min="1"
+                      placeholder="新增分类"
+                      v-model:value="manualAddedMailTemplateOptions"
+                    ></n-dynamic-input>
+                  </template> -->
+                </n-select>
+              </n-form-item>
+              <n-form-item
+                label="定时发送:"
+                label-style="font-size: 20px"
+                label-width="100px"
+                class="w-300px"
+              >
+                <n-date-picker
+                  type="datetime"
+                  clearable
+                  format="yyyy-MM-dd HH:mm"
+                  v-model:value="bulkMailSetInfo.mailSendScheduleTimestamp"
+                  placeholder="请选择邮件定时发送时间"
+                />
+              </n-form-item>
+            </div>
+
+            <n-form-item label="主题:" label-style="font-size: 20px">
+              <n-input
+                v-model:value="bulkMailSetInfo.title"
+                placeholder="请输入邮件主题"
+              />
+            </n-form-item>
+            <n-form-item label="收件人:" label-style="font-size: 20px">
+              <!-- v-model:value="selectedUserIdArr" -->
+              <n-select
+                v-model:value="selectedUserIdArr"
+                :show="false"
+                tag
+                placeholder="可手动输入收件人Id,按回车确认"
+                :show-arrow="false"
+                filterable
+                multiple
+              ></n-select>
+            </n-form-item>
+            <n-form-item label="内容:" label-style="font-size: 20px">
+              <n-input
+                type="textarea"
+                placeholder="请输入邮件内容"
+                v-model:value="bulkMailSetInfo.content"
+                :autosize="{
+                  minRows: 8,
+                }"
+              />
+            </n-form-item>
+            <div class="flex justify-end">
+              <n-button
+                role="submit"
+                icon-placement="left"
+                :bordered="false"
+                class="bg-primary_1! w-100px! h-40px! text-white! rounded-10px! text-20px!"
+                @click="handleBulkMailSend"
+              >
+                <template #icon>
+                  <div>
+                    <div
+                      class="i-mingcute:send-plane-fill text-white text-20px"
+                    />
+                  </div>
+                </template>
+                发送
+              </n-button>
+            </div>
+          </n-form>
+        </div>
+      </div>
+    </n-card>
+  </n-modal>
 </template>
 <style scoped lang="scss">
 
