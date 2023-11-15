@@ -6,6 +6,10 @@ import {
   type DataTableColumns,
   DataTableRowKey,
   useMessage,
+  type FormRules,
+  FormItemRule,
+  FormInst,
+  FormItemInst,
 } from "naive-ui";
 import { RowData } from "naive-ui/es/data-table/src/interface";
 import gsap from "gsap";
@@ -282,46 +286,87 @@ const bulkMailSetInfoTemplate = {
   // user_ids: [],
 };
 const bulkMailSetInfo = ref(Object.assign({}, bulkMailSetInfoTemplate));
-const selectedUserIdArr = ref<Array<any>>([]);
-watch(
-  selectedUserRowsRef,
-  () => {
-    selectedUserIdArr.value = selectedUserRowsRef.value.map(
-      (item) => item.user_id
-    );
-  },
-  {
-    // deep: true,
-  }
-);
+// Bug point. The rowKey will change the return value of the selectedRows.
+const selectedUserIdArr = computed(() => selectedUserRowsRef.value);
+// watch(selectedUserIdArr, () => console.log(selectedUserIdArr.value));
+// const selectedUserIdArr = ref<Array<any>>([]);
+// watch(
+//   selectedUserRowsRef,
+//   () => {
+//     selectedUserIdArr.value = selectedUserRowsRef.value.map(
+//       (item) => item.user_id
+//     );
+//   },
+//   {
+//     // deep: true,
+//   }
+// );
 
-const handleBulkMailSend = async () => {
-  if (selectedUserIdArr.value.length > 0) {
-    const bulkMailFormObj = (({ title, content }) => ({
-      title,
-      content,
-      user_ids: selectedUserIdArr.value,
-    }))(bulkMailSetInfo.value);
-    const { data, error } = await useFetch("/api/user/bulk_mail_send", {
-      method: "post",
-      body: {
-        data: bulkMailFormObj,
+const bulkMailFormRules: FormRules = {
+  templateIdentifier: [
+    {
+      required: true,
+      validator(rule: FormItemRule, value: string) {
+        if (value === null) return new Error("模版必选");
+        return true;
       },
-      headers: {
-        Authorization: `Bearer ${userStore.token}`,
+    },
+  ],
+  title: [
+    {
+      required: true,
+      validator(rule: FormItemRule, value: string) {
+        if (value.trim() === "") return new Error("邮件内容不可为空");
+        return true;
       },
-    });
+    },
+  ],
+  content: [
+    {
+      required: true,
+      validator(rule: FormItemRule, value: string) {
+        if (value.trim() === "") return new Error("邮件内容不可为空");
+        return true;
+      },
+    },
+  ],
+};
 
-    bulkMailSetInfo.value = Object.assign({}, bulkMailSetInfoTemplate);
-    selectedUserRowsRef.value = [];
-    selectedUserIdArr.value = [];
+const bulkMailFormRef = ref<FormInst | null>(null);
 
-    data.value &&
-      naiveMessage.success(`${data.value as any}`) &&
-      (isBulkMailModalShow.value = false);
-  } else {
+const handleBulkMailSend = async (e: MouseEvent) => {
+  e.preventDefault();
+  if (selectedUserIdArr.value.length === 0)
     naiveMessage.info("需要群发消息的用户栏不可为空");
-  }
+  bulkMailFormRef.value?.validate(async (errors) => {
+    if (!errors) {
+      const bulkMailFormObj = (({ title, content }) => ({
+        title,
+        content,
+        user_ids: selectedUserIdArr.value,
+      }))(bulkMailSetInfo.value);
+      const { data, error } = await useFetch("/api/user/bulk_mail_send", {
+        method: "post",
+        body: {
+          data: bulkMailFormObj,
+        },
+        headers: {
+          Authorization: `Bearer ${userStore.token}`,
+        },
+      });
+
+      bulkMailSetInfo.value = Object.assign({}, bulkMailSetInfoTemplate);
+      selectedUserRowsRef.value = [];
+      // selectedUserIdArr.value = [];
+
+      data.value &&
+        naiveMessage.success(`${data.value as any}`) &&
+        (isBulkMailModalShow.value = false);
+    } else {
+      // console.log(errors);
+      naiveMessage.error("邮件模版、主题、内容、收件人均不可为空");
+    }
+  });
 };
 
 const login_type_options = [
@@ -796,7 +841,7 @@ const handleClickSimpleSearchButton = async () => {
       :single-column="true"
       :striped="true"
       :bordered="false"
-      :row-key="(row) => row"
+      :row-key="(row) => row.user_id"
       @update:checked-row-keys="handleSelectedUsers"
       class="h-660px"
     />
@@ -859,7 +904,7 @@ const handleClickSimpleSearchButton = async () => {
             @click="
               () => {
                 isBulkMailModalShow = false;
-                selectedUserIdArr = [];
+                // selectedUserIdArr = [];
               }
             "
           ></div>
@@ -869,9 +914,15 @@ const handleClickSimpleSearchButton = async () => {
             label-placement="left"
             label-width="80px"
             :model="bulkMailSetInfo"
+            :rules="bulkMailFormRules"
+            ref="bulkMailFormRef"
           >
             <div class="grid grid-cols-3 gap-8 w-full">
-              <n-form-item label="模版:" label-style="font-size: 20px">
+              <n-form-item
+                label="模版:"
+                label-style="font-size: 20px"
+                path="templateIdentifier"
+              >
                 <n-select
                   v-model:value="bulkMailSetInfo.templateIdentifier"
                   :options="mailTemplateOptions"
@@ -891,6 +942,7 @@ const handleClickSimpleSearchButton = async () => {
                 label-style="font-size: 20px"
                 label-width="100px"
                 class="w-300px"
+                path="mailSendScheduleTimestamp"
               >
                 <n-date-picker
                   type="datetime"
@@ -902,13 +954,21 @@ const handleClickSimpleSearchButton = async () => {
               </n-form-item>
             </div>
 
-            <n-form-item label="主题:" label-style="font-size: 20px">
+            <n-form-item
+              label="主题:"
+              label-style="font-size: 20px"
+              path="title"
+            >
               <n-input
                 v-model:value="bulkMailSetInfo.title"
                 placeholder="请输入邮件主题"
               />
             </n-form-item>
-            <n-form-item label="收件人:" label-style="font-size: 20px">
+            <n-form-item
+              label="收件人:"
+              label-style="font-size: 20px"
+              path="receivers"
+            >
               <!-- v-model:value="selectedUserIdArr" -->
               <n-select
                 v-model:value="selectedUserIdArr"
@@ -920,7 +980,11 @@ const handleClickSimpleSearchButton = async () => {
                 multiple
               ></n-select>
             </n-form-item>
-            <n-form-item label="内容:" label-style="font-size: 20px">
+            <n-form-item
+              label="内容:"
+              label-style="font-size: 20px"
+              path="content"
+            >
               <n-input
                 type="textarea"
                 placeholder="请输入邮件内容"
