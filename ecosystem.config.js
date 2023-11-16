@@ -20,7 +20,7 @@ module.exports = {
         PORT: "5050",
         DEV_DATABASE_URL: "mysql://cube_dev:123456@192.168.1.25:3306/cube_dev",
       },
-      env_staging: {
+      env_stagging: {
         // 环境参数,当前指定为预发布环境
         NODE_ENV: "staging", //使用production模式 pm2 start ecosystem.config.js --env production
         PORT: "5050",

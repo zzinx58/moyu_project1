@@ -10,6 +10,8 @@ import {
   FormItemRule,
   FormInst,
   FormItemInst,
+  type dataTableProps,
+  DataTableInst,
 } from "naive-ui";
 import { RowData } from "naive-ui/es/data-table/src/interface";
 import gsap from "gsap";
@@ -286,21 +288,6 @@ const bulkMailSetInfoTemplate = {
   // user_ids: [],
 };
 const bulkMailSetInfo = ref(Object.assign({}, bulkMailSetInfoTemplate));
-// Bug point. The rowKey will change the return value of the selectedRows.
-const selectedUserIdArr = computed(() => selectedUserRowsRef.value);
-// watch(selectedUserIdArr, () => console.log(selectedUserIdArr.value));
-// const selectedUserIdArr = ref<Array<any>>([]);
-// watch(
-//   selectedUserRowsRef,
-//   () => {
-//     selectedUserIdArr.value = selectedUserRowsRef.value.map(
-//       (item) => item.user_id
-//     );
-//   },
-//   {
-//     // deep: true,
-//   }
-// );
 
 const bulkMailFormRules: FormRules = {
   templateIdentifier: [
@@ -333,6 +320,27 @@ const bulkMailFormRules: FormRules = {
 };
 
 const bulkMailFormRef = ref<FormInst | null>(null);
+
+// Bug point. The rowKey will change the return value of the selectedRows.
+// Computed Ref's value could not be change.
+// const selectedUserIdArr = computed({
+//   get: () => {
+//     return selectedUserRowsRef.value;
+//   },
+//   set: (newArrVal) => {
+//     selectedUserRowsRef.value = newArrVal;
+//   },
+// });
+const selectedUserIdArr = ref<Array<number>>([]);
+watch(
+  selectedUserRowsRef,
+  () => {
+    selectedUserIdArr.value = selectedUserRowsRef.value;
+  },
+  {
+    // deep: true,
+  }
+);
 
 const handleBulkMailSend = async (e: MouseEvent) => {
   e.preventDefault();
@@ -886,6 +894,7 @@ const handleClickSimpleSearchButton = async () => {
         <sapn class="i-mdi:navigate-next text-30px" />
       </template>
     </n-pagination>
+    <!-- <button @click="test">test</button> -->
   </div>
   <!-- :row-props="rowProps" -->
   <n-modal v-model:show="isBulkMailModalShow">
