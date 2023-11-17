@@ -170,6 +170,9 @@ const columns_timed_race_data = (): DataTableColumns => {
       // render(rowData, rowIndex) {
       //   return;
       // },
+      render(rowData) {
+        return rowData.best_duration + "s";
+      },
     },
     {
       title: "完成率",
@@ -191,16 +194,25 @@ const columns_timed_race_data = (): DataTableColumns => {
       title: "最佳AO5",
       key: "best_ao5_duration",
       // titleAlign: "center",
+      render(rowData) {
+        return rowData.best_ao5_duration + "s";
+      },
     },
     {
       title: "最佳AO12",
       key: "best_ao12_duration",
       // titleAlign: "center",
+      render(rowData) {
+        return rowData.best_ao12_duration + "s";
+      },
     },
     {
       title: "最佳AO100",
       key: "best_ao100_duration",
       // titleAlign: "center",
+      render(rowData) {
+        return rowData.best_ao100_duration + "s";
+      },
     },
     {
       title: "完成次数",
@@ -240,26 +252,50 @@ const columns_t_rank_data_raw = [
 const columns_t_rank_data = (): DataTableColumns => {
   return columns_t_rank_data_raw;
 };
-const columns_multi_race_speed_data_raw = [
-  {
-    title: "参加次数",
-    key: "participate_count",
-  },
-  {
-    title: "完成次数",
-    key: "completions_count",
-  },
-  {
-    title: "最佳排名",
-    key: "best_ranking",
-  },
-  {
-    title: "最佳AO5",
-    key: "best_ao5",
-  },
-];
+// const columns_multi_race_speed_data_raw = [
+//   {
+//     title: "参加次数",
+//     key: "participate_count",
+//   },
+//   {
+//     title: "完成次数",
+//     key: "completions_count",
+//   },
+//   {
+//     title: "最佳排名",
+//     key: "best_ranking",
+//   },
+//   {
+//     title: "最佳AO5",
+//     key: "best_ao5",
+//     // render(rowData) {
+//     //     return rowData.best_ao5_duration + "s";
+//     //   },
+//   },
+// ];
 const columns_multi_race_speed_data = (): DataTableColumns => {
-  return columns_multi_race_speed_data_raw;
+  // return columns_multi_race_speed_data_raw;
+  return [
+    {
+      title: "参加次数",
+      key: "participate_count",
+    },
+    {
+      title: "完成次数",
+      key: "completions_count",
+    },
+    {
+      title: "最佳排名",
+      key: "best_ranking",
+    },
+    {
+      title: "最佳AO5",
+      key: "best_ao5",
+      render(rowData) {
+        return rowData.best_ao5_duration + "s";
+      },
+    },
+  ];
 };
 const columns_squad_info = (): DataTableColumns => {
   return columns_squad_info_raw;
@@ -763,7 +799,7 @@ type correspondFEInterfaceType_userRelatedDataType = {
 };
 
 /* 真实数据获取与处理逻辑 */
-// const route = useRoute();
+const route = useRoute();
 
 const refTabFor_competitionData = ref(0);
 const refTabFor_tData = ref(0);
@@ -787,7 +823,7 @@ const handleFetchUserDetailData = async () => {
       [key: string]: any;
     }
     // >(`/api_cors/dashboard/users/${route.params.id}`, {
-  >(`/api/user/user_detail/${route.value.params.id}`, {
+  >(`/api/user/user_detail/${route.params.id}`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${userStore.token}`,
@@ -804,14 +840,16 @@ const handleFetchUserDetailData = async () => {
   // console.log(`output->userDetailDataRaw.value`, userDetailDataRaw.value);
 
   if (error.value?.statusCode === 401) {
-    reAuthLogin(route.value.path);
+    reAuthLogin(route.path);
   }
 
   const resultNumberFormatter = (targetNumber: number) => {
-    return new Intl.NumberFormat(undefined, {
-      maximumFractionDigits: 0,
-      minimumFractionDigits: 0,
-    }).format(targetNumber);
+    // return new Intl.NumberFormat(undefined, {
+    //   maximumFractionDigits: 0,
+    //   minimumFractionDigits: 0,
+    // }).format(targetNumber);
+    // return (+targetNumber).toFixed(2);
+    return (+targetNumber / 1000).toFixed(2);
   };
 
   if (userDetailDataRaw.value?.data) {

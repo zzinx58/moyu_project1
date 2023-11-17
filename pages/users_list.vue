@@ -369,7 +369,7 @@ const handleBulkMailSend = async (e: MouseEvent) => {
       // selectedUserIdArr.value = [];
 
       if (error.value?.statusCode === 401) {
-        reAuthLogin(route.value.path);
+        reAuthLogin(route.value().path);
       }
 
       data.value &&

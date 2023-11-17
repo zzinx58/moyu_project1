@@ -2,7 +2,8 @@ import { useMessage } from "naive-ui";
 import { useUserStore } from "../stores/user";
 
 const nuxtApp = useNuxtApp();
-export const route = useState("route", () => useRoute());
+// Could not use useRoute() here!
+export const route = useState("route", () => useRoute);
 // The below two ways will be undefined at first refresh.
 // export const router = useState(() => nuxtApp.$router);
 // export const router = useState("router", () => useRouter());
