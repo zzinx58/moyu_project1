@@ -763,7 +763,7 @@ type correspondFEInterfaceType_userRelatedDataType = {
 };
 
 /* 真实数据获取与处理逻辑 */
-const route = useRoute();
+// const route = useRoute();
 
 const refTabFor_competitionData = ref(0);
 const refTabFor_tData = ref(0);
@@ -787,7 +787,7 @@ const handleFetchUserDetailData = async () => {
       [key: string]: any;
     }
     // >(`/api_cors/dashboard/users/${route.params.id}`, {
-  >(`/api/user/user_detail/${route.params.id}`, {
+  >(`/api/user/user_detail/${route.value.params.id}`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${userStore.token}`,
@@ -802,6 +802,10 @@ const handleFetchUserDetailData = async () => {
   //   }, 1000);
   // }
   // console.log(`output->userDetailDataRaw.value`, userDetailDataRaw.value);
+
+  if (error.value?.statusCode === 401) {
+    reAuthLogin(route.value.path);
+  }
 
   const resultNumberFormatter = (targetNumber: number) => {
     return new Intl.NumberFormat(undefined, {

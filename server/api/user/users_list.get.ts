@@ -26,7 +26,7 @@ export default defineEventHandler(async (event) => {
   const queryParams = getQuery(event);
   // console.log(getQuery(event));
 
-  const result = await $fetch(
+  const result = (await $fetch(
     // "https://api.yicloud.vip/api/dashboard/users/list",
     apiForEnv,
     {
@@ -34,8 +34,8 @@ export default defineEventHandler(async (event) => {
       headers: Object.fromEntries([["Authorization", token]]),
       query: queryParams,
     }
-  );
-  // console.log(result);
+  )) as any;
+
   return result;
   return [];
 });

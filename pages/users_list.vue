@@ -19,9 +19,6 @@ import _, { head } from "lodash";
 import * as xlsx from "xlsx";
 import { useUserStore } from "@/stores/user";
 
-dayjs.extend(utc);
-const naiveMessage = useMessage();
-
 definePageMeta({
   layout: "pc",
   middleware: ["auth"],
@@ -29,6 +26,10 @@ definePageMeta({
 useHead({
   title: "U_List - 用户列表",
 });
+
+dayjs.extend(utc);
+const naiveMessage = useMessage();
+const userStore = useUserStore();
 
 const exportExcelAsFileMethod = (
   sheetName: string,
@@ -65,7 +66,7 @@ const exportExcelAsFileMethod = (
 // };
 const columns = (): DataTableColumns => {
   return [
-    { type: "selection" },
+    { type: "selection", options: ["all", "none"] },
     {
       // key: "id",
       key: "user_id",
@@ -367,6 +368,10 @@ const handleBulkMailSend = async (e: MouseEvent) => {
       selectedUserRowsRef.value = [];
       // selectedUserIdArr.value = [];
 
+      if (error.value?.statusCode === 401) {
+        reAuthLogin(route.value.path);
+      }
+
       data.value &&
         naiveMessage.success(`${data.value as any}`) &&
         (isBulkMailModalShow.value = false);
@@ -479,8 +484,6 @@ const searchOptionDetailInfo = ref();
 //     totalPageSize.value = finalSourceDisplayData.value.length / tablePageSize;
 //   }
 // });
-
-const userStore = useUserStore();
 
 const currentPage = ref(1);
 const tablePageSize = ref(10);
@@ -894,7 +897,6 @@ const handleClickSimpleSearchButton = async () => {
         <sapn class="i-mdi:navigate-next text-30px" />
       </template>
     </n-pagination>
-    <!-- <button @click="test">test</button> -->
   </div>
   <!-- :row-props="rowProps" -->
   <n-modal v-model:show="isBulkMailModalShow">
