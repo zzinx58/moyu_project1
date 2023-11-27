@@ -99,13 +99,34 @@ const handleExportApplicantsData = () => {
 const handleExportPlayersResultsData = () => {
   // console.log(3);
   if (t_resultsData.value) {
+    const finalData = t_resultsData.value.map((item) => {
+      const finalItem = {
+        t_id: item.t_id,
+        p_id: item.p_id,
+        p_name: item.p_name,
+        user_id: item.user_id,
+        name: item.name,
+        phase: item.phase,
+        r1_duration: item.r1_duration,
+        r2_duration: item.r2_duration,
+        r3_duration: item.r3_duration,
+        r4_duration: item.r4_duration,
+        r5_duration: item.r5_duration,
+        round_format: item.round_format,
+
+        best_duration: item.best_duration,
+        avg: item.avg,
+      };
+      return finalItem;
+    });
     const sheetName = `Sheet1`;
     const fileName = `赛事选手成绩数据导出 - ${dayjs()
       .utc(true)
       .format("YYYY-MM-DD HH:mm")
       .toString()}.xlsx`;
 
-    exportExcelAsFileMethod(sheetName, fileName, t_resultsData.value);
+    // exportExcelAsFileMethod(sheetName, fileName, t_resultsData.value);
+    exportExcelAsFileMethod(sheetName, fileName, finalData);
   }
 };
 

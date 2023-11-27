@@ -198,14 +198,35 @@ const handleUploadFileOnChange = (
       const workbook = xlsx.read(fileArrBuff, { type: "buffer" });
       const sheetNames = workbook.SheetNames;
       const sheet1 = workbook.Sheets[sheetNames[0]];
-      const sheet1Data = xlsx.utils.sheet_to_json(sheet1);
+      let sheet1Data = xlsx.utils.sheet_to_json(sheet1) as any;
+
+      sheet1Data = sheet1Data.map((item: any) => {
+        const itemAvgAndBestDuration = roundFormatBasedGradeCalc(
+          [
+            item.r1_duration,
+            item.r2_duration,
+            item.r3_duration,
+            item.r4_duration,
+            item.r5_duration,
+          ],
+          item.round_format
+        );
+        return {
+          ...item,
+          ...itemAvgAndBestDuration,
+        };
+      });
+
+      // console.log(sheet1Data);
+
       $fetch("/api/t_detail/t_results/createMany", {
         method: "POST",
         body: {
           t_id: routeParamId,
           data: sheet1Data,
         },
-      });
+        // });
+      }).then((result) => console.log(result));
     };
   }
 };
@@ -219,6 +240,7 @@ const round_format_grade_calc_strategy = [
       const filtered_and_sorted_duration_arr = durationResultArr.sort(
         (a, b) => a - b
       );
+
       const avg_result =
         filtered_and_sorted_duration_arr
           .slice(1, 4)
