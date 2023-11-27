@@ -49,7 +49,9 @@ const props = defineProps<{
   // t_projects: { id: number; label: string; iconMeta: string }[];
   t_projects: { id: number | undefined; label: string; iconMeta: string }[];
 }>();
-const display_applicantsData = toRef(props.t_applicantsData);
+// const display_applicantsData = toRef(props.t_applicantsData);
+const { cloned: t_applicantsDataCopy } = useCloned(props.t_applicantsData);
+const display_applicantsData = t_applicantsDataCopy;
 const t_projects_options = props.t_projects;
 
 type NuxtUITableColumnAttrType = {
@@ -103,19 +105,22 @@ const columnsAttrs = display_applicantsData.value
   });
 // console.log(columnsAttrs);
 
-const rows = display_applicantsData.value.map((item, index) => {
-  return {
-    name: item.name,
-    user_id: item.user_id,
-    t_number: item.t_number,
-  };
-});
+// const rows = display_applicantsData.value.map((item, index) => {
+//   return {
+//     name: item.name,
+//     user_id: item.user_id,
+//     t_number: item.t_number,
+//   };
+// });
+
 const selectedColumns = ref([...columnsStable, ...columnsAttrs]);
 const currentPage = ref(1);
 const tablePageCount = 15;
 
 const test: { user_id: number; user_projects: number[] }[] = [];
-for (const itemA of props.t_applicantsData) {
+
+// for (const itemA of props.t_applicantsData) {
+for (const itemA of t_applicantsDataCopy.value) {
   let existUser = test.find((itemB) => itemB.user_id === itemA.user_id);
   if (!existUser) {
     const userDataObj = {
@@ -132,14 +137,16 @@ for (const itemA of props.t_applicantsData) {
 // console.log(test);
 test.forEach((itemA) => {
   const finalObj = itemA.user_projects.reduce(
-    (accObj: { [key: string]: any }, item): { [key: string]: any } => {
-      accObj[`p_id-${item}`] = "√";
+    (accObj: { [key: string]: any }, itemPId): { [key: string]: any } => {
+      accObj[`p_id-${itemPId}`] = "1";
       return accObj;
     },
     {}
   );
   // console.log(finalObj);
-  const targetItem = props.t_applicantsData.find(
+
+  // const targetItem = props.t_applicantsData.find(
+  const targetItem = t_applicantsDataCopy.value.find(
     (itemB) => itemB.user_id === itemA.user_id
   );
   if (targetItem) Object.assign(targetItem, finalObj);
@@ -216,26 +223,30 @@ const handleUploadFileOnChange = (
   // fileObj: { raw: File; [key: string]: any },
   filesList: Record<number, any>
 ) => {
-  // console.log(fileObj, filesList);
   if (fileObj) {
     const fileReader = new FileReader();
+
     fileReader.readAsArrayBuffer(fileObj.raw);
     fileReader.onloadend = (loadEndEvent) => {
       // console.log(loadEndEvent.target?.result);
+
       const fileArrBuff = loadEndEvent.target?.result;
       const workbook = xlsx.read(fileArrBuff, { type: "buffer" });
       const sheetNames = workbook.SheetNames;
       const sheet1 = workbook.Sheets[sheetNames[0]];
       const sheet1Data = xlsx.utils.sheet_to_json(sheet1);
-      // console.log(sheet1Data);
+
+      console.log(sheet1Data);
       // console.log();
       $fetch("/api/t_detail/t_applicants/createMany", {
         method: "POST",
         body: {
           data: sheet1Data,
         },
+        // });
+      }).then((result) => {
+        console.log("赛事选手表格导入结果:", result);
       });
-
       // $fetch('/api/t_detail/t_applicants/createMany', {
       //   method: 'POST',
       //   headers: {

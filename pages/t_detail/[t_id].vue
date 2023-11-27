@@ -71,12 +71,29 @@ const handleExportTDetailData = () => {
 const handleExportApplicantsData = () => {
   // console.log(2);
   if (t_applicantsData.value) {
+    const finalData = t_applicantsData.value.map((item) => {
+      const {
+        id,
+        identity_card,
+        tel,
+        gender,
+        region,
+        region_id,
+        wca_id,
+        apply_time,
+        verify,
+        verify_time,
+        ...rest
+      } = item;
+      return rest;
+    });
     const sheetName = `Sheet1`;
     const fileName = `赛事参赛选手数据导出 - ${dayjs()
       .utc(true)
       .format("YYYY-MM-DD HH:mm")
       .toString()}.xlsx`;
-    exportExcelAsFileMethod(sheetName, fileName, t_applicantsData.value);
+    // exportExcelAsFileMethod(sheetName, fileName, t_applicantsData.value);
+    exportExcelAsFileMethod(sheetName, fileName, finalData);
   }
 };
 const handleExportPlayersResultsData = () => {
