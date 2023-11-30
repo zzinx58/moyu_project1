@@ -35,8 +35,8 @@ export default defineNuxtConfig({
   },
   devServer: {
     https: {
-      key: "keys/zzx-19231.key",
-      cert: "keys/zzx-19231.cert",
+      key: "keys/zzx-local_dev.key",
+      cert: "keys/zzx-local_dev.cert",
     },
     port: 5050,
   },
