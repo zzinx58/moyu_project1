@@ -22,7 +22,7 @@ module.exports = {
       },
       env_stagging: {
         // 环境参数,当前指定为预发布环境
-        NODE_ENV: "staging", //使用production模式 pm2 start ecosystem.config.js --env production
+        NODE_ENV: "stagging", //使用production模式 pm2 start ecosystem.config.js --env production
         PORT: "5050",
         DEV_DATABASE_URL: "mysql://cube_dev:123456@127.0.0.1:3306/cube_dev",
         VITE_PROJECT_ENV: "HK_DEV",

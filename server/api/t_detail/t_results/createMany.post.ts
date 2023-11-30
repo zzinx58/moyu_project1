@@ -19,7 +19,7 @@ export default defineEventHandler(async (e) => {
       })
     );
   }
-  // console.log(uploadExcelDataArr);
+  console.log(uploadExcelDataArr);
 
   let result = await prisma.tournament_result_t.createMany({
     data: uploadExcelDataArr,
