@@ -118,6 +118,22 @@ const columnsFlexible: NuxtUITableColumnAttrType[] = [
   },
 ];
 
+const dictionary_tResult = {
+  赛事编号: "t_id",
+  项目编号: "p_id",
+  项目: "p_name",
+  账号ID: "user_id",
+  姓名: "name",
+  选手编号: "t_number",
+  轮次: "phase",
+  第一回合成绩: "r1_duration",
+  第二回合成绩: "r2_duration",
+  第三回合成绩: "r3_duration",
+  第四回合成绩: "r4_duration",
+  第五回合成绩: "r5_duration",
+  赛制类型编号: "round_format",
+};
+
 // const resultNumberFormatter = (targetNumber: number) => {
 //   return new Intl.NumberFormat(undefined, {
 //     maximumFractionDigits: 2,
@@ -237,6 +253,15 @@ const round_format_grade_calc_strategy = [
     label: "五次去头去尾取平均",
     games_total: 5,
     calcRule: (durationResultArr: Array<number>) => {
+      const zeroCount = durationResultArr.reduce((acc, curV) => {
+        if (curV === 0) acc += 1;
+        return acc;
+      }, 0);
+      if (zeroCount === 2)
+        return {
+          avg: 0,
+          best_duration: 0,
+        };
       const filtered_and_sorted_duration_arr = durationResultArr.sort(
         (a, b) => a - b
       );
@@ -257,6 +282,15 @@ const round_format_grade_calc_strategy = [
     label: "三次取平均",
     games_total: 3,
     calcRule: (durationResultArr: Array<number>) => {
+      const zeroCount = durationResultArr.reduce((acc, curV) => {
+        if (curV === 0) acc += 1;
+        return acc;
+      }, 0);
+      if (zeroCount === 1)
+        return {
+          avg: 0,
+          best_duration: 0,
+        };
       const filtered_and_sorted_duration_arr = durationResultArr
         .filter((item) => item !== 0)
         .sort((a, b) => a - b);
@@ -274,6 +308,15 @@ const round_format_grade_calc_strategy = [
     label: "三次取最快",
     games_total: 3,
     calcRule: (durationResultArr: Array<number>) => {
+      const zeroCount = durationResultArr.reduce((acc, curV) => {
+        if (curV === 0) acc += 1;
+        return acc;
+      }, 0);
+      if (zeroCount === 1)
+        return {
+          avg: 0,
+          best_duration: 0,
+        };
       const filtered_and_sorted_duration_arr = durationResultArr
         .filter((item) => item !== 0)
         .sort((a, b) => a - b);
@@ -291,6 +334,15 @@ const round_format_grade_calc_strategy = [
     label: "两次取最快",
     games_total: 2,
     calcRule: (durationResultArr: Array<number>) => {
+      const zeroCount = durationResultArr.reduce((acc, curV) => {
+        if (curV === 0) acc += 1;
+        return acc;
+      }, 0);
+      if (zeroCount === 1)
+        return {
+          avg: 0,
+          best_duration: 0,
+        };
       const filtered_and_sorted_duration_arr = durationResultArr
         .filter((item) => item !== 0)
         .sort((a, b) => a - b);
@@ -307,6 +359,65 @@ const round_format_grade_calc_strategy = [
     label: "单次",
     games_total: 1,
     calcRule: (durationResultArr: Array<number>) => {
+      const zeroCount = durationResultArr.reduce((acc, curV) => {
+        if (curV === 0) acc += 1;
+        return acc;
+      }, 0);
+      if (zeroCount === 1)
+        return {
+          avg: 0,
+          best_duration: 0,
+        };
+      const filtered_and_sorted_duration_arr = durationResultArr
+        .filter((item) => item !== 0)
+        .sort((a, b) => a - b);
+      const avg_result =
+        durationResultArr.reduce((a, b) => a + b, 0) / durationResultArr.length;
+      return {
+        avg: avg_result,
+        best_duration: filtered_and_sorted_duration_arr.shift() ?? 0,
+      };
+    },
+  },
+  {
+    id: 6,
+    label: "三局两胜",
+    games_total: 3,
+    calcRule: (durationResultArr: Array<number>) => {
+      const zeroCount = durationResultArr.reduce((acc, curV) => {
+        if (curV === 0) acc += 1;
+        return acc;
+      }, 0);
+      if (zeroCount === 1)
+        return {
+          avg: 0,
+          best_duration: 0,
+        };
+      const filtered_and_sorted_duration_arr = durationResultArr
+        .filter((item) => item !== 0)
+        .sort((a, b) => a - b);
+      const avg_result =
+        durationResultArr.reduce((a, b) => a + b, 0) / durationResultArr.length;
+      return {
+        avg: avg_result,
+        best_duration: filtered_and_sorted_duration_arr.shift() ?? 0,
+      };
+    },
+  },
+  {
+    id: 7,
+    label: "五局三胜",
+    games_total: 5,
+    calcRule: (durationResultArr: Array<number>) => {
+      const zeroCount = durationResultArr.reduce((acc, curV) => {
+        if (curV === 0) acc += 1;
+        return acc;
+      }, 0);
+      if (zeroCount === 2)
+        return {
+          avg: 0,
+          best_duration: 0,
+        };
       const filtered_and_sorted_duration_arr = durationResultArr
         .filter((item) => item !== 0)
         .sort((a, b) => a - b);

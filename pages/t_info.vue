@@ -56,6 +56,14 @@ const t_format_options = [
     id: 1,
     label: "单次",
   },
+  {
+    id: 6,
+    label: "三局两胜",
+  },
+  {
+    id: 7,
+    label: "五局三胜",
+  },
 ];
 
 const custom_project_options = ["签到", "休息", "抽奖", "颁奖"];
