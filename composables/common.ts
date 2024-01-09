@@ -18,3 +18,40 @@ export const reAuthLogin = (currentPath: string) => {
   userStore().$reset();
   navigateTo(`/login?callback=${currentPath}`);
 };
+
+import * as JSONPathPlus from "jsonpath-plus";
+export const useJSONPath = JSONPathPlus.JSONPath;
+export const dictionary_keyValueConvertFunc = (
+  dictionary: Record<string, string>,
+  value: string
+) => {
+  const pathToResult = `$[?(@property === "${value}" || @ === "${value}")]`;
+  const itemInfos = useJSONPath<Array<any>>({
+    path: pathToResult,
+    json: dictionary,
+    resultType: "all",
+  });
+  const firstItemInfo = itemInfos[0];
+  // const result = [firstItemInfo.parentProperty, firstItemInfo.value];
+  let result = undefined;
+  if (itemInfos.length) {
+    result =
+      value === firstItemInfo.parentProperty
+        ? firstItemInfo.value
+        : firstItemInfo.parentProperty;
+  }
+  return result;
+};
+export const dictionary_ObjectKeyMappingConvertFunc = (
+  dictionary: Record<string, string>,
+  objItemsArr: Array<Object>
+) => {
+  return objItemsArr.map((objItem) => {
+    const itemKVArr = Object.entries(objItem);
+    const convertedKVArr = itemKVArr.map((kvItem) => {
+      const [key, value] = kvItem;
+      return [dictionary_keyValueConvertFunc(dictionary, key), value];
+    });
+    return Object.fromEntries(convertedKVArr);
+  });
+};

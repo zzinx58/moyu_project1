@@ -80,6 +80,16 @@ const columnsStable: NuxtUITableColumnAttrType[] = [
     key: "interval",
   },
 ];
+
+const dictionary_tApplicants = {
+  赛事编号: "t_id",
+  项目编号: "p_id",
+  项目: "p_name",
+  账号ID: "user_id",
+  姓名: "name",
+  选手编号: "t_number",
+};
+
 // const columnsAttrs = props.t_projectsDetail
 //   .map((item) => {
 //     return {
