@@ -416,6 +416,7 @@ const createProjectDetailTemplate: ProjectDetailType = {
   passline: "",
 };
 const t_create_preset_selected_projects_detail = ref<ProjectDetailType[]>([]);
+
 const t_create_custom_created_projects_detail = ref<ProjectDetailType[]>([
   structuredClone(createProjectDetailTemplate),
 ]);

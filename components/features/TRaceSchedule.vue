@@ -29,6 +29,14 @@ const t_format_options = [
     id: 1,
     label: "单次",
   },
+  {
+    id: 6,
+    label: "三局两胜",
+  },
+  {
+    id: 7,
+    label: "五局三胜",
+  },
 ];
 const projectItemList: {
   project_id: number;
