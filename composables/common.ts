@@ -21,6 +21,9 @@ export const reAuthLogin = (currentPath: string) => {
 
 import * as JSONPathPlus from "jsonpath-plus";
 export const useJSONPath = JSONPathPlus.JSONPath;
+import * as _ from "lodash";
+export const useLodash = () => _;
+
 export const dictionary_keyValueConvertFunc = (
   dictionary: Record<string, string>,
   value: string

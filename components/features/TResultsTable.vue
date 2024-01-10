@@ -94,7 +94,7 @@ const columnsFlexible: NuxtUITableColumnAttrType[] = [
     label: "最好成绩(s/秒)",
     key: "best_duration",
     sortable: true,
-    direction: "asc",
+    // direction: "asc",
   },
   {
     label: "平均成绩(s/秒)",
@@ -537,6 +537,22 @@ watchEffect(() => {
 const currentPage = ref(1);
 const tablePageCount = 15;
 
+const {
+  state: sorterState_best,
+  prev: sorterPrev_best,
+  next: sorterNext_best,
+  index: sorterIndex_best,
+} = useCycleList(["none", "asc", "desc"]);
+const {
+  state: sorterState_avg,
+  prev: sorterPrev_avg,
+  next: sorterNext_avg,
+  index: sorterIndex_avg,
+} = useCycleList(["none", "asc", "desc"]);
+const ref_resultsTableSorter = ref<Record<string, "asc" | "desc" | "none">>({
+  best_duration: sorterState_best.value as "asc" | "desc" | "none",
+  avg_duration: sorterState_avg.value as "asc" | "desc" | "none",
+});
 const display_resultsData = computed(() => {
   return (
     props.t_resultsData
@@ -589,7 +605,6 @@ const display_resultsData = computed(() => {
       })
   );
 });
-// console.log(display_resultsData.value);
 const filterListDataLength = computed(() => {
   if (selectedProjectItems.value.length > 0) {
     const filteredDataLength = display_resultsData.value
@@ -608,27 +623,54 @@ const filterListDataLength = computed(() => {
   }
 });
 
-const finalListData = computed(() => {
-  if (selectedProjectItems.value.length === 0) {
-    return display_resultsData.value?.slice(
-      (currentPage.value - 1) * tablePageCount,
-      currentPage.value * tablePageCount
-    );
-  }
-  let filterListData = display_resultsData.value
-    .filter((item, index, selfArr) => {
-      return selectedProjectItems.value.some(
-        (itemA) => +itemA.id === item.p_id
-      );
-    })
-    //Bug 小点
-    .filter((item) => {
-      return item.phase === +selectedPhase.value;
-    });
-  return filterListData.slice(
+const finalListData1 = computed(() => {
+  const filteredDataSource = display_resultsData.value.filter((item) => {
+    if (selectedProjectItems.value.length === 0) {
+      if (selectedPhase.value)
+        return true && item.phase === +selectedPhase.value;
+      else return true;
+    } else {
+      if (selectedPhase.value)
+        return (
+          selectedProjectItems.value.some((itemA) => +itemA.id === item.p_id) &&
+          item.phase === +selectedPhase.value
+        );
+      else
+        return selectedProjectItems.value.some(
+          (itemA) => +itemA.id === item.p_id
+        );
+    }
+  });
+
+  const sortedDataSource = () => {
+    const { best_duration, avg_duration } = ref_resultsTableSorter.value;
+    if ([best_duration, avg_duration].every((item) => item === "none"))
+      return filteredDataSource;
+    else
+      return filteredDataSource.sort((preV, curV) => {
+        const best_duration_result =
+          best_duration === "desc"
+            ? curV.best_duration - preV.best_duration
+            : preV.best_duration - curV.best_duration;
+        const avg_duration_result =
+          avg_duration === "desc"
+            ? curV.avg_duration - preV.avg_duration
+            : preV.avg_duration - curV.avg_duration;
+        return best_duration === "none"
+          ? avg_duration_result
+          : best_duration_result;
+      });
+  };
+  const slicedDataSource = sortedDataSource().slice(
     (currentPage.value - 1) * tablePageCount,
     currentPage.value * tablePageCount
   );
+  // console.log(
+  //   ref_resultsTableSorter.value,
+  //   display_resultsData.value.map((item) => item.best_duration),
+  //   slicedDataSource.map((item) => item.best_duration)
+  // );
+  return slicedDataSource;
 });
 
 const handleManualEnterPlayerResults = () => {
@@ -949,13 +991,70 @@ const handleSelectItemRise = async (rowData: any) => {
           <div class="h-588px w-full">
             <UTable
               :columns="selectedColumns"
-              :rows="finalListData"
+              :rows="finalListData1"
               :ui="tableUiStyle"
               :sort-button="{
                 color: '',
               }"
             >
               <!-- class="border border-#6F6F8B" -->
+              <template #best_duration-header="{ column, sort, ...restOne }">
+                <div
+                  @click="
+                    () => {
+                      sorterNext_best();
+                      ref_resultsTableSorter.best_duration = sorterState_best as 'none'|'asc'|'desc';
+                      ref_resultsTableSorter.avg_duration = 'none';
+                      sorterIndex_avg = 0;
+                    }
+                  "
+                >
+                  <div class="flex gap-2 items-center">
+                    {{ `${column.label}` }}
+                    <div
+                      :class="`${
+                        ref_resultsTableSorter.best_duration === 'none'
+                          ? 'i-ep:sort'
+                          : ref_resultsTableSorter.best_duration === 'desc'
+                          ? 'i-bi:sort-down'
+                          : 'i-bi:sort-up'
+                      }
+                      text-16px
+                      `"
+                    />
+                  </div>
+                </div>
+              </template>
+              <template #avg_duration-header="{ column, sort, ...restOne }">
+                <div
+                  @click="
+                    () => {
+                      sorterNext_avg();
+                      ref_resultsTableSorter.avg_duration = sorterState_avg as 'none'|'asc'|'desc';
+                      ref_resultsTableSorter.best_duration = 'none';
+                      sorterIndex_best = 0;
+
+                    }
+                  "
+                >
+                  <div class="flex gap-2 items-center">
+                    {{ `${column.label}` }}
+                    <div
+                      :class="`
+                      ${
+                        ref_resultsTableSorter.avg_duration === 'none'
+                          ? 'i-ep:sort '
+                          : ref_resultsTableSorter.avg_duration === 'desc'
+                          ? 'i-bi:sort-down'
+                          : 'i-bi:sort-up'
+                      }
+                      text-16px
+                      `"
+                    />
+                  </div>
+                </div>
+              </template>
+
               <template #name-data="{ row }">
                 <div>{{ row.name }}</div>
               </template>
